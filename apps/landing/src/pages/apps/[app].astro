@@ -19,10 +19,15 @@ if (!detail) {
 	title={`${detail.name} — Modfolio Studio`}
 	description={`${detail.headline} ${detail.desc}`}
 >
-	<main>
+	<main id="main">
 		<section class="app-hero" data-app={detail.id}>
 			<div class="app-hero-glow"></div>
 			<div class="app-hero-content">
+				<nav class="breadcrumb" aria-label="현재 위치">
+					<a href="/">Studio</a> <span aria-hidden="true">→</span>
+					<a href="/apps">앱</a> <span aria-hidden="true">→</span>
+					<span>{detail.name}</span>
+				</nav>
 				<p class="app-hero-label">{detail.name}</p>
 				<h1 class="app-hero-title">{detail.headline}</h1>
 				<p class="app-hero-desc">{detail.desc}</p>
@@ -67,6 +72,15 @@ if (!detail) {
 
 <style>
 	/* ═══ App Hero ═══ */
+
+	.breadcrumb {
+		font-family: var(--font-ui);
+		font-size: var(--font-size-caption);
+		color: var(--color-text-3);
+		margin-bottom: var(--space-6);
+	}
+
+	.breadcrumb a:hover { color: var(--color-text-1); }
 
 	.app-hero {
 		position: relative;

@@ -42,7 +42,7 @@ const faqs = [
 	title="Modfolio Studio — 만드는 사람을 위한 도구"
 	description="좋은 도구는 진입장벽을 없앱니다. 문서, 오디오, 폼 — 전문가가 아니어도 시작할 수 있습니다."
 >
-	<main>
+	<main id="main">
 		<!-- ── Hero (100vh) ── -->
 		<section class="hero">
 			<div class="hero-bg">
@@ -108,8 +108,8 @@ const faqs = [
 					<h2 class="app-headline">형식에서 해방하다.</h2>
 					<p class="app-desc">문서 변환 유틸리티</p>
 					<div class="app-actions">
-						<span class="app-domain">munseo.app</span>
-						<a href="https://munseo.app" class="app-visit" target="_blank" rel="noopener">앱 방문 →</a>
+						<a href="/apps/munseo" class="app-detail">자세히 보기</a>
+						<a href="https://munseo.app" class="app-visit" target="_blank" rel="noopener" aria-label="Munseo 앱 방문">앱 방문 →</a>
 					</div>
 				</div>
 			</section>
@@ -125,8 +125,8 @@ const faqs = [
 					<h2 class="app-headline">소리를 다루다.</h2>
 					<p class="app-desc">오디오 변환 유틸리티</p>
 					<div class="app-actions">
-						<span class="app-domain">umbracast.com</span>
-						<a href="https://umbracast.com" class="app-visit" target="_blank" rel="noopener">앱 방문 →</a>
+						<a href="/apps/umbracast" class="app-detail">자세히 보기</a>
+						<a href="https://umbracast.com" class="app-visit" target="_blank" rel="noopener" aria-label="Umbracast 앱 방문">앱 방문 →</a>
 					</div>
 				</div>
 			</section>
@@ -145,8 +145,8 @@ const faqs = [
 					<h2 class="app-headline">수작업을 끝내다.</h2>
 					<p class="app-desc">범용 폼 빌더</p>
 					<div class="app-actions">
-						<span class="app-domain">sincheong.app</span>
-						<a href="https://sincheong.app" class="app-visit" target="_blank" rel="noopener">앱 방문 →</a>
+						<a href="/apps/sincheong" class="app-detail">자세히 보기</a>
+						<a href="https://sincheong.app" class="app-visit" target="_blank" rel="noopener" aria-label="Sincheong 앱 방문">앱 방문 →</a>
 					</div>
 				</div>
 			</section>
@@ -476,10 +476,25 @@ const faqs = [
 	.app-align-right .app-actions { justify-content: flex-end; }
 	.app-align-center-offset .app-actions { justify-content: center; }
 
-	.app-domain {
-		font-family: var(--font-mono);
-		font-size: var(--font-size-caption);
+	.app-detail {
+		font-family: var(--font-ui);
+		font-size: var(--font-size-small);
+		font-weight: var(--font-weight-regular);
 		color: var(--color-text-3);
+		padding: var(--space-2) var(--space-4);
+		border: 1px solid var(--color-border-default);
+		border-radius: var(--radius-full);
+		min-height: 44px;
+		display: inline-flex;
+		align-items: center;
+		transition:
+			color var(--dur-fast) var(--ease-smooth),
+			border-color var(--dur-fast) var(--ease-smooth);
+	}
+
+	.app-detail:hover {
+		color: var(--color-text-1);
+		border-color: var(--color-text-1);
 	}
 
 	.app-visit {

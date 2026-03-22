@@ -25,16 +25,31 @@ const canonicalUrl = new URL(Astro.url.pathname, siteUrl).href;
 		<meta name="description" content={description} />
 		<link rel="canonical" href={canonicalUrl} />
 
+		<!-- Favicon -->
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+		<!-- Open Graph -->
 		<meta property="og:title" content={title} />
 		<meta property="og:description" content={description} />
 		<meta property="og:url" content={canonicalUrl} />
 		<meta property="og:type" content="website" />
 		<meta property="og:locale" content="ko_KR" />
 		<meta property="og:site_name" content="Modfolio Studio" />
+		<meta property="og:image" content={`${siteUrl}/og.png`} />
+		<meta property="og:image:width" content="1200" />
+		<meta property="og:image:height" content="630" />
+
+		<!-- Twitter Card -->
+		<meta name="twitter:card" content="summary_large_image" />
+		<meta name="twitter:title" content={title} />
+		<meta name="twitter:description" content={description} />
+		<meta name="twitter:image" content={`${siteUrl}/og.png`} />
 
 		<meta name="theme-color" content="#111118" />
 
+		<!-- Fonts -->
 		<link rel="preconnect" href="https://use.typekit.net" crossorigin />
+		<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
 		<link rel="stylesheet" href="https://use.typekit.net/glw6csk.css" />
 		<link
 			rel="stylesheet"
@@ -42,6 +57,8 @@ const canonicalUrl = new URL(Astro.url.pathname, siteUrl).href;
 		/>
 	</head>
 	<body>
+		<a href="#main" class="skip-link">본문으로 건너뛰기</a>
+
 		<noscript>
 			<div
 				style="padding:3rem;text-align:center;color:#ccc;background:#111118;min-height:100vh"
@@ -50,6 +67,7 @@ const canonicalUrl = new URL(Astro.url.pathname, siteUrl).href;
 				<p>만드는 사람을 위한 가볍고 정확한 도구.</p>
 			</div>
 		</noscript>
+
 		<Header />
 		<slot />
 		<Footer />
@@ -63,5 +81,25 @@ const canonicalUrl = new URL(Astro.url.pathname, siteUrl).href;
 		color: var(--color-text-1);
 		min-height: 100vh;
 		line-height: 1.6;
+	}
+
+	/* Skip-to-content link */
+	.skip-link {
+		position: fixed;
+		top: -100%;
+		left: var(--layout-padding-x);
+		z-index: 200;
+		padding: var(--space-2) var(--space-4);
+		background: var(--color-accent-primary);
+		color: var(--color-surface-0);
+		font-family: var(--font-ui);
+		font-size: var(--font-size-small);
+		border-radius: var(--radius-sm);
+		text-decoration: none;
+		transition: top var(--dur-fast) var(--ease-smooth);
+	}
+
+	.skip-link:focus {
+		top: var(--space-2);
 	}
 </style>

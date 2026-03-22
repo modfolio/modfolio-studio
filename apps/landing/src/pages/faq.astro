@@ -33,8 +33,11 @@ const faqs = [
 	title="자주 묻는 질문 — Modfolio Studio"
 	description="Studio 이용에 관한 자주 묻는 질문과 답변"
 >
-	<main>
+	<main id="main">
 		<section class="faq-hero">
+			<nav class="breadcrumb" aria-label="현재 위치">
+				<a href="/">Studio</a> <span aria-hidden="true">→</span> <span>FAQ</span>
+			</nav>
 			<h1 class="faq-title">자주 묻는 질문</h1>
 		</section>
 
@@ -54,8 +57,18 @@ const faqs = [
 </Base>
 
 <style>
+	.breadcrumb {
+		font-family: var(--font-ui);
+		font-size: var(--font-size-caption);
+		color: var(--color-text-3);
+		margin-bottom: var(--space-6);
+	}
+
+	.breadcrumb a:hover { color: var(--color-text-1); }
+
 	.faq-hero {
 		display: flex;
+		flex-direction: column;
 		align-items: center;
 		justify-content: center;
 		min-height: 40vh;

@@ -1,0 +1,86 @@
+---
+import Base from "../layouts/Base.astro";
+---
+
+<Base title="개인정보처리방침 — Modfolio Studio">
+	<main class="legal-page" id="main">
+		<nav class="breadcrumb" aria-label="현재 위치">
+			<a href="/">Studio</a> <span aria-hidden="true">→</span> <span>개인정보처리방침</span>
+		</nav>
+		<h1 class="legal-title">개인정보처리방침</h1>
+		<div class="legal-content">
+			<p>모드폴리오(이하 "회사")는 이용자의 개인정보를 중요시하며, 관련 법령을 준수합니다.</p>
+
+			<h2>제1조 (수집하는 개인정보)</h2>
+			<p>서비스 이용 시 Modfolio Connect를 통해 다음 정보를 수집합니다: 이메일 주소, 이름, 프로필 정보. 서비스 이용 과정에서 접속 로그, 쿠키 등이 자동으로 생성되어 수집될 수 있습니다.</p>
+
+			<h2>제2조 (개인정보의 이용)</h2>
+			<p>수집한 개인정보는 서비스 제공 및 운영, 서비스 개선, 이용자 식별 및 인증 목적으로만 이용됩니다.</p>
+
+			<h2>제3조 (개인정보의 보관 및 파기)</h2>
+			<p>이용자의 개인정보는 수집 목적이 달성된 후 지체 없이 파기합니다. 단, 관련 법령에 의해 보존이 필요한 경우 해당 기간 동안 보관합니다.</p>
+
+			<p class="legal-note">본 방침은 2026년 3월 23일부터 시행합니다. 상세 방침은 추후 업데이트됩니다.</p>
+		</div>
+	</main>
+</Base>
+
+<style>
+	.legal-page {
+		max-width: 720px;
+		margin: 0 auto;
+		padding: calc(var(--header-height) + var(--space-12)) var(--layout-padding-x) var(--space-24);
+	}
+
+	.breadcrumb {
+		font-family: var(--font-ui);
+		font-size: var(--font-size-caption);
+		color: var(--color-text-3);
+		margin-bottom: var(--space-8);
+	}
+
+	.breadcrumb a {
+		color: var(--color-text-3);
+		text-decoration: none;
+		transition: color var(--dur-fast) var(--ease-smooth);
+	}
+
+	.breadcrumb a:hover {
+		color: var(--color-text-1);
+	}
+
+	.legal-title {
+		font-family: var(--font-display);
+		font-size: var(--font-size-h1);
+		font-weight: var(--font-weight-light);
+		margin-bottom: var(--space-12);
+	}
+
+	.legal-content {
+		font-family: var(--font-body);
+		font-size: var(--font-size-body);
+		color: var(--color-text-2);
+		line-height: 1.8;
+	}
+
+	.legal-content h2 {
+		font-family: var(--font-display);
+		font-size: var(--font-size-h3);
+		font-weight: var(--font-weight-medium);
+		color: var(--color-text-1);
+		margin: var(--space-10) 0 var(--space-4);
+	}
+
+	.legal-content p {
+		margin-bottom: var(--space-4);
+		max-width: 60ch;
+	}
+
+	.legal-note {
+		margin-top: var(--space-12);
+		font-family: var(--font-ui);
+		font-size: var(--font-size-small);
+		color: var(--color-text-3);
+		font-style: italic;
+	}
+</style>

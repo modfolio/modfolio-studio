@@ -60,6 +60,11 @@
 		-moz-osx-font-smoothing: grayscale;
 		scroll-behavior: smooth;
 	}
+
+	a {
+		text-decoration: none;
+		color: inherit;
+	}
 }
 
 /* ── Layer: Tokens ── */
@@ -171,6 +176,8 @@
 		/* ── Layout (ecosystem layout-patterns spec) ── */
 
 		--layout-max-width: 1280px;
+		--layout-max-width-narrow: 720px;
+		--layout-max-width-mid: 900px;
 		--layout-padding-x: clamp(1.5rem, 5vw, 3rem);
 		--header-height: 80px;
 

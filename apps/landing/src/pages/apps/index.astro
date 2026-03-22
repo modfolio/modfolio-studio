@@ -7,8 +7,11 @@ import { STUDIO_APPS } from "../../lib/apps";
 	title="앱 — Modfolio Studio"
 	description="문서, 오디오, 폼 — 각각의 문제를 정확하게 해결하는 세 가지 도구."
 >
-	<main>
+	<main id="main">
 		<section class="apps-hero">
+			<nav class="breadcrumb" aria-label="현재 위치">
+				<a href="/">Studio</a> <span aria-hidden="true">→</span> <span>앱</span>
+			</nav>
 			<h1 class="apps-title">각각의 문제를,<br />정확하게.</h1>
 			<p class="apps-subtitle">
 				하나의 도구가 모든 걸 해결하지 않습니다.<br />
@@ -35,6 +38,15 @@ import { STUDIO_APPS } from "../../lib/apps";
 </Base>
 
 <style>
+	.breadcrumb {
+		font-family: var(--font-ui);
+		font-size: var(--font-size-caption);
+		color: var(--color-text-3);
+		margin-bottom: var(--space-6);
+	}
+
+	.breadcrumb a:hover { color: var(--color-text-1); }
+
 	.apps-hero {
 		display: flex;
 		flex-direction: column;

@@ -1,0 +1,86 @@
+---
+import Base from "../layouts/Base.astro";
+---
+
+<Base title="이용약관 — Modfolio Studio">
+	<main class="legal-page" id="main">
+		<nav class="breadcrumb" aria-label="현재 위치">
+			<a href="/">Studio</a> <span aria-hidden="true">→</span> <span>이용약관</span>
+		</nav>
+		<h1 class="legal-title">이용약관</h1>
+		<div class="legal-content">
+			<p>본 이용약관은 모드폴리오(이하 "회사")가 운영하는 Modfolio Studio(이하 "서비스")의 이용 조건을 규정합니다.</p>
+
+			<h2>제1조 (목적)</h2>
+			<p>이 약관은 회사가 제공하는 서비스의 이용에 관한 조건 및 절차, 기타 필요한 사항을 규정함을 목적으로 합니다.</p>
+
+			<h2>제2조 (서비스의 내용)</h2>
+			<p>회사는 다음 서비스를 제공합니다: Munseo(문서 변환), Umbracast(오디오 변환), Sincheong(폼 빌더). 서비스의 세부 내용은 회사의 판단에 따라 변경될 수 있습니다.</p>
+
+			<h2>제3조 (이용자의 의무)</h2>
+			<p>이용자는 서비스를 이용함에 있어 관련 법령과 본 약관의 규정을 준수해야 합니다.</p>
+
+			<p class="legal-note">본 약관은 2026년 3월 23일부터 시행합니다. 상세 약관은 추후 업데이트됩니다.</p>
+		</div>
+	</main>
+</Base>
+
+<style>
+	.legal-page {
+		max-width: 720px;
+		margin: 0 auto;
+		padding: calc(var(--header-height) + var(--space-12)) var(--layout-padding-x) var(--space-24);
+	}
+
+	.breadcrumb {
+		font-family: var(--font-ui);
+		font-size: var(--font-size-caption);
+		color: var(--color-text-3);
+		margin-bottom: var(--space-8);
+	}
+
+	.breadcrumb a {
+		color: var(--color-text-3);
+		text-decoration: none;
+		transition: color var(--dur-fast) var(--ease-smooth);
+	}
+
+	.breadcrumb a:hover {
+		color: var(--color-text-1);
+	}
+
+	.legal-title {
+		font-family: var(--font-display);
+		font-size: var(--font-size-h1);
+		font-weight: var(--font-weight-light);
+		margin-bottom: var(--space-12);
+	}
+
+	.legal-content {
+		font-family: var(--font-body);
+		font-size: var(--font-size-body);
+		color: var(--color-text-2);
+		line-height: 1.8;
+	}
+
+	.legal-content h2 {
+		font-family: var(--font-display);
+		font-size: var(--font-size-h3);
+		font-weight: var(--font-weight-medium);
+		color: var(--color-text-1);
+		margin: var(--space-10) 0 var(--space-4);
+	}
+
+	.legal-content p {
+		margin-bottom: var(--space-4);
+		max-width: 60ch;
+	}
+
+	.legal-note {
+		margin-top: var(--space-12);
+		font-family: var(--font-ui);
+		font-size: var(--font-size-small);
+		color: var(--color-text-3);
+		font-style: italic;
+	}
+</style>

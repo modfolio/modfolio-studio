@@ -4,16 +4,47 @@ interface Props {
 }
 
 const { portalUrl = "https://lab.modfolio.io" } = Astro.props;
+const pathname = Astro.url.pathname;
+
+const navLinks = [
+	{ href: "/about", label: "소개" },
+	{ href: "/apps", label: "앱" },
+	{ href: "/faq", label: "FAQ" },
+];
 ---
 
 <header class="header" id="header">
 	<a href="/" class="header-logo">Modfolio Studio</a>
-	<nav class="header-nav">
-		<a href="/about" class="header-link">소개</a>
-		<a href="/apps" class="header-link">앱</a>
-		<a href="/faq" class="header-link">FAQ</a>
+
+	<nav class="header-nav" aria-label="주요 내비게이션">
+		{navLinks.map((link) => (
+			<a
+				href={link.href}
+				class="header-link"
+				aria-current={pathname.startsWith(link.href) ? "page" : undefined}
+			>
+				{link.label}
+			</a>
+		))}
 	</nav>
+
 	<a href={portalUrl} class="header-cta">Lab 열기</a>
+
+	<!-- 모바일 메뉴 (CSS-only) -->
+	<input type="checkbox" id="mobile-menu-toggle" class="mobile-toggle" aria-hidden="true" />
+	<label for="mobile-menu-toggle" class="mobile-burger" aria-label="메뉴 열기">
+		<span class="burger-line"></span>
+		<span class="burger-line"></span>
+		<span class="burger-line"></span>
+	</label>
+	<div class="mobile-overlay" aria-label="모바일 내비게이션">
+		<nav class="mobile-nav">
+			{navLinks.map((link) => (
+				<a href={link.href} class="mobile-link">{link.label}</a>
+			))}
+			<a href={portalUrl} class="mobile-link mobile-link-cta">Lab 열기</a>
+		</nav>
+	</div>
 </header>
 
 <style>
@@ -40,6 +71,7 @@ const { portalUrl = "https://lab.modfolio.io" } = Astro.props;
 		color: var(--color-text-1);
 		text-decoration: none;
 		letter-spacing: -0.03em;
+		z-index: 110;
 	}
 
 	.header-nav {
@@ -61,11 +93,11 @@ const { portalUrl = "https://lab.modfolio.io" } = Astro.props;
 		transition: color var(--dur-fast) var(--ease-smooth);
 	}
 
-	.header-link:hover {
+	.header-link:hover,
+	.header-link[aria-current="page"] {
 		color: var(--color-text-1);
 	}
 
-	/* 호버 밑줄: 헤더 하단 border에 정렬, 중앙에서 좌우 펼침 */
 	.header-link::after {
 		content: "";
 		position: absolute;
@@ -80,7 +112,8 @@ const { portalUrl = "https://lab.modfolio.io" } = Astro.props;
 			left var(--dur-base) var(--ease-smooth);
 	}
 
-	.header-link:hover::after {
+	.header-link:hover::after,
+	.header-link[aria-current="page"]::after {
 		width: 100%;
 		left: 0;
 	}
@@ -94,6 +127,7 @@ const { portalUrl = "https://lab.modfolio.io" } = Astro.props;
 		padding: var(--space-2) var(--space-4);
 		border: 1px solid var(--color-border-default);
 		border-radius: var(--radius-full);
+		z-index: 110;
 		transition:
 			color var(--dur-fast) var(--ease-smooth),
 			border-color var(--dur-fast) var(--ease-smooth),
@@ -106,9 +140,98 @@ const { portalUrl = "https://lab.modfolio.io" } = Astro.props;
 		background: var(--color-accent-primary);
 	}
 
+	/* ── 모바일 햄버거 (CSS-only) ── */
+
+	.mobile-toggle {
+		display: none;
+	}
+
+	.mobile-burger {
+		display: none;
+		flex-direction: column;
+		justify-content: center;
+		gap: 5px;
+		width: 44px;
+		height: 44px;
+		padding: var(--space-2);
+		cursor: pointer;
+		z-index: 110;
+	}
+
+	.burger-line {
+		display: block;
+		width: 20px;
+		height: 1.5px;
+		background: var(--color-text-1);
+		transition: transform var(--dur-base) var(--ease-smooth);
+	}
+
+	.mobile-overlay {
+		display: none;
+		position: fixed;
+		inset: 0;
+		background: color-mix(in oklch, var(--color-surface-0) 95%, transparent);
+		backdrop-filter: blur(24px);
+		z-index: 105;
+		align-items: center;
+		justify-content: center;
+	}
+
+	.mobile-nav {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: var(--space-8);
+	}
+
+	.mobile-link {
+		font-family: var(--font-display);
+		font-size: var(--font-size-h2);
+		font-weight: var(--font-weight-light);
+		color: var(--color-text-1);
+		text-decoration: none;
+		letter-spacing: -0.02em;
+		transition: color var(--dur-fast) var(--ease-smooth);
+	}
+
+	.mobile-link:hover {
+		color: var(--color-accent-primary);
+	}
+
+	.mobile-link-cta {
+		font-size: var(--font-size-h3);
+		color: var(--color-accent-primary);
+		margin-top: var(--space-4);
+	}
+
+	/* 토글 활성 */
+	.mobile-toggle:checked ~ .mobile-overlay {
+		display: flex;
+	}
+
+	.mobile-toggle:checked ~ .mobile-burger .burger-line:nth-child(1) {
+		transform: translateY(6.5px) rotate(45deg);
+	}
+
+	.mobile-toggle:checked ~ .mobile-burger .burger-line:nth-child(2) {
+		opacity: 0;
+	}
+
+	.mobile-toggle:checked ~ .mobile-burger .burger-line:nth-child(3) {
+		transform: translateY(-6.5px) rotate(-45deg);
+	}
+
 	@media (max-width: 768px) {
 		.header-nav {
 			display: none;
+		}
+
+		.header-cta {
+			display: none;
+		}
+
+		.mobile-burger {
+			display: flex;
 		}
 	}
 </style>
