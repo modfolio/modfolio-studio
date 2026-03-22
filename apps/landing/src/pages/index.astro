@@ -7,40 +7,40 @@ const portalUrl = "https://lab.modfolio.io";
 const steps = [
 	{
 		num: "01",
-		title: "하나의 계정",
-		desc: "Modfolio Connect 로그인 한 번이면 충분합니다.",
+		title: "계정 하나면 됩니다",
+		desc: "Modfolio Connect로 로그인하세요. 추가 가입 없이 모든 Studio 도구에 접근할 수 있습니다.",
 	},
 	{
 		num: "02",
-		title: "세 가지 도구",
-		desc: "문서, 오디오, 폼. 필요한 순간에 즉시 접근.",
+		title: "필요한 도구를 고르세요",
+		desc: "문서, 오디오, 폼. 각각의 도구가 독립적으로 동작하면서도 하나의 워크플로우 안에 있습니다.",
 	},
 	{
 		num: "03",
-		title: "설치 없이 시작",
-		desc: "브라우저에서 바로. Edge에서 실행됩니다.",
+		title: "열면 바로 시작",
+		desc: "설치할 것도, 기다릴 것도 없습니다. 브라우저를 열면 이미 준비되어 있습니다.",
 	},
 ];
 
 const faqs = [
 	{
-		q: "별도 계정이 필요한가요?",
-		a: "아닙니다. Modfolio Connect 계정 하나면 Studio의 모든 앱에 접근할 수 있습니다.",
+		q: "별도로 계정을 만들어야 하나요?",
+		a: "아닙니다. Modfolio Connect 계정이 있다면 Studio의 모든 앱을 바로 사용할 수 있습니다. 별도 가입 절차가 없습니다.",
 	},
 	{
-		q: "앱 간 데이터가 공유되나요?",
-		a: "각 앱의 데이터는 완전히 분리됩니다. 인증 정보만 공유되며, 문서·오디오·폼 데이터는 개별 앱에서 독립 관리됩니다.",
+		q: "앱끼리 데이터가 공유되나요?",
+		a: "아닙니다. 각 앱의 데이터는 완전히 분리되어 있습니다. 공유되는 것은 로그인 정보뿐이며, 문서·오디오·폼 데이터는 각 앱에서 독립적으로 관리됩니다.",
 	},
 	{
-		q: "무료로 사용할 수 있나요?",
-		a: "현재 모든 기능을 무료로 제공합니다. 추후 고급 기능에 대한 유료 플랜이 추가될 수 있습니다.",
+		q: "비용이 드나요?",
+		a: "현재 모든 기능을 무료로 이용할 수 있습니다. 추후 고급 기능에 한해 유료 플랜이 추가될 수 있습니다.",
 	},
 ];
 ---
 
 <Base
-	title="Modfolio Studio — 누구든 크리에이터가 될 수 있는 도구"
-	description="크리에이티브는 재능의 영역이 아닙니다. 문서 변환, 오디오 처리, 폼 관리 — 하나의 계정으로 시작하세요."
+	title="Modfolio Studio — 만드는 사람을 위한 도구"
+	description="좋은 도구는 진입장벽을 없앱니다. 문서, 오디오, 폼 — 전문가가 아니어도 시작할 수 있습니다."
 >
 	<main>
 		<!-- ── Hero (100vh) ── -->
@@ -51,7 +51,7 @@ const faqs = [
 			</div>
 			<div class="hero-content">
 				<h1 class="hero-title">
-					크리에이티브는<br />재능의 영역이 아닙니다.
+					좋은 도구 앞에서,<br />모두가 크리에이터입니다.
 				</h1>
 				<a href={portalUrl} class="hero-cta">Studio Lab 열기</a>
 			</div>
@@ -74,20 +74,19 @@ const faqs = [
 		<section class="philosophy">
 			<div class="philosophy-grid">
 				<div class="philosophy-block">
-					<h2 class="philosophy-label">미션</h2>
+					<h2 class="philosophy-label">우리가 믿는 것</h2>
 					<p class="philosophy-text">
-						크리에이티브가 더 중요해지는 시대에,<br />
-						진입장벽을 낮추는 것이<br />
-						우리의 목표입니다.
+						만들고 싶은 마음이 있다면,<br />
+						그것으로 충분합니다.<br />
+						나머지는 도구가 해결할 문제입니다.
 					</p>
 				</div>
 				<div class="philosophy-block philosophy-right">
-					<h2 class="philosophy-label">비전</h2>
+					<h2 class="philosophy-label">우리가 만드는 것</h2>
 					<p class="philosophy-text">
-						재능이 있어야만 가능하다는<br />
-						구시대적 사고에서 벗어나,<br />
-						누구든 크리에이티브에 도전할 수 있는<br />
-						방법론과 환경, 커뮤니티를 제공합니다.
+						전문가만 쓸 수 있는 도구가 아닌,<br />
+						누구든 열면 바로 시작할 수 있는<br />
+						가볍고 정확한 크리에이티브 환경.
 					</p>
 				</div>
 			</div>
@@ -155,7 +154,7 @@ const faqs = [
 
 		<!-- ── How It Works ── -->
 		<section class="how">
-			<h2 class="section-heading">5분이면 시작합니다</h2>
+			<h2 class="section-heading">시작하는 데 5분이면 됩니다</h2>
 			<div class="steps">
 				{steps.map((s, i) => (
 					<div class="step" data-step={i}>
@@ -183,7 +182,7 @@ const faqs = [
 		<!-- ── Closing CTA ── -->
 		<section class="closing">
 			<div class="closing-glow"></div>
-			<h2 class="closing-title">도구는 준비되었습니다.</h2>
+			<h2 class="closing-title">만들 준비가 되셨다면.</h2>
 			<a href={portalUrl} class="closing-cta">Studio Lab 열기</a>
 		</section>
 	</main>
