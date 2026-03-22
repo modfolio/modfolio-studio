@@ -155,18 +155,16 @@ import { STUDIO_APPS } from "../lib/apps";
 		padding: var(--space-6) var(--layout-padding-x);
 		display: flex;
 		justify-content: space-between;
-		align-items: center;
-		gap: var(--space-8);
+		align-items: flex-start;
+		gap: var(--space-6);
 	}
 
 	.footer-biz {
 		font-family: var(--font-ui);
-		font-size: clamp(0.65rem, 0.6rem + 0.25vw, 0.75rem);
+		font-size: clamp(0.65rem, 0.6rem + 0.2vw, 0.75rem);
 		font-weight: var(--font-weight-regular);
 		color: var(--color-text-3);
-		white-space: nowrap;
-		overflow: hidden;
-		text-overflow: ellipsis;
+		line-height: 1.7;
 	}
 
 	.footer-copy {
@@ -185,13 +183,6 @@ import { STUDIO_APPS } from "../lib/apps";
 
 		.footer-legal {
 			flex-direction: column;
-			align-items: flex-start;
-		}
-
-		.footer-biz {
-			white-space: normal;
-			font-size: 0.7rem;
-			line-height: 1.8;
 		}
 	}
 
