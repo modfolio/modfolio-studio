@@ -1,3 +1,3 @@
-import { auth } from "../../lib/connect";
+import { auth } from "$lib/connect";
 
 export const GET = auth.callbackHandler;

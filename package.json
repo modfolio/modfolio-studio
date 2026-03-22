@@ -7,10 +7,13 @@
 	"packageManager": "bun@1.2.4",
 	"scripts": {
 		"build": "cd apps/landing && bun run build",
+		"build:app": "cd apps/app && bun run build",
 		"dev": "cd apps/landing && bun run dev",
+		"dev:app": "cd apps/app && bun run dev",
 		"check": "biome check .",
 		"check:fix": "biome check --write .",
-		"typecheck": "cd apps/landing && astro check"
+		"typecheck": "cd apps/landing && astro check",
+		"typecheck:app": "cd apps/app && bun run check"
 	},
 	"devDependencies": {
 		"@biomejs/biome": "^2.4.8"

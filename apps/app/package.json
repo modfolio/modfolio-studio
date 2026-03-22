@@ -1,0 +1,20 @@
+{
+	"name": "app",
+	"type": "module",
+	"scripts": {
+		"dev": "vite dev --port 4060",
+		"build": "vite build",
+		"preview": "vite preview",
+		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json"
+	},
+	"dependencies": {
+		"@modfolio/connect-sdk": "^5.1.0",
+		"@sveltejs/adapter-cloudflare": "^7.2.8",
+		"@sveltejs/kit": "^2.55.0",
+		"@sveltejs/vite-plugin-svelte": "^5.0.0",
+		"svelte": "^5.54.1",
+		"svelte-check": "^4.0.0",
+		"typescript": "^5.9.3",
+		"vite": "^6.3.0"
+	}
+}

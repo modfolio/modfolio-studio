@@ -19,7 +19,7 @@
 	},
 	"overrides": [
 		{
-			"includes": ["**/*.astro"],
+			"includes": ["**/*.astro", "**/*.svelte"],
 			"linter": {
 				"rules": {
 					"correctness": {
@@ -36,8 +36,11 @@
 	"files": {
 		"includes": [
 			"apps/*/src/**/*.ts",
+			"apps/*/src/**/*.svelte",
 			"apps/*/src/**/*.astro",
 			"apps/*/src/**/*.css",
+			"apps/*/*.ts",
+			"apps/*/*.js",
 			"*.json"
 		]
 	}

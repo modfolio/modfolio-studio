@@ -1,0 +1,12 @@
+name = "modfolio-studio-app"
+compatibility_date = "2026-03-01"
+compatibility_flags = ["nodejs_compat"]
+pages_build_output_dir = ".svelte-kit/cloudflare"
+
+[observability.logs]
+enabled = true
+head_sampling_rate = 1
+
+[vars]
+PUBLIC_APP_URL = "https://lab.modfolio.io"
+PUBLIC_LANDING_URL = "https://studio.modfolio.io"
