@@ -20,7 +20,8 @@ WCAG AA 접근성 전문 리뷰 에이전트.
 4. prefers-reduced-motion 폴백 (모든 애니메이션)
 5. 키보드 네비게이션 (tabindex 논리적 순서)
 6. 터치 타겟 최소 44x44px
-7. 시각 효과 pointer-events: none 격리
+7. focus trap (모달/다이얼로그)
+8. 시각 효과 pointer-events: none 격리
 
 ## 출력 형식
 
