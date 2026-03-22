@@ -6,14 +6,20 @@ import { STUDIO_APPS } from "../lib/apps";
 	<div class="footer-main">
 		<div class="footer-grid">
 			<div class="footer-col footer-brand">
-				<h4 class="footer-heading">Studio</h4>
+				<h4 class="footer-heading">Modfolio Studio</h4>
 				<p class="footer-desc">
 					누구든 크리에이터가 될 수 있는 도구를 만듭니다.
 				</p>
 				<div class="footer-sns">
-					<a href="https://instagram.com/modfolio.io" class="sns-link" target="_blank" rel="noopener" aria-label="Instagram">IG</a>
-					<a href="https://linkedin.com/company/modfolio" class="sns-link" target="_blank" rel="noopener" aria-label="LinkedIn">LI</a>
-					<a href="https://youtube.com/@modfolio" class="sns-link" target="_blank" rel="noopener" aria-label="YouTube">YT</a>
+					<a href="https://instagram.com/modfolio.io" class="sns-link" target="_blank" rel="noopener" aria-label="Instagram">
+						<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" /><circle cx="12" cy="12" r="5" /><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none" /></svg>
+					</a>
+					<a href="https://linkedin.com/company/modfolio" class="sns-link" target="_blank" rel="noopener" aria-label="LinkedIn">
+						<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-4 0v7h-4v-7a6 6 0 0 1 6-6z" /><rect x="2" y="9" width="4" height="12" /><circle cx="4" cy="4" r="2" /></svg>
+					</a>
+					<a href="https://youtube.com/@modfolio" class="sns-link" target="_blank" rel="noopener" aria-label="YouTube">
+						<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 2A29 29 0 0 0 1 12a29 29 0 0 0 .46 5.58 2.78 2.78 0 0 0 1.94 2C5.12 20 12 20 12 20s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-2A29 29 0 0 0 23 12a29 29 0 0 0-.46-5.58z" /><polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" /></svg>
+					</a>
 				</div>
 			</div>
 			<div class="footer-col">
@@ -28,6 +34,8 @@ import { STUDIO_APPS } from "../lib/apps";
 				<h4 class="footer-heading">Platform</h4>
 				<a href="https://connect.modfolio.io" class="footer-link" target="_blank" rel="noopener">Connect</a>
 				<a href="https://pay.modfolio.io" class="footer-link" target="_blank" rel="noopener">Pay</a>
+				<a href="https://admin.modfolio.io" class="footer-link" target="_blank" rel="noopener">Admin</a>
+				<a href="https://on.modfolio.io" class="footer-link" target="_blank" rel="noopener">On</a>
 				<a href="https://docs.modfolio.io" class="footer-link" target="_blank" rel="noopener">Docs</a>
 			</div>
 			<div class="footer-col">
@@ -38,6 +46,7 @@ import { STUDIO_APPS } from "../lib/apps";
 			</div>
 		</div>
 	</div>
+	<div class="footer-legal-border"></div>
 	<div class="footer-legal">
 		<p class="footer-biz">모드폴리오 · 대표 김동헌 · 사업자등록번호 104-95-65636 · 통신판매업 제2025-수원팔달-0953호 · 출판사 제2024-000037호 · 경기도 수원시 팔달구 효원로 278, 6층 602호 · contact@modfolio.io</p>
 		<p class="footer-copy">© 2026 Modfolio. All rights reserved.</p>
@@ -94,11 +103,7 @@ import { STUDIO_APPS } from "../lib/apps";
 	}
 
 	.sns-link {
-		font-family: var(--font-ui);
-		font-size: var(--font-size-caption);
-		font-weight: var(--font-weight-medium);
 		color: var(--color-text-3);
-		text-decoration: none;
 		width: var(--space-8);
 		height: var(--space-8);
 		display: flex;
@@ -135,38 +140,33 @@ import { STUDIO_APPS } from "../lib/apps";
 		color: var(--color-text-1);
 	}
 
-	/* Products 링크에 앱별 hover 색상 */
-	.footer-link[data-app="munseo"]:hover {
-		color: var(--color-app-munseo);
+	.footer-link[data-app="munseo"]:hover { color: var(--color-app-munseo); }
+	.footer-link[data-app="umbracast"]:hover { color: var(--color-app-umbracast); }
+	.footer-link[data-app="sincheong"]:hover { color: var(--color-app-sincheong); }
+
+	/* 하단바 구분선: 전폭 */
+	.footer-legal-border {
+		border-top: 1px solid var(--color-border-default);
 	}
 
-	.footer-link[data-app="umbracast"]:hover {
-		color: var(--color-app-umbracast);
-	}
-
-	.footer-link[data-app="sincheong"]:hover {
-		color: var(--color-app-sincheong);
-	}
-
-	/* 법적 정보 바 */
 	.footer-legal {
 		max-width: var(--layout-max-width);
 		margin: 0 auto;
 		padding: var(--space-6) var(--layout-padding-x);
-		border-top: 1px solid var(--color-border-default);
 		display: flex;
 		justify-content: space-between;
-		align-items: flex-start;
-		gap: var(--space-4);
+		align-items: center;
+		gap: var(--space-8);
 	}
 
 	.footer-biz {
 		font-family: var(--font-ui);
-		font-size: var(--font-size-caption);
+		font-size: clamp(0.6rem, 0.55rem + 0.25vw, 0.7rem);
 		font-weight: var(--font-weight-regular);
 		color: var(--color-text-3);
-		line-height: 1.6;
-		max-width: 70ch;
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
 	}
 
 	.footer-copy {
@@ -175,6 +175,7 @@ import { STUDIO_APPS } from "../lib/apps";
 		font-weight: var(--font-weight-regular);
 		color: var(--color-text-3);
 		white-space: nowrap;
+		flex-shrink: 0;
 	}
 
 	@media (max-width: 768px) {
@@ -184,6 +185,12 @@ import { STUDIO_APPS } from "../lib/apps";
 
 		.footer-legal {
 			flex-direction: column;
+			align-items: flex-start;
+		}
+
+		.footer-biz {
+			white-space: normal;
+			font-size: 0.6rem;
 		}
 	}
 

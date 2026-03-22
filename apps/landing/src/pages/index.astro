@@ -70,6 +70,32 @@ const faqs = [
 			</div>
 		</section>
 
+		<!-- ── Philosophy ── -->
+		<section class="philosophy">
+			<div class="philosophy-grid">
+				<div class="philosophy-block">
+					<h2 class="philosophy-label">미션</h2>
+					<p class="philosophy-text">
+						크리에이티브가 더 중요해지는 시대에,<br />
+						진입장벽을 낮추는 것이<br />
+						우리의 목표입니다.
+					</p>
+				</div>
+				<div class="philosophy-block philosophy-right">
+					<h2 class="philosophy-label">비전</h2>
+					<p class="philosophy-text">
+						재능이 있어야만 가능하다는<br />
+						구시대적 사고에서 벗어나,<br />
+						누구든 크리에이티브에 도전할 수 있는<br />
+						방법론과 환경, 커뮤니티를 제공합니다.
+					</p>
+				</div>
+			</div>
+			<div class="philosophy-cta">
+				<a href="/about" class="philosophy-link">Studio 소개 →</a>
+			</div>
+		</section>
+
 		<!-- ── App Sections (각 100vh, 비대칭 + 기하학) ── -->
 		<div id="apps">
 			<!-- Munseo: 좌정렬 + 겹친 사각형 -->
@@ -241,6 +267,66 @@ const faqs = [
 
 	.hero-cta:active {
 		transform: scale(0.97);
+	}
+
+	/* ═══ Philosophy ═══ */
+
+	.philosophy {
+		max-width: var(--layout-max-width);
+		margin: 0 auto;
+		padding: var(--space-24) var(--layout-padding-x);
+	}
+
+	.philosophy-grid {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		gap: var(--space-16);
+		margin-bottom: var(--space-12);
+	}
+
+	.philosophy-label {
+		font-family: var(--font-ui);
+		font-size: var(--font-size-caption);
+		font-weight: var(--font-weight-medium);
+		text-transform: uppercase;
+		letter-spacing: 0.12em;
+		color: var(--color-accent-primary);
+		margin-bottom: var(--space-6);
+	}
+
+	.philosophy-text {
+		font-family: var(--font-display);
+		font-size: var(--font-size-h3);
+		font-weight: var(--font-weight-light);
+		line-height: 1.6;
+		color: var(--color-text-2);
+	}
+
+	.philosophy-right {
+		text-align: right;
+	}
+
+	.philosophy-cta {
+		text-align: center;
+	}
+
+	.philosophy-link {
+		font-family: var(--font-ui);
+		font-size: var(--font-size-small);
+		font-weight: var(--font-weight-medium);
+		color: var(--color-text-2);
+		text-decoration: none;
+		padding: var(--space-2) var(--space-6);
+		border: 1px solid var(--color-border-default);
+		border-radius: var(--radius-full);
+		transition:
+			color var(--dur-fast) var(--ease-smooth),
+			border-color var(--dur-fast) var(--ease-smooth);
+	}
+
+	.philosophy-link:hover {
+		color: var(--color-text-1);
+		border-color: var(--color-text-1);
 	}
 
 	/* ═══ Social Proof ═══ */
@@ -691,6 +777,8 @@ const faqs = [
 
 	@media (max-width: 768px) {
 		.hero-title { font-size: clamp(2rem, 6vw, 3.5rem); }
+		.philosophy-grid { grid-template-columns: 1fr; gap: var(--space-10); }
+		.philosophy-right { text-align: left; }
 		.app-headline { font-size: var(--font-size-h1); }
 		.app-align-left,
 		.app-align-center-offset,
