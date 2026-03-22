@@ -97,59 +97,19 @@ const faqs = [
 
 		<!-- ── App Sections (각 100vh, 비대칭 + 기하학) ── -->
 		<div id="apps">
-			<!-- Munseo: 좌정렬 + 겹친 사각형 -->
-			<section class="app-section app-munseo" data-app="munseo">
-				<div class="app-geo geo-rects">
-					<div class="geo-rect geo-rect-1"></div>
-					<div class="geo-rect geo-rect-2"></div>
-				</div>
-				<div class="app-inner app-align-left">
-					<p class="app-label">Munseo</p>
-					<h2 class="app-headline">형식에서 해방하다.</h2>
-					<p class="app-desc">문서 변환 유틸리티</p>
-					<div class="app-actions">
-						<a href="/apps/munseo" class="btn-outline">자세히 보기</a>
-						<a href="https://munseo.app" class="btn-filled" target="_blank" rel="noopener" aria-label="Munseo 앱 방문">앱 방문 →</a>
+			{STUDIO_APPS.map((app) => (
+				<section class={`app-section app-${app.id}`} data-app={app.id}>
+					<div class="app-inner">
+						<p class="app-label">{app.name}</p>
+						<h2 class="app-headline">{app.headline}</h2>
+						<p class="app-desc">{app.desc}</p>
+						<div class="app-actions">
+							<a href={`/apps/${app.id}`} class="btn-outline">자세히 보기</a>
+							<a href={`https://${app.domain}`} class="btn-filled" target="_blank" rel="noopener" aria-label={`${app.name} 앱 방문`}>앱 방문 →</a>
+						</div>
 					</div>
-				</div>
-			</section>
-
-			<!-- Umbracast: 오프셋 센터 + 파형 -->
-			<section class="app-section app-umbracast" data-app="umbracast">
-				<div class="app-geo geo-wave">
-					<div class="geo-wave-line"></div>
-					<div class="geo-wave-line geo-wave-2"></div>
-				</div>
-				<div class="app-inner app-align-center-offset">
-					<p class="app-label">Umbracast</p>
-					<h2 class="app-headline">소리를 다루다.</h2>
-					<p class="app-desc">오디오 변환 유틸리티</p>
-					<div class="app-actions">
-						<a href="/apps/umbracast" class="btn-outline">자세히 보기</a>
-						<a href="https://umbracast.com" class="btn-filled" target="_blank" rel="noopener" aria-label="Umbracast 앱 방문">앱 방문 →</a>
-					</div>
-				</div>
-			</section>
-
-			<!-- Sincheong: 우정렬 + 원형 노드 -->
-			<section class="app-section app-sincheong" data-app="sincheong">
-				<div class="app-geo geo-nodes">
-					<div class="geo-node geo-node-1"></div>
-					<div class="geo-node geo-node-2"></div>
-					<div class="geo-node geo-node-3"></div>
-					<div class="geo-connector geo-conn-1"></div>
-					<div class="geo-connector geo-conn-2"></div>
-				</div>
-				<div class="app-inner app-align-right">
-					<p class="app-label">Sincheong</p>
-					<h2 class="app-headline">수작업을 끝내다.</h2>
-					<p class="app-desc">범용 폼 빌더</p>
-					<div class="app-actions">
-						<a href="/apps/sincheong" class="btn-outline">자세히 보기</a>
-						<a href="https://sincheong.app" class="btn-filled" target="_blank" rel="noopener" aria-label="Sincheong 앱 방문">앱 방문 →</a>
-					</div>
-				</div>
-			</section>
+				</section>
+			))}
 		</div>
 
 		<!-- ── How It Works ── -->
@@ -382,7 +342,7 @@ const faqs = [
 		display: flex;
 		align-items: center;
 		justify-content: center;
-		min-height: 85vh;
+		min-height: 80vh;
 		padding: var(--space-24) var(--layout-padding-x);
 		overflow: hidden;
 	}
@@ -390,13 +350,9 @@ const faqs = [
 	.app-inner {
 		position: relative;
 		z-index: 1;
-		max-width: var(--layout-max-width);
-		width: 100%;
+		text-align: center;
+		max-width: var(--layout-max-width-mid);
 		margin: 0 auto;
-		display: grid;
-		grid-template-columns: 1fr 1fr;
-		align-items: center;
-		gap: var(--space-12);
 		animation: fadeUp var(--dur-slow) var(--ease-smooth) both;
 		animation-timeline: view();
 		animation-range: entry 0% entry 40%;
@@ -410,15 +366,6 @@ const faqs = [
 	@supports not (animation-timeline: view()) {
 		.app-inner { opacity: 1; transform: none; animation: none; }
 	}
-
-	/* Munseo: 콘텐츠 좌, 기하학 우 */
-	.app-align-left { grid-column: 1; }
-
-	/* Umbracast: 콘텐츠 센터 (full span) */
-	.app-align-center-offset { grid-column: 1 / -1; text-align: center; max-width: 640px; margin: 0 auto; }
-
-	/* Sincheong: 콘텐츠 우, 기하학 좌 */
-	.app-align-right { grid-column: 2; text-align: right; }
 
 	.app-label {
 		font-family: var(--font-ui);
@@ -451,9 +398,7 @@ const faqs = [
 		margin-bottom: var(--space-6);
 	}
 
-	.app-actions { display: flex; align-items: center; gap: var(--space-3); flex-wrap: wrap; }
-	.app-align-right .app-actions { justify-content: flex-end; }
-	.app-align-center-offset .app-actions { justify-content: center; }
+	.app-actions { display: flex; align-items: center; justify-content: center; gap: var(--space-3); flex-wrap: wrap; }
 
 	/* Per-app colors */
 	.app-munseo .app-label { color: var(--color-app-munseo); }
@@ -471,26 +416,6 @@ const faqs = [
 	.app-munseo { background: radial-gradient(ellipse 60% 50% at 70% 50%, color-mix(in oklch, var(--color-app-munseo) 8%, transparent), var(--color-surface-0) 65%); }
 	.app-umbracast { background: radial-gradient(ellipse 60% 50% at 50% 40%, color-mix(in oklch, var(--color-app-umbracast) 8%, transparent), var(--color-surface-0) 65%); }
 	.app-sincheong { background: radial-gradient(ellipse 60% 50% at 30% 50%, color-mix(in oklch, var(--color-app-sincheong) 8%, transparent), var(--color-surface-0) 65%); }
-
-	/* ── Geometric Shapes ── */
-
-	.app-geo { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
-
-	.geo-rect { position: absolute; border: 1px solid var(--color-app-munseo); border-radius: var(--radius-md); opacity: 0.1; }
-	.geo-rect-1 { width: 200px; height: 260px; right: 15%; top: 20%; transform: rotate(-6deg); }
-	.geo-rect-2 { width: 180px; height: 240px; right: 18%; top: 25%; transform: rotate(3deg); }
-
-	.geo-wave-line { position: absolute; width: 100%; height: 1px; top: 30%; background: repeating-linear-gradient(90deg, transparent, transparent 20px, color-mix(in oklch, var(--color-app-umbracast) 15%, transparent) 20px, color-mix(in oklch, var(--color-app-umbracast) 15%, transparent) 22px); }
-	.geo-wave-2 { top: 70%; opacity: 0.5; }
-
-	.geo-node { position: absolute; border: 1px solid var(--color-app-sincheong); border-radius: var(--radius-full); opacity: 0.12; }
-	.geo-node-1 { width: 40px; height: 40px; left: 12%; top: 30%; }
-	.geo-node-2 { width: 32px; height: 32px; left: 8%; top: 50%; }
-	.geo-node-3 { width: 24px; height: 24px; left: 18%; top: 55%; }
-
-	.geo-connector { position: absolute; height: 1px; background: var(--color-app-sincheong); opacity: 0.08; transform-origin: left center; }
-	.geo-conn-1 { width: 80px; left: calc(12% + 20px); top: calc(30% + 20px); transform: rotate(40deg); }
-	.geo-conn-2 { width: 60px; left: calc(8% + 16px); top: calc(50% + 16px); transform: rotate(-20deg); }
 
 	/* ── Section Heading ── */
 
@@ -614,7 +539,7 @@ const faqs = [
 		color: var(--color-text-2);
 		line-height: 1.7;
 		padding: 0 0 var(--space-6) var(--space-8);
-		max-width: 55ch;
+		max-width: 60ch;
 	}
 
 	/* ── Closing CTA ── */
@@ -652,23 +577,12 @@ const faqs = [
 
 	/* ── Responsive ── */
 
-	@media (max-width: 1024px) {
-		.app-inner { grid-template-columns: 1fr; }
-		.app-align-right { grid-column: 1; text-align: left; }
-		.app-align-right .app-actions { justify-content: flex-start; }
-	}
-
 	@media (max-width: 768px) {
 		.hero-title { font-size: clamp(2rem, 6vw, 3.5rem); }
 		.philosophy-grid { grid-template-columns: 1fr; }
 		.app-headline { font-size: var(--font-size-h1); }
-		.app-align-left,
-		.app-align-center-offset,
-		.app-align-right { text-align: center; }
-		.app-actions { justify-content: center; }
 		.steps { grid-template-columns: 1fr; }
 		.proof-inner { flex-wrap: wrap; justify-content: center; }
-		.geo-rects, .geo-wave, .geo-nodes { display: none; }
 	}
 
 	@media (max-width: 480px) {

@@ -176,8 +176,8 @@
 		/* ── Layout (ecosystem layout-patterns spec) ── */
 
 		--layout-max-width: 1280px;
-		--layout-max-width-narrow: 720px;
-		--layout-max-width-mid: 900px;
+		--layout-max-width-narrow: 800px;
+		--layout-max-width-mid: 1000px;
 		--layout-padding-x: clamp(1.5rem, 5vw, 3rem);
 		--header-height: 80px;
 
