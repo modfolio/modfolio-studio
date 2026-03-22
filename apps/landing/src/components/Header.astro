@@ -1,0 +1,106 @@
+---
+interface Props {
+	portalUrl?: string;
+}
+
+const { portalUrl = "https://lab.modfolio.io" } = Astro.props;
+---
+
+<header class="header" id="header">
+	<a href="/" class="header-logo">Modfolio Studio</a>
+	<nav class="header-nav">
+		<a href="/about" class="header-link">소개</a>
+		<a href="/#apps" class="header-link">앱</a>
+		<a href="/#faq" class="header-link">FAQ</a>
+	</nav>
+	<a href={portalUrl} class="header-cta">Lab 열기</a>
+</header>
+
+<style>
+	.header {
+		position: fixed;
+		top: 0;
+		left: 0;
+		right: 0;
+		z-index: 100;
+		height: var(--header-height);
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		padding: 0 var(--layout-padding-x);
+		background: color-mix(in oklch, var(--color-surface-0) 70%, transparent);
+		backdrop-filter: blur(16px);
+	}
+
+	.header-logo {
+		font-family: var(--font-display);
+		font-size: var(--font-size-h3);
+		font-weight: var(--font-weight-light);
+		color: var(--color-text-1);
+		text-decoration: none;
+		letter-spacing: -0.03em;
+	}
+
+	.header-nav {
+		display: flex;
+		gap: var(--space-8);
+	}
+
+	.header-link {
+		position: relative;
+		font-family: var(--font-ui);
+		font-size: var(--font-size-small);
+		font-weight: var(--font-weight-regular);
+		color: var(--color-text-2);
+		text-decoration: none;
+		transition: color var(--dur-fast) var(--ease-smooth);
+	}
+
+	.header-link:hover {
+		color: var(--color-text-1);
+	}
+
+	/* 호버 밑줄: 중앙에서 좌우 펼침 */
+	.header-link::after {
+		content: "";
+		position: absolute;
+		bottom: -2px;
+		left: 50%;
+		width: 0;
+		height: 1px;
+		background: var(--color-text-1);
+		transition: width var(--dur-base) var(--ease-smooth), left var(--dur-base) var(--ease-smooth);
+	}
+
+	.header-link:hover::after {
+		width: 100%;
+		left: 0;
+	}
+
+	.header-cta {
+		font-family: var(--font-ui);
+		font-size: var(--font-size-caption);
+		font-weight: var(--font-weight-medium);
+		color: var(--color-text-2);
+		text-decoration: none;
+		padding: var(--space-2) var(--space-4);
+		border: 1px solid var(--color-border-default);
+		border-radius: var(--radius-full);
+		transition:
+			color var(--dur-fast) var(--ease-smooth),
+			border-color var(--dur-fast) var(--ease-smooth),
+			background var(--dur-fast) var(--ease-smooth);
+	}
+
+	.header-cta:hover {
+		color: var(--color-surface-0);
+		border-color: var(--color-accent-primary);
+		background: var(--color-accent-primary);
+	}
+
+	@media (max-width: 768px) {
+		.header-nav {
+			display: none;
+		}
+	}
+</style>

@@ -1,0 +1,239 @@
+---
+import Base from "../layouts/Base.astro";
+import { STUDIO_APPS } from "../lib/apps";
+---
+
+<Base
+	title="소개 — Modfolio Studio"
+	description="누구든 크리에이터가 될 수 있는 환경을 만듭니다. Studio의 미션과 철학."
+>
+	<main>
+		<section class="about-hero">
+			<h1 class="about-title">
+				누구든 크리에이터가<br />될 수 있는 환경.
+			</h1>
+		</section>
+
+		<section class="mission">
+			<div class="mission-inner">
+				<div class="mission-block">
+					<h2 class="mission-label">미션</h2>
+					<p class="mission-text">
+						크리에이티브는 재능이 아니라 환경의 문제입니다. 전문 도구, 전문 지식,
+						전문 환경 — 너무 높았던 진입장벽을 낮추는 것이 Studio의 목표입니다.
+					</p>
+				</div>
+				<div class="mission-block">
+					<h2 class="mission-label">비전</h2>
+					<p class="mission-text">
+						더더욱 크리에이티브가 중요해지는 시대, 재능이 있어야만 가능하다는
+						구시대적 사고에서 벗어나 누구든 크리에이티브에 도전할 수 있는 방법론과
+						환경, 커뮤니티를 제공합니다.
+					</p>
+				</div>
+			</div>
+		</section>
+
+		<section class="values">
+			<h2 class="section-heading">세 가지 약속</h2>
+			<div class="values-grid">
+				<div class="value-card" data-accent="coral">
+					<h3 class="value-title">접근성</h3>
+					<p class="value-desc">
+						전문 도구를 누구에게나. 설치 없이 브라우저에서 바로 시작할 수 있는
+						도구를 만듭니다.
+					</p>
+				</div>
+				<div class="value-card" data-accent="amber">
+					<h3 class="value-title">통합</h3>
+					<p class="value-desc">
+						하나의 계정, 하나의 워크플로우. Modfolio Connect으로 모든 도구에
+						즉시 접근합니다.
+					</p>
+				</div>
+				<div class="value-card" data-accent="violet">
+					<h3 class="value-title">엣지</h3>
+					<p class="value-desc">
+						Cloudflare Edge에서 실행됩니다. 어디서든, 어떤 디바이스에서든
+						빠르게 동작합니다.
+					</p>
+				</div>
+			</div>
+		</section>
+
+		<section class="about-apps">
+			<h2 class="section-heading">Studio의 도구</h2>
+			<div class="about-apps-grid">
+				{STUDIO_APPS.map((app) => (
+					<a href={`/apps/${app.id}`} class="about-app-card" data-app={app.id}>
+						<h3 class="about-app-name">{app.name}</h3>
+						<p class="about-app-headline">{app.headline}</p>
+						<span class="about-app-domain">{app.domain}</span>
+					</a>
+				))}
+			</div>
+		</section>
+	</main>
+</Base>
+
+<style>
+	.about-hero {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		min-height: 70vh;
+		padding: var(--header-height) var(--layout-padding-x) var(--space-16);
+		text-align: center;
+	}
+
+	.about-title {
+		font-family: var(--font-display);
+		font-size: var(--font-size-hero);
+		font-weight: var(--font-weight-light);
+		line-height: 1.15;
+		letter-spacing: -0.03em;
+	}
+
+	.mission {
+		max-width: var(--layout-max-width);
+		margin: 0 auto;
+		padding: var(--space-20) var(--layout-padding-x);
+	}
+
+	.mission-inner {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		gap: var(--space-12);
+	}
+
+	.mission-label {
+		font-family: var(--font-ui);
+		font-size: var(--font-size-caption);
+		font-weight: var(--font-weight-medium);
+		text-transform: uppercase;
+		letter-spacing: 0.12em;
+		color: var(--color-accent-primary);
+		margin-bottom: var(--space-4);
+	}
+
+	.mission-text {
+		font-family: var(--font-body);
+		font-size: var(--font-size-body);
+		font-weight: var(--font-weight-regular);
+		color: var(--color-text-2);
+		line-height: 1.8;
+		max-width: 40ch;
+	}
+
+	.section-heading {
+		font-family: var(--font-display);
+		font-size: var(--font-size-h2);
+		font-weight: var(--font-weight-light);
+		text-align: center;
+		letter-spacing: -0.02em;
+		margin-bottom: var(--space-12);
+	}
+
+	.values {
+		max-width: var(--layout-max-width);
+		margin: 0 auto;
+		padding: var(--space-20) var(--layout-padding-x);
+	}
+
+	.values-grid {
+		display: grid;
+		grid-template-columns: repeat(3, 1fr);
+		gap: var(--space-6);
+	}
+
+	.value-card {
+		padding: var(--space-8);
+		border: 1px solid var(--color-border-default);
+		border-radius: var(--radius-lg);
+		transition:
+			border-color var(--dur-base) var(--ease-smooth),
+			transform var(--dur-fast) var(--ease-smooth);
+	}
+
+	.value-card:hover { transform: translateY(-3px); }
+
+	.value-card[data-accent="coral"]:hover { border-color: var(--color-app-munseo); }
+	.value-card[data-accent="amber"]:hover { border-color: var(--color-app-umbracast); }
+	.value-card[data-accent="violet"]:hover { border-color: var(--color-app-sincheong); }
+
+	.value-title {
+		font-family: var(--font-display);
+		font-size: var(--font-size-h3);
+		font-weight: var(--font-weight-medium);
+		margin-bottom: var(--space-3);
+	}
+
+	.value-desc {
+		font-family: var(--font-body);
+		font-size: var(--font-size-small);
+		font-weight: var(--font-weight-regular);
+		color: var(--color-text-2);
+		line-height: 1.7;
+		max-width: 30ch;
+	}
+
+	.about-apps {
+		max-width: var(--layout-max-width);
+		margin: 0 auto;
+		padding: var(--space-20) var(--layout-padding-x);
+	}
+
+	.about-apps-grid {
+		display: grid;
+		grid-template-columns: repeat(3, 1fr);
+		gap: var(--space-6);
+	}
+
+	.about-app-card {
+		display: flex;
+		flex-direction: column;
+		gap: var(--space-3);
+		padding: var(--space-8);
+		border: 1px solid var(--color-border-default);
+		border-radius: var(--radius-lg);
+		text-decoration: none;
+		color: var(--color-text-1);
+		transition:
+			border-color var(--dur-base) var(--ease-smooth),
+			transform var(--dur-fast) var(--ease-smooth),
+			box-shadow var(--dur-base) var(--ease-smooth);
+	}
+
+	.about-app-card:hover {
+		transform: translateY(-3px);
+		box-shadow: var(--shadow-md);
+	}
+
+	.about-app-card[data-app="munseo"]:hover { border-color: var(--color-app-munseo); }
+	.about-app-card[data-app="umbracast"]:hover { border-color: var(--color-app-umbracast); }
+	.about-app-card[data-app="sincheong"]:hover { border-color: var(--color-app-sincheong); }
+
+	.about-app-name {
+		font-family: var(--font-display);
+		font-size: var(--font-size-h3);
+		font-weight: var(--font-weight-bold);
+	}
+
+	.about-app-headline {
+		font-family: var(--font-body);
+		font-size: var(--font-size-small);
+		color: var(--color-text-2);
+	}
+
+	.about-app-domain {
+		font-family: var(--font-mono);
+		font-size: var(--font-size-caption);
+		color: var(--color-text-3);
+	}
+
+	@media (max-width: 768px) {
+		.mission-inner { grid-template-columns: 1fr; }
+		.values-grid { grid-template-columns: 1fr; }
+		.about-apps-grid { grid-template-columns: 1fr; }
+	}
+</style>

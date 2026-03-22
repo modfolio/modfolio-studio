@@ -168,6 +168,12 @@
 		--space-20: 5rem;
 		--space-24: 6rem;
 
+		/* ── Layout (ecosystem layout-patterns spec) ── */
+
+		--layout-max-width: 1280px;
+		--layout-padding-x: clamp(1rem, 4vw, 2rem);
+		--header-height: 80px;
+
 		/* ── Border Radius ── */
 
 		--radius-sm: 6px;

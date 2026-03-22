@@ -1,0 +1,195 @@
+---
+import { STUDIO_APPS } from "../lib/apps";
+---
+
+<footer class="footer">
+	<div class="footer-main">
+		<div class="footer-grid">
+			<div class="footer-col footer-brand">
+				<h4 class="footer-heading">Studio</h4>
+				<p class="footer-desc">
+					누구든 크리에이터가 될 수 있는 도구를 만듭니다.
+				</p>
+				<div class="footer-sns">
+					<a href="https://instagram.com/modfolio.io" class="sns-link" target="_blank" rel="noopener" aria-label="Instagram">IG</a>
+					<a href="https://linkedin.com/company/modfolio" class="sns-link" target="_blank" rel="noopener" aria-label="LinkedIn">LI</a>
+					<a href="https://youtube.com/@modfolio" class="sns-link" target="_blank" rel="noopener" aria-label="YouTube">YT</a>
+				</div>
+			</div>
+			<div class="footer-col">
+				<h4 class="footer-heading">Products</h4>
+				{STUDIO_APPS.map((app) => (
+					<a href={`/apps/${app.id}`} class="footer-link" data-app={app.id}>
+						{app.name}
+					</a>
+				))}
+			</div>
+			<div class="footer-col">
+				<h4 class="footer-heading">Platform</h4>
+				<a href="https://connect.modfolio.io" class="footer-link" target="_blank" rel="noopener">Connect</a>
+				<a href="https://pay.modfolio.io" class="footer-link" target="_blank" rel="noopener">Pay</a>
+				<a href="https://docs.modfolio.io" class="footer-link" target="_blank" rel="noopener">Docs</a>
+			</div>
+			<div class="footer-col">
+				<h4 class="footer-heading">Ecosystem</h4>
+				<a href="https://works.modfolio.io" class="footer-link" target="_blank" rel="noopener">Works</a>
+				<a href="https://ls.modfolio.io" class="footer-link" target="_blank" rel="noopener">LS</a>
+				<a href="https://axiom.modfolio.io" class="footer-link" target="_blank" rel="noopener">Axiom</a>
+			</div>
+		</div>
+	</div>
+	<div class="footer-legal">
+		<p class="footer-biz">모드폴리오 · 대표 김동헌 · 사업자등록번호 104-95-65636 · 통신판매업 제2025-수원팔달-0953호 · 출판사 제2024-000037호 · 경기도 수원시 팔달구 효원로 278, 6층 602호 · contact@modfolio.io</p>
+		<p class="footer-copy">© 2026 Modfolio. All rights reserved.</p>
+	</div>
+</footer>
+
+<style>
+	.footer {
+		background: var(--color-surface-raised);
+		border-top: 1px solid var(--color-border-default);
+	}
+
+	.footer-main {
+		max-width: var(--layout-max-width);
+		margin: 0 auto;
+		padding: var(--space-16) var(--layout-padding-x) var(--space-12);
+	}
+
+	.footer-grid {
+		display: grid;
+		grid-template-columns: 1.5fr 1fr 1fr 1fr;
+		gap: var(--space-8);
+	}
+
+	.footer-heading {
+		font-family: var(--font-ui);
+		font-size: var(--font-size-caption);
+		font-weight: var(--font-weight-medium);
+		text-transform: uppercase;
+		letter-spacing: 0.08em;
+		color: var(--color-text-3);
+		margin-bottom: var(--space-4);
+	}
+
+	.footer-brand {
+		display: flex;
+		flex-direction: column;
+		gap: var(--space-3);
+	}
+
+	.footer-desc {
+		font-family: var(--font-body);
+		font-size: var(--font-size-small);
+		font-weight: var(--font-weight-regular);
+		color: var(--color-text-2);
+		max-width: 28ch;
+		line-height: 1.6;
+	}
+
+	.footer-sns {
+		display: flex;
+		gap: var(--space-3);
+		margin-top: var(--space-2);
+	}
+
+	.sns-link {
+		font-family: var(--font-ui);
+		font-size: var(--font-size-caption);
+		font-weight: var(--font-weight-medium);
+		color: var(--color-text-3);
+		text-decoration: none;
+		width: var(--space-8);
+		height: var(--space-8);
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		border: 1px solid var(--color-border-default);
+		border-radius: var(--radius-full);
+		transition:
+			color var(--dur-fast) var(--ease-smooth),
+			border-color var(--dur-fast) var(--ease-smooth);
+	}
+
+	.sns-link:hover {
+		color: var(--color-text-1);
+		border-color: var(--color-text-1);
+	}
+
+	.footer-col {
+		display: flex;
+		flex-direction: column;
+		gap: var(--space-2);
+	}
+
+	.footer-link {
+		font-family: var(--font-body);
+		font-size: var(--font-size-small);
+		font-weight: var(--font-weight-regular);
+		color: var(--color-text-2);
+		text-decoration: none;
+		transition: color var(--dur-fast) var(--ease-smooth);
+	}
+
+	.footer-link:hover {
+		color: var(--color-text-1);
+	}
+
+	/* Products 링크에 앱별 hover 색상 */
+	.footer-link[data-app="munseo"]:hover {
+		color: var(--color-app-munseo);
+	}
+
+	.footer-link[data-app="umbracast"]:hover {
+		color: var(--color-app-umbracast);
+	}
+
+	.footer-link[data-app="sincheong"]:hover {
+		color: var(--color-app-sincheong);
+	}
+
+	/* 법적 정보 바 */
+	.footer-legal {
+		max-width: var(--layout-max-width);
+		margin: 0 auto;
+		padding: var(--space-6) var(--layout-padding-x);
+		border-top: 1px solid var(--color-border-default);
+		display: flex;
+		justify-content: space-between;
+		align-items: flex-start;
+		gap: var(--space-4);
+	}
+
+	.footer-biz {
+		font-family: var(--font-ui);
+		font-size: var(--font-size-caption);
+		font-weight: var(--font-weight-regular);
+		color: var(--color-text-3);
+		line-height: 1.6;
+		max-width: 70ch;
+	}
+
+	.footer-copy {
+		font-family: var(--font-ui);
+		font-size: var(--font-size-caption);
+		font-weight: var(--font-weight-regular);
+		color: var(--color-text-3);
+		white-space: nowrap;
+	}
+
+	@media (max-width: 768px) {
+		.footer-grid {
+			grid-template-columns: 1fr 1fr;
+		}
+
+		.footer-legal {
+			flex-direction: column;
+		}
+	}
+
+	@media (max-width: 480px) {
+		.footer-grid {
+			grid-template-columns: 1fr;
+		}
+	}
+</style>

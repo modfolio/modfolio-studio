@@ -42,18 +42,13 @@ const faqs = [
 	title="Modfolio Studio — 누구든 크리에이터가 될 수 있는 도구"
 	description="크리에이티브는 재능의 영역이 아닙니다. 문서 변환, 오디오 처리, 폼 관리 — 하나의 계정으로 시작하세요."
 >
-	<!-- ── Nav ── -->
-	<nav class="nav">
-		<div class="nav-inner">
-			<a href="/" class="nav-logo">Studio</a>
-			<a href={portalUrl} class="nav-cta">Lab 열기</a>
-		</div>
-	</nav>
-
 	<main>
 		<!-- ── Hero (100vh) ── -->
 		<section class="hero">
-			<div class="hero-glow"></div>
+			<div class="hero-bg">
+				<div class="hero-glow"></div>
+				<div class="hero-grid-pattern"></div>
+			</div>
 			<div class="hero-content">
 				<h1 class="hero-title">
 					크리에이티브는<br />재능의 영역이 아닙니다.
@@ -64,173 +59,112 @@ const faqs = [
 
 		<!-- ── Social Proof ── -->
 		<section class="proof">
-			<span>Modfolio 생태계</span>
-			<span class="proof-sep" aria-hidden="true">·</span>
-			<span>15개 앱</span>
-			<span class="proof-sep" aria-hidden="true">·</span>
-			<span>Connect SSO 통합</span>
-			<span class="proof-sep" aria-hidden="true">·</span>
-			<span>100% Edge Native</span>
+			<div class="proof-inner">
+				<span class="proof-item">Modfolio 생태계</span>
+				<span class="proof-sep" aria-hidden="true">·</span>
+				<span class="proof-item proof-highlight">15개 앱</span>
+				<span class="proof-sep" aria-hidden="true">·</span>
+				<span class="proof-item">Connect SSO</span>
+				<span class="proof-sep" aria-hidden="true">·</span>
+				<span class="proof-item">100% Edge Native</span>
+			</div>
 		</section>
 
-		<!-- ── App Sections (각 100vh) ── -->
-		{
-			STUDIO_APPS.map((app) => (
-				<section class="app-section" data-app={app.id}>
-					<div class="app-section-content">
-						<p class="app-label">{app.name}</p>
-						<h2 class="app-headline">{app.headline}</h2>
-						<p class="app-desc">
-							{app.desc} · {app.domain}
-						</p>
+		<!-- ── App Sections (각 100vh, 비대칭 + 기하학) ── -->
+		<div id="apps">
+			<!-- Munseo: 좌정렬 + 겹친 사각형 -->
+			<section class="app-section app-munseo" data-app="munseo">
+				<div class="app-geo geo-rects">
+					<div class="geo-rect geo-rect-1"></div>
+					<div class="geo-rect geo-rect-2"></div>
+				</div>
+				<div class="app-inner app-align-left">
+					<p class="app-label">Munseo</p>
+					<h2 class="app-headline">형식에서 해방하다.</h2>
+					<p class="app-desc">문서 변환 유틸리티</p>
+					<div class="app-actions">
+						<span class="app-domain">munseo.app</span>
+						<a href="https://munseo.app" class="app-visit" target="_blank" rel="noopener">앱 방문 →</a>
 					</div>
-				</section>
-			))
-		}
+				</div>
+			</section>
+
+			<!-- Umbracast: 오프셋 센터 + 파형 -->
+			<section class="app-section app-umbracast" data-app="umbracast">
+				<div class="app-geo geo-wave">
+					<div class="geo-wave-line"></div>
+					<div class="geo-wave-line geo-wave-2"></div>
+				</div>
+				<div class="app-inner app-align-center-offset">
+					<p class="app-label">Umbracast</p>
+					<h2 class="app-headline">소리를 다루다.</h2>
+					<p class="app-desc">오디오 변환 유틸리티</p>
+					<div class="app-actions">
+						<span class="app-domain">umbracast.com</span>
+						<a href="https://umbracast.com" class="app-visit" target="_blank" rel="noopener">앱 방문 →</a>
+					</div>
+				</div>
+			</section>
+
+			<!-- Sincheong: 우정렬 + 원형 노드 -->
+			<section class="app-section app-sincheong" data-app="sincheong">
+				<div class="app-geo geo-nodes">
+					<div class="geo-node geo-node-1"></div>
+					<div class="geo-node geo-node-2"></div>
+					<div class="geo-node geo-node-3"></div>
+					<div class="geo-connector geo-conn-1"></div>
+					<div class="geo-connector geo-conn-2"></div>
+				</div>
+				<div class="app-inner app-align-right">
+					<p class="app-label">Sincheong</p>
+					<h2 class="app-headline">수작업을 끝내다.</h2>
+					<p class="app-desc">범용 폼 빌더</p>
+					<div class="app-actions">
+						<span class="app-domain">sincheong.app</span>
+						<a href="https://sincheong.app" class="app-visit" target="_blank" rel="noopener">앱 방문 →</a>
+					</div>
+				</div>
+			</section>
+		</div>
 
 		<!-- ── How It Works ── -->
 		<section class="how">
 			<h2 class="section-heading">5분이면 시작합니다</h2>
 			<div class="steps">
-				{
-					steps.map((s) => (
-						<div class="step">
-							<span class="step-num">{s.num}</span>
-							<h3 class="step-title">{s.title}</h3>
-							<p class="step-desc">{s.desc}</p>
-						</div>
-					))
-				}
+				{steps.map((s, i) => (
+					<div class="step" data-step={i}>
+						<span class="step-num">{s.num}</span>
+						<h3 class="step-title">{s.title}</h3>
+						<p class="step-desc">{s.desc}</p>
+					</div>
+				))}
 			</div>
 		</section>
 
 		<!-- ── FAQ ── -->
-		<section class="faq">
+		<section class="faq" id="faq">
 			<h2 class="section-heading">자주 묻는 질문</h2>
 			<div class="faq-list">
-				{
-					faqs.map((f) => (
-						<details class="faq-item">
-							<summary class="faq-q">{f.q}</summary>
-							<p class="faq-a">{f.a}</p>
-						</details>
-					))
-				}
+				{faqs.map((f) => (
+					<details class="faq-item">
+						<summary class="faq-q">{f.q}</summary>
+						<p class="faq-a">{f.a}</p>
+					</details>
+				))}
 			</div>
 		</section>
 
-		<!-- ── CTA ── -->
+		<!-- ── Closing CTA ── -->
 		<section class="closing">
+			<div class="closing-glow"></div>
 			<h2 class="closing-title">도구는 준비되었습니다.</h2>
 			<a href={portalUrl} class="closing-cta">Studio Lab 열기</a>
 		</section>
 	</main>
-
-	<!-- ── Footer ── -->
-	<footer class="footer">
-		<div class="footer-grid">
-			<div class="footer-col">
-				<h4 class="footer-heading">Studio</h4>
-				<a href="/" class="footer-link">소개</a>
-				<a href={portalUrl} class="footer-link">Studio Lab</a>
-			</div>
-			<div class="footer-col">
-				<h4 class="footer-heading">앱</h4>
-				{
-					STUDIO_APPS.map((app) => (
-						<a
-							href={`https://${app.domain}`}
-							class="footer-link"
-							target="_blank"
-							rel="noopener"
-						>
-							{app.name}
-						</a>
-					))
-				}
-			</div>
-			<div class="footer-col">
-				<h4 class="footer-heading">Modfolio</h4>
-				<a href="https://modfolio.io" class="footer-link" target="_blank" rel="noopener">modfolio.io</a>
-				<a href="https://connect.modfolio.io" class="footer-link" target="_blank" rel="noopener">Connect</a>
-				<a href="https://docs.modfolio.io" class="footer-link" target="_blank" rel="noopener">Docs</a>
-			</div>
-			<div class="footer-col">
-				<h4 class="footer-heading">법적 고지</h4>
-				<a href="/terms" class="footer-link">이용약관</a>
-				<a href="/privacy" class="footer-link">개인정보처리방침</a>
-			</div>
-		</div>
-		<div class="footer-bottom">
-			<p>© 2026 Modfolio. All rights reserved.</p>
-		</div>
-	</footer>
 </Base>
 
 <style>
-	/* ═══════════════════════════════════════════════
-	   Modfolio Studio — Cinematic Landing
-	   Scroll = Storytelling. 요소 수 최소, 임팩트 최대.
-	   ═══════════════════════════════════════════════ */
-
-	body {
-		font-family: var(--font-body);
-		background: var(--color-surface-0);
-		color: var(--color-text-1);
-		min-height: 100vh;
-		line-height: 1.6;
-	}
-
-	/* ── Nav ── */
-
-	.nav {
-		position: fixed;
-		top: 0;
-		left: 0;
-		right: 0;
-		z-index: 100;
-		padding: var(--space-4) var(--space-8);
-		background: color-mix(in oklch, var(--color-surface-0) 70%, transparent);
-		backdrop-filter: blur(16px);
-	}
-
-	.nav-inner {
-		max-width: 1200px;
-		margin: 0 auto;
-		display: flex;
-		align-items: center;
-		justify-content: space-between;
-	}
-
-	.nav-logo {
-		font-family: var(--font-display);
-		font-size: var(--font-size-h3);
-		font-weight: var(--font-weight-light);
-		color: var(--color-text-1);
-		text-decoration: none;
-		letter-spacing: -0.03em;
-	}
-
-	.nav-cta {
-		font-family: var(--font-ui);
-		font-size: var(--font-size-caption);
-		font-weight: var(--font-weight-medium);
-		color: var(--color-text-2);
-		text-decoration: none;
-		padding: var(--space-2) var(--space-4);
-		border: 1px solid var(--color-border-default);
-		border-radius: var(--radius-full);
-		transition:
-			color var(--dur-fast) var(--ease-smooth),
-			border-color var(--dur-fast) var(--ease-smooth);
-	}
-
-	.nav-cta:hover {
-		color: var(--color-text-1);
-		border-color: var(--color-text-1);
-	}
-
-	/* ── Hero ── */
+	/* ═══ Hero ═══ */
 
 	.hero {
 		position: relative;
@@ -238,19 +172,33 @@ const faqs = [
 		align-items: center;
 		justify-content: center;
 		min-height: 100vh;
-		padding: var(--space-24) var(--space-6);
+		padding: var(--header-height) var(--layout-padding-x) var(--space-16);
 		overflow: hidden;
+	}
+
+	.hero-bg {
+		position: absolute;
+		inset: 0;
+		pointer-events: none;
 	}
 
 	.hero-glow {
 		position: absolute;
 		inset: 0;
 		background: radial-gradient(
-			ellipse 60% 50% at 50% 50%,
-			color-mix(in oklch, var(--color-accent-primary) 5%, transparent),
+			ellipse 50% 40% at 50% 45%,
+			color-mix(in oklch, var(--color-accent-primary) 10%, transparent),
 			transparent
 		);
-		pointer-events: none;
+	}
+
+	.hero-grid-pattern {
+		position: absolute;
+		inset: 0;
+		background:
+			repeating-linear-gradient(0deg, transparent, transparent 79px, color-mix(in oklch, var(--color-border-default) 30%, transparent) 80px),
+			repeating-linear-gradient(90deg, transparent, transparent 79px, color-mix(in oklch, var(--color-border-default) 30%, transparent) 80px);
+		opacity: 0.4;
 	}
 
 	.hero-content {
@@ -266,6 +214,7 @@ const faqs = [
 		line-height: 1.15;
 		letter-spacing: -0.03em;
 		margin-bottom: var(--space-12);
+		text-shadow: 0 4px 40px color-mix(in oklch, var(--color-accent-primary) 15%, transparent);
 	}
 
 	.hero-cta {
@@ -287,99 +236,90 @@ const faqs = [
 	.hero-cta:hover {
 		border-color: var(--color-accent-primary);
 		transform: scale(1.03);
-		box-shadow: 0 0 32px color-mix(in oklch, var(--color-accent-primary) 20%, transparent);
+		box-shadow: 0 0 40px color-mix(in oklch, var(--color-accent-primary) 25%, transparent);
 	}
 
 	.hero-cta:active {
 		transform: scale(0.97);
 	}
 
-	/* ── Social Proof ── */
+	/* ═══ Social Proof ═══ */
 
 	.proof {
+		border-top: 1px solid var(--color-border-default);
+		border-bottom: 1px solid var(--color-border-default);
+		padding: var(--space-4) var(--layout-padding-x);
+	}
+
+	.proof-inner {
+		max-width: var(--layout-max-width);
+		margin: 0 auto;
 		display: flex;
 		justify-content: center;
 		align-items: center;
 		gap: var(--space-3);
-		padding: var(--space-4) var(--space-6);
-		border-top: 1px solid var(--color-border-default);
-		border-bottom: 1px solid var(--color-border-default);
+	}
+
+	.proof-item {
 		font-family: var(--font-ui);
 		font-size: var(--font-size-caption);
 		font-weight: var(--font-weight-regular);
 		color: var(--color-text-3);
 		letter-spacing: 0.06em;
 		text-transform: uppercase;
+		padding: var(--space-1) var(--space-3);
+		border-radius: var(--radius-sm);
+		background: color-mix(in oklch, var(--color-surface-overlay) 50%, transparent);
 	}
 
-	.proof-sep {
+	.proof-highlight {
+		font-family: var(--font-mono);
 		color: var(--color-accent-primary);
 	}
 
-	/* ── App Sections (Fullscreen) ── */
+	.proof-sep {
+		color: var(--color-border-default);
+	}
+
+	/* ═══ App Sections (100vh, 비대칭) ═══ */
 
 	.app-section {
+		position: relative;
 		display: flex;
 		align-items: center;
-		justify-content: center;
 		min-height: 100vh;
-		padding: var(--space-16) var(--space-6);
+		padding: var(--space-16) var(--layout-padding-x);
+		overflow: hidden;
+	}
+
+	.app-inner {
 		position: relative;
-	}
-
-	/* Per-app radial glow background */
-	.app-section[data-app="munseo"] {
-		background: radial-gradient(
-			ellipse 70% 60% at 50% 50%,
-			color-mix(in oklch, var(--color-app-munseo) 6%, transparent),
-			var(--color-surface-0) 70%
-		);
-	}
-
-	.app-section[data-app="umbracast"] {
-		background: radial-gradient(
-			ellipse 70% 60% at 50% 50%,
-			color-mix(in oklch, var(--color-app-umbracast) 6%, transparent),
-			var(--color-surface-0) 70%
-		);
-	}
-
-	.app-section[data-app="sincheong"] {
-		background: radial-gradient(
-			ellipse 70% 60% at 50% 50%,
-			color-mix(in oklch, var(--color-app-sincheong) 6%, transparent),
-			var(--color-surface-0) 70%
-		);
+		z-index: 1;
+		max-width: var(--layout-max-width);
+		width: 100%;
+		margin: 0 auto;
 	}
 
 	/* Scroll-driven fade-in */
-	.app-section-content {
-		text-align: center;
-		max-width: 700px;
+	.app-inner {
 		animation: fadeUp var(--dur-slow) var(--ease-smooth) both;
 		animation-timeline: view();
-		animation-range: entry 0% entry 50%;
+		animation-range: entry 0% entry 40%;
 	}
 
 	@keyframes fadeUp {
-		from {
-			opacity: 0;
-			transform: translateY(var(--space-10));
-		}
-		to {
-			opacity: 1;
-			transform: translateY(0);
-		}
+		from { opacity: 0; transform: translateY(var(--space-8)); }
+		to { opacity: 1; transform: translateY(0); }
 	}
 
-	/* Fallback for browsers without view timeline */
 	@supports not (animation-timeline: view()) {
-		.app-section-content {
-			opacity: 1;
-			transform: none;
-			animation: none;
-		}
+		.app-inner { opacity: 1; transform: none; animation: none; }
 	}
+
+	/* 정렬 변형 */
+	.app-align-left { text-align: left; max-width: 500px; margin-left: 0; margin-right: auto; }
+	.app-align-center-offset { text-align: center; max-width: 500px; margin-left: auto; margin-right: var(--space-12); }
+	.app-align-right { text-align: right; max-width: 500px; margin-left: auto; margin-right: 0; }
 
 	.app-label {
 		font-family: var(--font-ui);
@@ -388,18 +328,6 @@ const faqs = [
 		text-transform: uppercase;
 		letter-spacing: 0.15em;
 		margin-bottom: var(--space-4);
-	}
-
-	.app-section[data-app="munseo"] .app-label {
-		color: var(--color-app-munseo);
-	}
-
-	.app-section[data-app="umbracast"] .app-label {
-		color: var(--color-app-umbracast);
-	}
-
-	.app-section[data-app="sincheong"] .app-label {
-		color: var(--color-app-sincheong);
 	}
 
 	.app-headline {
@@ -416,9 +344,148 @@ const faqs = [
 		font-size: var(--font-size-small);
 		font-weight: var(--font-weight-regular);
 		color: var(--color-text-3);
+		margin-bottom: var(--space-6);
 	}
 
-	/* ── Section Heading (shared) ── */
+	.app-actions {
+		display: flex;
+		align-items: center;
+		gap: var(--space-4);
+	}
+
+	.app-align-right .app-actions { justify-content: flex-end; }
+	.app-align-center-offset .app-actions { justify-content: center; }
+
+	.app-domain {
+		font-family: var(--font-mono);
+		font-size: var(--font-size-caption);
+		color: var(--color-text-3);
+	}
+
+	.app-visit {
+		font-family: var(--font-ui);
+		font-size: var(--font-size-small);
+		font-weight: var(--font-weight-medium);
+		text-decoration: none;
+		padding: var(--space-2) var(--space-6);
+		border-radius: var(--radius-full);
+		transition:
+			transform var(--dur-fast) var(--ease-smooth),
+			box-shadow var(--dur-base) var(--ease-smooth);
+	}
+
+	.app-visit:hover {
+		transform: scale(1.05);
+	}
+
+	.app-visit:active { transform: scale(0.95); }
+
+	/* Per-app colors */
+	.app-munseo .app-label { color: var(--color-app-munseo); }
+	.app-umbracast .app-label { color: var(--color-app-umbracast); }
+	.app-sincheong .app-label { color: var(--color-app-sincheong); }
+
+	.app-munseo .app-visit {
+		color: var(--color-surface-0);
+		background: var(--color-app-munseo);
+	}
+
+	.app-munseo .app-visit:hover {
+		box-shadow: 0 0 32px color-mix(in oklch, var(--color-app-munseo) 30%, transparent);
+	}
+
+	.app-umbracast .app-visit {
+		color: var(--color-surface-0);
+		background: var(--color-app-umbracast);
+	}
+
+	.app-umbracast .app-visit:hover {
+		box-shadow: 0 0 32px color-mix(in oklch, var(--color-app-umbracast) 30%, transparent);
+	}
+
+	.app-sincheong .app-visit {
+		color: var(--color-surface-0);
+		background: var(--color-app-sincheong);
+	}
+
+	.app-sincheong .app-visit:hover {
+		box-shadow: 0 0 32px color-mix(in oklch, var(--color-app-sincheong) 30%, transparent);
+	}
+
+	/* Per-app radial glow backgrounds */
+	.app-munseo {
+		background: radial-gradient(ellipse 60% 50% at 70% 50%, color-mix(in oklch, var(--color-app-munseo) 8%, transparent), var(--color-surface-0) 65%);
+	}
+
+	.app-umbracast {
+		background: radial-gradient(ellipse 60% 50% at 50% 40%, color-mix(in oklch, var(--color-app-umbracast) 8%, transparent), var(--color-surface-0) 65%);
+	}
+
+	.app-sincheong {
+		background: radial-gradient(ellipse 60% 50% at 30% 50%, color-mix(in oklch, var(--color-app-sincheong) 8%, transparent), var(--color-surface-0) 65%);
+	}
+
+	/* ═══ Geometric Shapes ═══ */
+
+	.app-geo {
+		position: absolute;
+		inset: 0;
+		pointer-events: none;
+		overflow: hidden;
+	}
+
+	/* Munseo: 겹친 사각형 (문서) */
+	.geo-rect {
+		position: absolute;
+		border: 1px solid var(--color-app-munseo);
+		border-radius: var(--radius-md);
+		opacity: 0.1;
+	}
+
+	.geo-rect-1 { width: 200px; height: 260px; right: 15%; top: 20%; transform: rotate(-6deg); }
+	.geo-rect-2 { width: 180px; height: 240px; right: 18%; top: 25%; transform: rotate(3deg); }
+
+	/* Umbracast: 파형 (오디오) */
+	.geo-wave-line {
+		position: absolute;
+		width: 100%;
+		height: 1px;
+		top: 30%;
+		background: repeating-linear-gradient(
+			90deg,
+			transparent,
+			transparent 20px,
+			color-mix(in oklch, var(--color-app-umbracast) 15%, transparent) 20px,
+			color-mix(in oklch, var(--color-app-umbracast) 15%, transparent) 22px
+		);
+	}
+
+	.geo-wave-2 { top: 70%; opacity: 0.5; }
+
+	/* Sincheong: 원형 노드 (폼 연결) */
+	.geo-node {
+		position: absolute;
+		border: 1px solid var(--color-app-sincheong);
+		border-radius: var(--radius-full);
+		opacity: 0.12;
+	}
+
+	.geo-node-1 { width: 40px; height: 40px; left: 12%; top: 30%; }
+	.geo-node-2 { width: 32px; height: 32px; left: 8%; top: 50%; }
+	.geo-node-3 { width: 24px; height: 24px; left: 18%; top: 55%; }
+
+	.geo-connector {
+		position: absolute;
+		height: 1px;
+		background: var(--color-app-sincheong);
+		opacity: 0.08;
+		transform-origin: left center;
+	}
+
+	.geo-conn-1 { width: 80px; left: calc(12% + 20px); top: calc(30% + 20px); transform: rotate(40deg); }
+	.geo-conn-2 { width: 60px; left: calc(8% + 16px); top: calc(50% + 16px); transform: rotate(-20deg); }
+
+	/* ═══ Section Heading ═══ */
 
 	.section-heading {
 		font-family: var(--font-display);
@@ -429,33 +496,58 @@ const faqs = [
 		margin-bottom: var(--space-12);
 	}
 
-	/* ── How It Works ── */
+	/* ═══ How It Works ═══ */
 
 	.how {
 		max-width: 1000px;
 		margin: 0 auto;
-		padding: var(--space-24) var(--space-6);
+		padding: var(--space-24) var(--layout-padding-x);
 	}
 
 	.steps {
 		display: grid;
 		grid-template-columns: repeat(3, 1fr);
 		gap: var(--space-8);
+		position: relative;
+	}
+
+	/* 연결선 */
+	.steps::before {
+		content: "";
+		position: absolute;
+		top: var(--space-6);
+		left: var(--space-6);
+		right: var(--space-6);
+		height: 1px;
+		background: linear-gradient(
+			90deg,
+			var(--color-app-munseo),
+			var(--color-app-umbracast),
+			var(--color-app-sincheong)
+		);
+		opacity: 0.2;
 	}
 
 	.step {
 		padding-left: var(--space-6);
-		border-left: 1px solid var(--color-border-default);
+		border-left: 4px solid var(--color-border-default);
 	}
+
+	.step[data-step="0"] { border-color: var(--color-app-munseo); }
+	.step[data-step="1"] { border-color: var(--color-app-umbracast); }
+	.step[data-step="2"] { border-color: var(--color-app-sincheong); }
 
 	.step-num {
 		display: block;
 		font-family: var(--font-mono);
-		font-size: var(--font-size-caption);
+		font-size: var(--font-size-h2);
 		font-weight: var(--font-weight-bold);
-		color: var(--color-accent-primary);
 		margin-bottom: var(--space-3);
 	}
+
+	.step[data-step="0"] .step-num { color: var(--color-app-munseo); }
+	.step[data-step="1"] .step-num { color: var(--color-app-umbracast); }
+	.step[data-step="2"] .step-num { color: var(--color-app-sincheong); }
 
 	.step-title {
 		font-family: var(--font-display);
@@ -473,12 +565,12 @@ const faqs = [
 		max-width: 28ch;
 	}
 
-	/* ── FAQ ── */
+	/* ═══ FAQ ═══ */
 
 	.faq {
 		max-width: 640px;
 		margin: 0 auto;
-		padding: var(--space-24) var(--space-6);
+		padding: var(--space-24) var(--layout-padding-x);
 	}
 
 	.faq-list {
@@ -488,6 +580,13 @@ const faqs = [
 
 	.faq-item {
 		border-bottom: 1px solid var(--color-border-default);
+		transition: background var(--dur-fast) var(--ease-smooth);
+	}
+
+	.faq-item[open] {
+		background: var(--color-surface-raised);
+		border-left: 4px solid var(--color-accent-primary);
+		padding-left: var(--space-4);
 	}
 
 	.faq-q {
@@ -500,8 +599,22 @@ const faqs = [
 		transition: color var(--dur-fast) var(--ease-smooth);
 	}
 
-	.faq-q::-webkit-details-marker {
-		display: none;
+	.faq-q::-webkit-details-marker { display: none; }
+
+	/* 커스텀 +/− 아이콘 */
+	.faq-q::before {
+		content: "+";
+		display: inline-block;
+		width: var(--space-6);
+		font-family: var(--font-mono);
+		font-weight: var(--font-weight-light);
+		font-size: var(--font-size-h3);
+		color: var(--color-accent-primary);
+		transition: transform var(--dur-fast) var(--ease-smooth);
+	}
+
+	.faq-item[open] .faq-q::before {
+		transform: rotate(45deg);
 	}
 
 	.faq-q:hover {
@@ -514,23 +627,36 @@ const faqs = [
 		font-weight: var(--font-weight-regular);
 		color: var(--color-text-2);
 		line-height: 1.7;
-		padding-bottom: var(--space-6);
+		padding: 0 0 var(--space-6) var(--space-6);
 		max-width: 50ch;
 	}
 
-	/* ── Closing CTA ── */
+	/* ═══ Closing CTA ═══ */
 
 	.closing {
+		position: relative;
 		display: flex;
 		flex-direction: column;
 		align-items: center;
 		justify-content: center;
 		min-height: 60vh;
-		padding: var(--space-24) var(--space-6);
+		padding: var(--space-24) var(--layout-padding-x);
 		text-align: center;
+		overflow: hidden;
+	}
+
+	.closing-glow {
+		position: absolute;
+		inset: 0;
+		background:
+			radial-gradient(ellipse 30% 40% at 30% 50%, color-mix(in oklch, var(--color-app-munseo) 5%, transparent), transparent),
+			radial-gradient(ellipse 30% 40% at 50% 60%, color-mix(in oklch, var(--color-app-umbracast) 5%, transparent), transparent),
+			radial-gradient(ellipse 30% 40% at 70% 40%, color-mix(in oklch, var(--color-app-sincheong) 5%, transparent), transparent);
+		pointer-events: none;
 	}
 
 	.closing-title {
+		position: relative;
 		font-family: var(--font-display);
 		font-size: var(--font-size-h1);
 		font-weight: var(--font-weight-light);
@@ -539,6 +665,7 @@ const faqs = [
 	}
 
 	.closing-cta {
+		position: relative;
 		display: inline-block;
 		font-family: var(--font-ui);
 		font-size: var(--font-size-body);
@@ -555,101 +682,29 @@ const faqs = [
 
 	.closing-cta:hover {
 		transform: scale(1.05);
-		box-shadow: 0 0 40px color-mix(in oklch, var(--color-accent-primary) 30%, transparent);
+		box-shadow: 0 0 48px color-mix(in oklch, var(--color-accent-primary) 35%, transparent);
 	}
 
-	.closing-cta:active {
-		transform: scale(0.97);
-	}
+	.closing-cta:active { transform: scale(0.97); }
 
-	/* ── Footer ── */
-
-	.footer {
-		background: var(--color-surface-raised);
-		border-top: 1px solid var(--color-border-default);
-		padding: var(--space-16) var(--space-8) var(--space-8);
-	}
-
-	.footer-grid {
-		max-width: 1000px;
-		margin: 0 auto var(--space-12);
-		display: grid;
-		grid-template-columns: repeat(4, 1fr);
-		gap: var(--space-8);
-	}
-
-	.footer-col {
-		display: flex;
-		flex-direction: column;
-		gap: var(--space-2);
-	}
-
-	.footer-heading {
-		font-family: var(--font-ui);
-		font-size: var(--font-size-caption);
-		font-weight: var(--font-weight-medium);
-		text-transform: uppercase;
-		letter-spacing: 0.08em;
-		color: var(--color-text-3);
-		margin-bottom: var(--space-2);
-	}
-
-	.footer-link {
-		font-family: var(--font-body);
-		font-size: var(--font-size-small);
-		font-weight: var(--font-weight-regular);
-		color: var(--color-text-2);
-		text-decoration: none;
-		transition: color var(--dur-fast) var(--ease-smooth);
-	}
-
-	.footer-link:hover {
-		color: var(--color-text-1);
-	}
-
-	.footer-bottom {
-		max-width: 1000px;
-		margin: 0 auto;
-		padding-top: var(--space-8);
-		border-top: 1px solid var(--color-border-default);
-		font-family: var(--font-ui);
-		font-size: var(--font-size-caption);
-		color: var(--color-text-3);
-	}
-
-	/* ── Responsive ── */
+	/* ═══ Responsive ═══ */
 
 	@media (max-width: 768px) {
-		.hero-title {
-			font-size: clamp(2rem, 6vw, 3.5rem);
-		}
-
-		.app-headline {
-			font-size: var(--font-size-h1);
-		}
-
-		.steps {
-			grid-template-columns: 1fr;
-			gap: var(--space-6);
-		}
-
-		.footer-grid {
-			grid-template-columns: 1fr 1fr;
-		}
-
-		.proof {
-			flex-wrap: wrap;
-			justify-content: center;
-		}
+		.hero-title { font-size: clamp(2rem, 6vw, 3.5rem); }
+		.app-headline { font-size: var(--font-size-h1); }
+		.app-align-left,
+		.app-align-center-offset,
+		.app-align-right { text-align: center; margin: 0 auto; }
+		.app-actions { justify-content: center; }
+		.steps { grid-template-columns: 1fr; gap: var(--space-6); }
+		.steps::before { display: none; }
+		.proof-inner { flex-wrap: wrap; justify-content: center; }
+		.geo-rects,
+		.geo-wave,
+		.geo-nodes { display: none; }
 	}
 
 	@media (max-width: 480px) {
-		.hero-title {
-			font-size: clamp(1.75rem, 5vw, 2.5rem);
-		}
-
-		.footer-grid {
-			grid-template-columns: 1fr;
-		}
+		.hero-title { font-size: clamp(1.75rem, 5vw, 2.5rem); }
 	}
 </style>
