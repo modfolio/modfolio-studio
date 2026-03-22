@@ -3,71 +3,260 @@ import Base from "../layouts/Base.astro";
 import { STUDIO_APPS } from "../lib/apps";
 
 const portalUrl = "https://lab.modfolio.io";
+
+const steps = [
+	{
+		num: "01",
+		title: "Connect 로그인",
+		desc: "Modfolio Connect 계정 하나로 인증. 별도 가입 없이 즉시.",
+	},
+	{
+		num: "02",
+		title: "Studio Lab 진입",
+		desc: "세 가지 유틸리티가 한 화면에. 원하는 도구를 선택하세요.",
+	},
+	{
+		num: "03",
+		title: "바로 시작",
+		desc: "추가 설치 없이 브라우저에서. Edge에서 실행되어 빠릅니다.",
+	},
+];
+
+const faqs = [
+	{
+		q: "별도 계정이 필요한가요?",
+		a: "아닙니다. Modfolio Connect 계정 하나면 Studio의 모든 앱에 접근할 수 있습니다.",
+	},
+	{
+		q: "앱 간 데이터가 공유되나요?",
+		a: "각 앱의 데이터는 완전히 분리됩니다. 인증 정보만 공유되며, 문서·오디오·폼 데이터는 개별 앱에서 독립 관리됩니다.",
+	},
+	{
+		q: "무료로 사용할 수 있나요?",
+		a: "현재 모든 기능을 무료로 제공합니다. 추후 고급 기능에 대한 유료 플랜이 추가될 수 있습니다.",
+	},
+];
 ---
 
 <Base
-	title="Modfolio Studio"
-	description="엔터테인먼트 & 유틸리티 그룹 — Munseo, Umbracast, Sincheong"
+	title="Modfolio Studio — 엔터테인먼트 & 유틸리티 그룹"
+	description="문서 변환, 오디오 처리, 폼 관리 — 하나의 계정으로 세 가지 유틸리티에 즉시 접근"
 >
-	<main class="landing">
-		<div class="glow glow-1" />
-		<div class="glow glow-2" />
+	<!-- ── 1. Nav Header ── -->
+
+	<nav class="nav" id="nav">
+		<div class="nav-inner">
+			<a href="/" class="nav-logo">Studio</a>
+			<div class="nav-links">
+				{
+					STUDIO_APPS.map((app) => (
+						<a
+							href={`https://${app.domain}`}
+							class="nav-link"
+							target="_blank"
+							rel="noopener"
+						>
+							{app.name}
+						</a>
+					))
+				}
+			</div>
+			<a href={portalUrl} class="nav-cta">Lab 열기</a>
+		</div>
+	</nav>
+
+	<main>
+		<!-- ── 2. Hero (PAS) ── -->
 
 		<section class="hero">
-			<div class="hero-content">
-				<p class="hero-eyebrow">Entertainment & Utility Group</p>
-				<h1 class="hero-title">
-					흩어진 도구를,
-					<br />
-					하나의 스튜디오로.
-				</h1>
-				<p class="hero-body">
-					문서 변환, 오디오 처리, 폼 관리 — 매번 다른 도구, 다른 계정, 다른
-					워크플로우. Modfolio Studio는 하나의 SSO 로그인으로 세 가지
-					유틸리티에 즉시 접근합니다.
-				</p>
-				<a href={portalUrl} class="btn-cta"> Studio Lab 열기 </a>
-			</div>
+			<div class="glow glow-1"></div>
+			<div class="glow glow-2"></div>
 
-			<div class="hero-apps">
+			<div class="hero-grid">
+				<div class="hero-content">
+					<p class="hero-eyebrow">Modfolio Studio</p>
+					<h1 class="hero-title">
+						매번 다른 도구,<br />
+						매번 다른 로그인.<br />
+						<span class="hero-accent">이제 그만.</span>
+					</h1>
+					<p class="hero-body">
+						문서 변환할 때 하나, 오디오 처리할 때 또 하나, 폼 관리할 때 또
+						하나. 세 번의 로그인, 세 가지 인터페이스, 끊어진 워크플로우.
+					</p>
+					<p class="hero-solution">
+						Studio는 하나의 계정으로 세 유틸리티에 즉시 접근합니다.
+					</p>
+					<div class="hero-ctas">
+						<a href={portalUrl} class="btn-primary">Studio Lab 열기</a>
+						<a href="#features" class="btn-secondary">앱 둘러보기 ↓</a>
+					</div>
+				</div>
+
+				<div class="hero-apps">
+					{
+						STUDIO_APPS.map((app, i) => (
+							<div
+								class="app-preview"
+								data-app={app.id}
+								style={`--stagger: ${i}`}
+							>
+								<span class="app-preview-name">{app.name}</span>
+								<span class="app-preview-desc">{app.desc}</span>
+							</div>
+						))
+					}
+				</div>
+			</div>
+		</section>
+
+		<!-- ── 3. Social Proof ── -->
+
+		<section class="proof">
+			<div class="proof-inner">
+				<span>Modfolio 생태계</span>
+				<span class="proof-dot">·</span>
+				<span>15개 앱</span>
+				<span class="proof-dot">·</span>
+				<span>Connect SSO 통합</span>
+				<span class="proof-dot">·</span>
+				<span>100% Edge Native</span>
+			</div>
+		</section>
+
+		<!-- ── 4. Features (FBO) ── -->
+
+		<section class="features" id="features">
+			<h2 class="section-title">세 가지 도구, 하나의 기준</h2>
+			<div class="features-grid">
 				{
 					STUDIO_APPS.map((app, i) => (
-						<div
-							class="app-preview"
+						<article
+							class="feature-card"
 							data-app={app.id}
-							style={`--stagger: ${i}`}
+							style={`--card-index: ${i}`}
 						>
-							<span class="app-preview-name">{app.name}</span>
-							<span class="app-preview-desc">{app.desc}</span>
+							<div class="feature-accent" />
+							<div class="feature-body">
+								<h3 class="feature-name">{app.name}</h3>
+								<p class="feature-tagline">{app.tagline}</p>
+								<span class="feature-domain">{app.domain}</span>
+							</div>
+						</article>
+					))
+				}
+			</div>
+		</section>
+
+		<!-- ── 5. How It Works (BAB) ── -->
+
+		<section class="how-it-works">
+			<h2 class="section-title">5분이면 시작합니다</h2>
+			<div class="steps-grid">
+				{
+					steps.map((step) => (
+						<div class="step">
+							<span class="step-num">{step.num}</span>
+							<h3 class="step-title">{step.title}</h3>
+							<p class="step-desc">{step.desc}</p>
 						</div>
 					))
 				}
 			</div>
 		</section>
 
-		<section class="features">
-			{
-				STUDIO_APPS.map((app) => (
-					<div class="feature-card" data-app={app.id}>
-						<h3 class="feature-name">{app.name}</h3>
-						<p class="feature-tagline">{app.tagline}</p>
-						<span class="feature-domain">{app.domain}</span>
-					</div>
-				))
-			}
+		<!-- ── 6. FAQ ── -->
+
+		<section class="faq">
+			<h2 class="section-title">자주 묻는 질문</h2>
+			<div class="faq-list">
+				{
+					faqs.map((faq) => (
+						<details class="faq-item">
+							<summary class="faq-question">{faq.q}</summary>
+							<p class="faq-answer">{faq.a}</p>
+						</details>
+					))
+				}
+			</div>
 		</section>
 
+		<!-- ── 7. CTA ── -->
+
 		<section class="cta-section">
-			<h2 class="cta-heading">하나의 계정, 세 가지 도구</h2>
+			<h2 class="cta-heading">하나의 계정으로,<br />세 가지 도구를.</h2>
 			<p class="cta-body">
 				Modfolio Connect 계정 하나로 Studio의 모든 유틸리티를 사용하세요.
 			</p>
-			<a href={portalUrl} class="btn-cta"> 시작하기 </a>
+			<div class="cta-buttons">
+				<a href={portalUrl} class="btn-primary">Studio Lab 열기</a>
+				<a href="https://studio.modfolio.io" class="btn-secondary"
+					>studio.modfolio.io</a
+				>
+			</div>
 		</section>
 	</main>
+
+	<!-- ── 8. Footer ── -->
+
+	<footer class="footer">
+		<div class="footer-grid">
+			<div class="footer-col">
+				<h4 class="footer-heading">Studio</h4>
+				<a href="/" class="footer-link">소개</a>
+				<a href={portalUrl} class="footer-link">Studio Lab</a>
+			</div>
+			<div class="footer-col">
+				<h4 class="footer-heading">앱</h4>
+				{
+					STUDIO_APPS.map((app) => (
+						<a
+							href={`https://${app.domain}`}
+							class="footer-link"
+							target="_blank"
+							rel="noopener"
+						>
+							{app.name}
+						</a>
+					))
+				}
+			</div>
+			<div class="footer-col">
+				<h4 class="footer-heading">Modfolio</h4>
+				<a
+					href="https://modfolio.io"
+					class="footer-link"
+					target="_blank"
+					rel="noopener">modfolio.io</a
+				>
+				<a
+					href="https://connect.modfolio.io"
+					class="footer-link"
+					target="_blank"
+					rel="noopener">Connect</a
+				>
+				<a
+					href="https://docs.modfolio.io"
+					class="footer-link"
+					target="_blank"
+					rel="noopener">Docs</a
+				>
+			</div>
+			<div class="footer-col">
+				<h4 class="footer-heading">법적 고지</h4>
+				<a href="/terms" class="footer-link">이용약관</a>
+				<a href="/privacy" class="footer-link">개인정보처리방침</a>
+			</div>
+		</div>
+		<div class="footer-bottom">
+			<p>© 2026 Modfolio. All rights reserved.</p>
+		</div>
+	</footer>
 </Base>
 
 <style>
+	/* ── Global ── */
+
 	body {
 		font-family: var(--font-body);
 		background: var(--color-surface-0);
@@ -76,42 +265,113 @@ const portalUrl = "https://lab.modfolio.io";
 		line-height: 1.6;
 	}
 
-	.landing {
+	/* ── 1. Nav ── */
+
+	.nav {
+		position: fixed;
+		top: 0;
+		left: 0;
+		right: 0;
+		z-index: 100;
+		padding: var(--space-4) var(--space-6);
+		transition: background var(--dur-base) var(--ease-smooth);
+		background: color-mix(in oklch, var(--color-surface-0) 80%, transparent);
+		backdrop-filter: blur(12px);
+	}
+
+	.nav-inner {
+		max-width: 1120px;
+		margin: 0 auto;
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+	}
+
+	.nav-logo {
+		font-family: var(--font-display);
+		font-size: var(--font-size-h3);
+		font-weight: var(--font-weight-bold);
+		color: var(--color-text-1);
+		text-decoration: none;
+		letter-spacing: -0.02em;
+	}
+
+	.nav-links {
+		display: flex;
+		gap: var(--space-6);
+	}
+
+	.nav-link {
+		font-family: var(--font-ui);
+		font-size: var(--font-size-small);
+		font-weight: var(--font-weight-regular);
+		color: var(--color-text-2);
+		text-decoration: none;
+		transition: color var(--dur-fast) var(--ease-smooth);
+	}
+
+	.nav-link:hover {
+		color: var(--color-text-1);
+	}
+
+	.nav-cta {
+		font-family: var(--font-ui);
+		font-size: var(--font-size-small);
+		font-weight: var(--font-weight-medium);
+		color: var(--color-accent-primary);
+		text-decoration: none;
+		padding: var(--space-2) var(--space-4);
+		border: 1px solid var(--color-accent-primary);
+		border-radius: var(--radius-sm);
+		transition:
+			background var(--dur-fast) var(--ease-smooth),
+			color var(--dur-fast) var(--ease-smooth);
+	}
+
+	.nav-cta:hover {
+		background: var(--color-accent-primary);
+		color: var(--color-surface-0);
+	}
+
+	/* ── 2. Hero ── */
+
+	.hero {
 		position: relative;
 		overflow: hidden;
+		padding-top: var(--space-24);
 	}
 
 	.glow {
-		position: fixed;
+		position: absolute;
 		width: 600px;
 		height: 600px;
 		border-radius: 50%;
 		filter: blur(120px);
-		opacity: 0.05;
+		opacity: 0.08;
 		pointer-events: none;
 	}
 
 	.glow-1 {
 		background: var(--color-accent-primary);
 		top: -200px;
-		right: -200px;
+		right: -100px;
 	}
 
 	.glow-2 {
-		background: var(--color-accent-secondary);
-		bottom: -200px;
-		left: -200px;
+		background: var(--color-accent-tertiary);
+		bottom: -300px;
+		left: -100px;
 	}
 
-	.hero {
+	.hero-grid {
 		display: grid;
 		grid-template-columns: 1.2fr 0.8fr;
 		gap: var(--space-12);
 		align-items: center;
-		min-height: 100vh;
+		min-height: 85vh;
 		max-width: 1120px;
 		margin: 0 auto;
-		padding: var(--space-12) var(--space-6);
+		padding: var(--space-16) var(--space-6) var(--space-12);
 		position: relative;
 		z-index: 1;
 	}
@@ -119,30 +379,103 @@ const portalUrl = "https://lab.modfolio.io";
 	.hero-eyebrow {
 		font-family: var(--font-ui);
 		font-size: var(--font-size-caption);
-		font-weight: 500;
+		font-weight: var(--font-weight-medium);
 		text-transform: uppercase;
-		letter-spacing: 0.12em;
+		letter-spacing: 0.15em;
 		color: var(--color-accent-primary);
-		margin-bottom: var(--space-4);
+		margin-bottom: var(--space-6);
 	}
 
 	.hero-title {
 		font-family: var(--font-display);
 		font-size: var(--font-size-display);
-		font-weight: 700;
-		line-height: 1.1;
+		font-weight: var(--font-weight-bold);
+		line-height: 1.15;
 		letter-spacing: -0.02em;
 		margin-bottom: var(--space-6);
+	}
+
+	.hero-accent {
+		color: var(--color-accent-primary);
 	}
 
 	.hero-body {
 		font-family: var(--font-body);
 		font-size: var(--font-size-body);
+		font-weight: var(--font-weight-regular);
 		color: var(--color-text-2);
-		max-width: 48ch;
+		max-width: 42ch;
+		margin-bottom: var(--space-3);
+		line-height: 1.7;
+	}
+
+	.hero-solution {
+		font-family: var(--font-body);
+		font-size: var(--font-size-body);
+		font-weight: var(--font-weight-medium);
+		color: var(--color-text-1);
+		max-width: 42ch;
 		margin-bottom: var(--space-8);
 		line-height: 1.7;
 	}
+
+	.hero-ctas {
+		display: flex;
+		gap: var(--space-4);
+		align-items: center;
+	}
+
+	/* ── Buttons ── */
+
+	.btn-primary {
+		display: inline-flex;
+		align-items: center;
+		padding: var(--space-3) var(--space-8);
+		background: var(--color-interactive-primary);
+		border: none;
+		border-radius: var(--radius-md);
+		color: var(--color-surface-0);
+		font-family: var(--font-ui);
+		font-size: var(--font-size-body);
+		font-weight: var(--font-weight-bold);
+		text-decoration: none;
+		cursor: pointer;
+		transition:
+			transform var(--dur-fast) var(--ease-smooth),
+			background var(--dur-fast) var(--ease-smooth),
+			box-shadow var(--dur-base) var(--ease-smooth);
+	}
+
+	.btn-primary:hover {
+		transform: scale(1.03);
+		background: var(--color-interactive-hover);
+		box-shadow: 0 0 24px color-mix(in oklch, var(--color-accent-primary) 30%, transparent);
+	}
+
+	.btn-primary:active {
+		transform: scale(0.97);
+	}
+
+	.btn-secondary {
+		font-family: var(--font-ui);
+		font-size: var(--font-size-small);
+		font-weight: var(--font-weight-medium);
+		color: var(--color-text-2);
+		text-decoration: none;
+		padding: var(--space-3) var(--space-6);
+		border: 1px solid var(--color-border-default);
+		border-radius: var(--radius-md);
+		transition:
+			border-color var(--dur-fast) var(--ease-smooth),
+			color var(--dur-fast) var(--ease-smooth);
+	}
+
+	.btn-secondary:hover {
+		border-color: var(--color-border-hover);
+		color: var(--color-text-1);
+	}
+
+	/* ── Hero: App Preview (Waterfall) ── */
 
 	.hero-apps {
 		display: flex;
@@ -155,9 +488,15 @@ const portalUrl = "https://lab.modfolio.io";
 		flex-direction: column;
 		gap: var(--space-1);
 		padding: var(--space-4) var(--space-6);
-		border-left: 2px solid var(--color-border-default);
-		margin-left: calc(var(--stagger) * var(--space-8));
-		transition: border-color var(--dur-base) var(--ease-smooth);
+		border-left: 3px solid var(--color-border-default);
+		margin-left: calc(var(--stagger) * var(--space-10));
+		transition:
+			border-color var(--dur-base) var(--ease-smooth),
+			transform var(--dur-fast) var(--ease-smooth);
+	}
+
+	.app-preview:hover {
+		transform: translateX(var(--space-2));
 	}
 
 	.app-preview[data-app="munseo"] {
@@ -175,62 +514,106 @@ const portalUrl = "https://lab.modfolio.io";
 	.app-preview-name {
 		font-family: var(--font-display);
 		font-size: var(--font-size-h3);
-		font-weight: 700;
+		font-weight: var(--font-weight-bold);
 	}
 
 	.app-preview-desc {
 		font-family: var(--font-ui);
 		font-size: var(--font-size-small);
+		font-weight: var(--font-weight-regular);
 		color: var(--color-text-2);
 	}
 
-	.btn-cta {
-		display: inline-flex;
-		align-items: center;
-		gap: var(--space-2);
-		padding: var(--space-3) var(--space-8);
-		background: var(--color-interactive-primary);
-		border: none;
-		border-radius: var(--radius-md);
-		color: var(--color-surface-0);
-		font-family: var(--font-ui);
-		font-size: var(--font-size-body);
-		font-weight: 700;
-		text-decoration: none;
-		cursor: pointer;
-		transition: background var(--dur-fast) var(--ease-smooth);
+	/* ── 3. Social Proof ── */
+
+	.proof {
+		border-top: 1px solid var(--color-border-default);
+		border-bottom: 1px solid var(--color-border-default);
+		padding: var(--space-4) var(--space-6);
 	}
 
-	.btn-cta:hover {
-		background: var(--color-interactive-hover);
+	.proof-inner {
+		max-width: 1120px;
+		margin: 0 auto;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		gap: var(--space-3);
+		font-family: var(--font-ui);
+		font-size: var(--font-size-caption);
+		font-weight: var(--font-weight-regular);
+		color: var(--color-text-3);
+		text-transform: uppercase;
+		letter-spacing: 0.08em;
 	}
+
+	.proof-dot {
+		color: var(--color-accent-primary);
+	}
+
+	/* ── Section Title ── */
+
+	.section-title {
+		font-family: var(--font-display);
+		font-size: var(--font-size-h2);
+		font-weight: var(--font-weight-bold);
+		text-align: center;
+		margin-bottom: var(--space-12);
+		letter-spacing: -0.01em;
+	}
+
+	/* ── 4. Features (FBO) ── */
 
 	.features {
+		max-width: 1120px;
+		margin: 0 auto;
+		padding: var(--space-20) var(--space-6);
+	}
+
+	@keyframes cardReveal {
+		from {
+			opacity: 0;
+			transform: translateY(var(--space-6));
+		}
+		to {
+			opacity: 1;
+			transform: translateY(0);
+		}
+	}
+
+	.features-grid {
 		display: grid;
 		grid-template-columns: repeat(3, 1fr);
 		gap: var(--space-6);
-		max-width: 1120px;
-		margin: 0 auto;
-		padding: var(--space-16) var(--space-6);
-		position: relative;
-		z-index: 1;
 	}
 
 	.feature-card {
-		padding: var(--space-8);
+		background: var(--color-surface-raised);
 		border: 1px solid var(--color-border-default);
 		border-radius: var(--radius-lg);
-		background: var(--color-surface-raised);
+		overflow: hidden;
 		transition:
 			border-color var(--dur-base) var(--ease-smooth),
-			transform var(--dur-fast) var(--ease-smooth);
+			transform var(--dur-fast) var(--ease-smooth),
+			box-shadow var(--dur-base) var(--ease-smooth);
 	}
 
 	.feature-card:hover {
-		transform: translateY(-2px);
+		transform: translateY(-3px);
 		border-color: var(--color-border-hover);
+		box-shadow: var(--shadow-md);
 	}
 
+	/* Asymmetric card sizing */
+	.feature-card:nth-child(1) {
+		padding-bottom: var(--space-4);
+	}
+
+	.feature-card:nth-child(2) {
+		margin-top: var(--space-6);
+	}
+
+	/* Per-app accent hover */
 	.feature-card[data-app="munseo"]:hover {
 		border-color: var(--color-app-munseo);
 	}
@@ -243,19 +626,58 @@ const portalUrl = "https://lab.modfolio.io";
 		border-color: var(--color-app-sincheong);
 	}
 
+	/* Active app glow */
+	.feature-card[data-app="sincheong"] {
+		border-color: var(--color-border-hover);
+	}
+
+	.feature-accent {
+		height: 3px;
+	}
+
+	.feature-card[data-app="munseo"] .feature-accent {
+		background: linear-gradient(
+			90deg,
+			var(--color-app-munseo),
+			transparent 70%
+		);
+	}
+
+	.feature-card[data-app="umbracast"] .feature-accent {
+		background: linear-gradient(
+			90deg,
+			var(--color-app-umbracast),
+			transparent 70%
+		);
+	}
+
+	.feature-card[data-app="sincheong"] .feature-accent {
+		background: linear-gradient(
+			90deg,
+			var(--color-app-sincheong),
+			transparent 70%
+		);
+	}
+
+	.feature-body {
+		padding: var(--space-8);
+	}
+
 	.feature-name {
 		font-family: var(--font-display);
 		font-size: var(--font-size-h3);
-		font-weight: 700;
+		font-weight: var(--font-weight-bold);
 		margin-bottom: var(--space-3);
 	}
 
 	.feature-tagline {
 		font-family: var(--font-body);
 		font-size: var(--font-size-small);
+		font-weight: var(--font-weight-regular);
 		color: var(--color-text-2);
 		line-height: 1.6;
 		margin-bottom: var(--space-6);
+		max-width: 30ch;
 	}
 
 	.feature-domain {
@@ -264,41 +686,242 @@ const portalUrl = "https://lab.modfolio.io";
 		color: var(--color-text-3);
 	}
 
+	/* ── 5. How It Works ── */
+
+	.how-it-works {
+		max-width: 1120px;
+		margin: 0 auto;
+		padding: var(--space-20) var(--space-6);
+	}
+
+	.steps-grid {
+		display: grid;
+		grid-template-columns: repeat(3, 1fr);
+		gap: var(--space-8);
+	}
+
+	.step {
+		position: relative;
+		padding-left: var(--space-6);
+		border-left: 1px solid var(--color-border-default);
+	}
+
+	.step-num {
+		font-family: var(--font-mono);
+		font-size: var(--font-size-caption);
+		font-weight: var(--font-weight-bold);
+		color: var(--color-accent-primary);
+		display: block;
+		margin-bottom: var(--space-3);
+	}
+
+	.step-title {
+		font-family: var(--font-display);
+		font-size: var(--font-size-h3);
+		font-weight: var(--font-weight-medium);
+		margin-bottom: var(--space-2);
+	}
+
+	.step-desc {
+		font-family: var(--font-body);
+		font-size: var(--font-size-small);
+		font-weight: var(--font-weight-regular);
+		color: var(--color-text-2);
+		line-height: 1.6;
+		max-width: 30ch;
+	}
+
+	/* ── 6. FAQ ── */
+
+	.faq {
+		max-width: 680px;
+		margin: 0 auto;
+		padding: var(--space-20) var(--space-6);
+	}
+
+	.faq-list {
+		display: flex;
+		flex-direction: column;
+		gap: var(--space-1);
+	}
+
+	.faq-item {
+		border-bottom: 1px solid var(--color-border-default);
+	}
+
+	.faq-question {
+		font-family: var(--font-ui);
+		font-size: var(--font-size-body);
+		font-weight: var(--font-weight-medium);
+		padding: var(--space-4) 0;
+		cursor: pointer;
+		list-style: none;
+		transition: color var(--dur-fast) var(--ease-smooth);
+	}
+
+	.faq-question:hover {
+		color: var(--color-accent-primary);
+	}
+
+	.faq-question::-webkit-details-marker {
+		display: none;
+	}
+
+	.faq-answer {
+		font-family: var(--font-body);
+		font-size: var(--font-size-small);
+		font-weight: var(--font-weight-regular);
+		color: var(--color-text-2);
+		line-height: 1.7;
+		padding-bottom: var(--space-6);
+		max-width: 55ch;
+	}
+
+	/* ── 7. CTA ── */
+
 	.cta-section {
 		text-align: center;
-		padding: var(--space-20) var(--space-6);
+		padding: var(--space-24) var(--space-6);
 		position: relative;
-		z-index: 1;
 	}
 
 	.cta-heading {
 		font-family: var(--font-display);
 		font-size: var(--font-size-h1);
-		font-weight: 700;
+		font-weight: var(--font-weight-bold);
 		margin-bottom: var(--space-4);
+		letter-spacing: -0.02em;
+		line-height: 1.2;
 	}
 
 	.cta-body {
 		font-family: var(--font-body);
 		font-size: var(--font-size-body);
+		font-weight: var(--font-weight-regular);
 		color: var(--color-text-2);
 		margin-bottom: var(--space-8);
 	}
 
+	.cta-buttons {
+		display: flex;
+		gap: var(--space-4);
+		justify-content: center;
+		align-items: center;
+	}
+
+	/* ── 8. Footer ── */
+
+	.footer {
+		background: var(--color-surface-raised);
+		border-top: 1px solid var(--color-border-default);
+		padding: var(--space-16) var(--space-6) var(--space-8);
+	}
+
+	.footer-grid {
+		max-width: 1120px;
+		margin: 0 auto;
+		display: grid;
+		grid-template-columns: repeat(4, 1fr);
+		gap: var(--space-8);
+		margin-bottom: var(--space-12);
+	}
+
+	.footer-col {
+		display: flex;
+		flex-direction: column;
+		gap: var(--space-2);
+	}
+
+	.footer-heading {
+		font-family: var(--font-ui);
+		font-size: var(--font-size-caption);
+		font-weight: var(--font-weight-bold);
+		text-transform: uppercase;
+		letter-spacing: 0.08em;
+		color: var(--color-text-3);
+		margin-bottom: var(--space-2);
+	}
+
+	.footer-link {
+		font-family: var(--font-body);
+		font-size: var(--font-size-small);
+		font-weight: var(--font-weight-regular);
+		color: var(--color-text-2);
+		text-decoration: none;
+		transition: color var(--dur-fast) var(--ease-smooth);
+	}
+
+	.footer-link:hover {
+		color: var(--color-text-1);
+	}
+
+	.footer-bottom {
+		max-width: 1120px;
+		margin: 0 auto;
+		padding-top: var(--space-8);
+		border-top: 1px solid var(--color-border-default);
+		font-family: var(--font-ui);
+		font-size: var(--font-size-caption);
+		color: var(--color-text-3);
+	}
+
+	/* ── Responsive ── */
+
+	@media (max-width: 1024px) {
+		.features-grid {
+			grid-template-columns: 1fr 1fr;
+		}
+
+		.feature-card:nth-child(2) {
+			margin-top: 0;
+		}
+	}
+
 	@media (max-width: 768px) {
-		.hero {
+		.nav-links {
+			display: none;
+		}
+
+		.hero-grid {
 			grid-template-columns: 1fr;
 			min-height: auto;
-			padding: var(--space-16) var(--space-4) var(--space-10);
+			padding: var(--space-20) var(--space-4) var(--space-10);
 		}
 
 		.hero-apps {
-			margin-top: var(--space-8);
+			margin-top: var(--space-6);
 		}
 
-		.features {
+		.features-grid {
 			grid-template-columns: 1fr;
-			padding: var(--space-10) var(--space-4);
+		}
+
+		.steps-grid {
+			grid-template-columns: 1fr;
+			gap: var(--space-6);
+		}
+
+		.cta-buttons {
+			flex-direction: column;
+		}
+
+		.footer-grid {
+			grid-template-columns: 1fr 1fr;
+		}
+	}
+
+	@media (max-width: 480px) {
+		.hero-title {
+			font-size: clamp(1.75rem, 1.5rem + 1.5vw, 2.5rem);
+		}
+
+		.footer-grid {
+			grid-template-columns: 1fr;
+		}
+
+		.proof-inner {
+			flex-wrap: wrap;
+			justify-content: center;
 		}
 	}
 </style>

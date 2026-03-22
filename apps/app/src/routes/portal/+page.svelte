@@ -12,9 +12,12 @@ let { data }: { data: PageData } = $props();
 	/>
 </svelte:head>
 
-<main class="portal">
-	<header class="portal-header">
-		<h1 class="portal-title">Studio Lab</h1>
+<header class="portal-header">
+	<div class="portal-header-inner">
+		<div class="portal-header-left">
+			<h1 class="portal-title">Studio Lab</h1>
+			<span class="app-count">{data.apps.length}개 앱</span>
+		</div>
 		<div class="user-area">
 			{#if data.user}
 				<div class="avatar-badge">
@@ -27,7 +30,10 @@ let { data }: { data: PageData } = $props();
 				<a href="/auth/logout" class="btn-logout">로그아웃</a>
 			{/if}
 		</div>
-	</header>
+	</div>
+</header>
+
+<main class="portal">
 
 	<section class="app-grid">
 		{#each data.apps as app, i (app.id)}
@@ -70,37 +76,63 @@ let { data }: { data: PageData } = $props();
 		{/each}
 	</section>
 
-	<section class="feed-area">
-		<h2 class="feed-title">새로운 소식</h2>
-		<p class="feed-placeholder">
-			Studio 앱들의 최신 소식이 여기에 표시됩니다.
-		</p>
-	</section>
+	<footer class="portal-footer">
+		<a href="https://studio.modfolio.io" class="back-link" target="_blank" rel="noopener">
+			← studio.modfolio.io
+		</a>
+	</footer>
 </main>
 
 <style>
+	/* ── Sticky Header ── */
+
+	.portal-header {
+		position: sticky;
+		top: 0;
+		z-index: 50;
+		background: color-mix(in oklch, var(--color-surface-0) 85%, transparent);
+		backdrop-filter: blur(12px);
+		border-bottom: 1px solid var(--color-border-default);
+		padding: var(--space-4) var(--space-6);
+	}
+
+	.portal-header-inner {
+		max-width: 1120px;
+		margin: 0 auto;
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+	}
+
+	.portal-header-left {
+		display: flex;
+		align-items: center;
+		gap: var(--space-3);
+	}
+
+	.portal-title {
+		font-family: var(--font-display);
+		font-size: var(--font-size-h3);
+		font-weight: var(--font-weight-bold);
+		letter-spacing: -0.01em;
+	}
+
+	.app-count {
+		font-family: var(--font-ui);
+		font-size: var(--font-size-caption);
+		font-weight: var(--font-weight-medium);
+		color: var(--color-text-3);
+		padding: var(--space-1) var(--space-3);
+		background: var(--color-surface-emphasis);
+		border-radius: var(--radius-full);
+	}
+
 	/* ── Portal Layout ── */
 
 	.portal {
 		max-width: 1120px;
 		margin: 0 auto;
 		padding: var(--space-10) var(--space-6);
-	}
-
-	.portal-header {
-		display: flex;
-		justify-content: space-between;
-		align-items: center;
-		margin-bottom: var(--space-10);
-		padding-bottom: var(--space-6);
-		border-bottom: 1px solid var(--color-border-default);
-	}
-
-	.portal-title {
-		font-family: var(--font-display);
-		font-size: var(--font-size-h2);
-		font-weight: 700;
-		letter-spacing: -0.01em;
 	}
 
 	/* ── User Area ── */
@@ -122,7 +154,7 @@ let { data }: { data: PageData } = $props();
 		justify-content: center;
 		font-family: var(--font-ui);
 		font-size: var(--font-size-small);
-		font-weight: 700;
+		font-weight: var(--font-weight-bold);
 		color: var(--color-text-1);
 	}
 
@@ -135,7 +167,7 @@ let { data }: { data: PageData } = $props();
 	.user-name {
 		font-family: var(--font-ui);
 		font-size: var(--font-size-small);
-		font-weight: 500;
+		font-weight: var(--font-weight-medium);
 	}
 
 	.user-email {
@@ -197,9 +229,22 @@ let { data }: { data: PageData } = $props();
 	}
 
 	.app-card:hover {
-		transform: translateY(-2px);
+		transform: translateY(-3px);
 		border-color: var(--color-border-hover);
-		box-shadow: var(--shadow-md);
+		box-shadow: var(--shadow-lg);
+	}
+
+	/* Per-app hover glow */
+	.app-card[data-app="munseo"]:hover {
+		box-shadow: 0 8px 24px color-mix(in oklch, var(--color-app-munseo) 15%, transparent);
+	}
+
+	.app-card[data-app="umbracast"]:hover {
+		box-shadow: 0 8px 24px color-mix(in oklch, var(--color-app-umbracast) 15%, transparent);
+	}
+
+	.app-card[data-app="sincheong"]:hover {
+		box-shadow: 0 8px 24px color-mix(in oklch, var(--color-app-sincheong) 15%, transparent);
 	}
 
 	/* Per-app accent top border */
@@ -250,7 +295,7 @@ let { data }: { data: PageData } = $props();
 	.card-name {
 		font-family: var(--font-display);
 		font-size: var(--font-size-h3);
-		font-weight: 700;
+		font-weight: var(--font-weight-bold);
 	}
 
 	.card-status {
@@ -307,7 +352,7 @@ let { data }: { data: PageData } = $props();
 	.card-action {
 		font-family: var(--font-ui);
 		font-size: var(--font-size-small);
-		font-weight: 600;
+		font-weight: var(--font-weight-bold);
 		color: var(--color-text-1);
 		text-decoration: none;
 		transition: color var(--dur-fast) var(--ease-smooth);
@@ -322,34 +367,30 @@ let { data }: { data: PageData } = $props();
 		cursor: default;
 	}
 
-	/* ── Feed Area ── */
+	/* ── Footer ── */
 
-	.feed-area {
+	.portal-footer {
 		padding-top: var(--space-10);
 		border-top: 1px solid var(--color-border-default);
 	}
 
-	.feed-title {
-		font-family: var(--font-display);
-		font-size: var(--font-size-h3);
-		font-weight: 700;
-		margin-bottom: var(--space-4);
+	.back-link {
+		font-family: var(--font-ui);
+		font-size: var(--font-size-small);
+		font-weight: var(--font-weight-regular);
+		color: var(--color-text-3);
+		text-decoration: none;
+		transition: color var(--dur-fast) var(--ease-smooth);
 	}
 
-	.feed-placeholder {
-		font-family: var(--font-body);
-		font-size: var(--font-size-small);
-		color: var(--color-text-3);
-		padding: var(--space-10) 0;
-		text-align: center;
-		border: 1px dashed var(--color-border-default);
-		border-radius: var(--radius-lg);
+	.back-link:hover {
+		color: var(--color-text-1);
 	}
 
 	/* ── Responsive ── */
 
 	@media (max-width: 768px) {
-		.portal-header {
+		.portal-header-inner {
 			flex-direction: column;
 			align-items: flex-start;
 			gap: var(--space-4);
