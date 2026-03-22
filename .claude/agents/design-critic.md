@@ -18,7 +18,7 @@ maxTurns: 10
 2. spacing이 8pt 그리드 토큰 사용 (임의 px 없음)
 3. elevation이 명명된 레벨만 사용 (shadow-sm/md/lg/xl)
 4. 토큰 명명이 의미적 패턴 (`color-{역할}-{변형}`)
-5. 애니메이션이 스프링 기반 (ease-in-out 지양)
+5. 애니메이션이 토큰 duration/easing 사용
 6. 순차 등장 패턴 사용 여부 (animation-delay 60-120ms)
 7. 레이아웃 구조가 디자인 의도에 부합하는지
 

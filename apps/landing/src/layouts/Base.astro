@@ -1,0 +1,57 @@
+---
+import "../styles/tokens.css";
+
+interface Props {
+	title?: string;
+	description?: string;
+}
+
+const {
+	title = "Modfolio Studio",
+	description = "엔터테인먼트 & 유틸리티 그룹 — Munseo, Umbracast, Sincheong",
+} = Astro.props;
+
+const siteUrl = "https://studio.modfolio.io";
+const canonicalUrl = new URL(Astro.url.pathname, siteUrl).href;
+---
+
+<html lang="ko">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>{title}</title>
+		<meta name="description" content={description} />
+		<link rel="canonical" href={canonicalUrl} />
+
+		<!-- Open Graph -->
+		<meta property="og:title" content={title} />
+		<meta property="og:description" content={description} />
+		<meta property="og:url" content={canonicalUrl} />
+		<meta property="og:type" content="website" />
+		<meta property="og:locale" content="ko_KR" />
+		<meta property="og:site_name" content="Modfolio Studio" />
+
+		<meta name="theme-color" content="#111118" />
+
+		<!-- Adobe Fonts — Studio Kit (Cinematic Contrast) -->
+		<link rel="preconnect" href="https://use.typekit.net" crossorigin />
+		<link rel="stylesheet" href="https://use.typekit.net/glw6csk.css" />
+
+		<!-- Pretendard Variable (Korean fallback) -->
+		<link
+			rel="stylesheet"
+			href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css"
+		/>
+	</head>
+	<body>
+		<noscript>
+			<div
+				style="padding:3rem;text-align:center;color:#ccc;background:#111118;min-height:100vh"
+			>
+				<h1 style="font-size:2rem;margin-bottom:1rem">Modfolio Studio</h1>
+				<p>엔터테인먼트 & 유틸리티 그룹</p>
+			</div>
+		</noscript>
+		<slot />
+	</body>
+</html>

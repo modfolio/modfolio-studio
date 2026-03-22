@@ -1,9 +1,3 @@
----
-description: Connect SDK SSO 연동 (OIDC PKCE)
-effort: max
-model: opus
----
-
 # Skill: SSO 연동
 
 modfolio-connect를 통한 SSO 인증 연동 가이드.

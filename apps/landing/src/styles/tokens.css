@@ -1,0 +1,186 @@
+/* ============================================================
+   Modfolio Studio — 3-Tier Design Token Architecture
+   Brand: "Cinematic Contrast" — Entertainment & Utility Group
+   Kit: glw6csk (Adobe Fonts)
+
+   Tier 1: Primitives (raw values)
+   Tier 2: Semantic (role-based mapping)
+   Tier 3: Accent (Studio brand + per-app)
+   ============================================================ */
+
+@layer reset, base, tokens, components, utilities;
+
+/* ── CLS Prevention: Metric Overrides ── */
+
+@font-face {
+	font-family: "freight-display-fallback";
+	src: local("Georgia");
+	ascent-override: 95%;
+	descent-override: 25%;
+	line-gap-override: 0%;
+	size-adjust: 105%;
+}
+
+@font-face {
+	font-family: "acumin-fallback";
+	src: local("Arial");
+	ascent-override: 92%;
+	descent-override: 24%;
+	line-gap-override: 0%;
+	size-adjust: 98%;
+}
+
+@font-face {
+	font-family: "aktiv-fallback";
+	src: local("Arial");
+	ascent-override: 100%;
+	descent-override: 22%;
+	line-gap-override: 0%;
+	size-adjust: 100%;
+}
+
+/* ── Layer: Reset ── */
+
+@layer reset {
+	*,
+	*::before,
+	*::after {
+		box-sizing: border-box;
+		margin: 0;
+		padding: 0;
+	}
+
+	:focus-visible {
+		outline: 2px solid var(--color-accent-primary);
+		outline-offset: 2px;
+	}
+
+	html {
+		-webkit-font-smoothing: antialiased;
+		-moz-osx-font-smoothing: grayscale;
+		scroll-behavior: smooth;
+	}
+}
+
+/* ── Layer: Tokens ── */
+
+@layer tokens {
+	:root {
+		/* ── Tier 1: Primitives ── */
+
+		/* Surfaces (oklch — perceptual uniformity, purple-blue hue 280) */
+		--primitive-void: oklch(0.07 0.01 280);
+		--primitive-surface-1: oklch(0.12 0.01 280);
+		--primitive-surface-2: oklch(0.16 0.01 280);
+		--primitive-surface-3: oklch(0.19 0.015 280);
+
+		/* Text */
+		--primitive-text-high: oklch(0.93 0.01 300);
+		--primitive-text-mid: oklch(0.68 0.02 290);
+		--primitive-text-low: oklch(0.45 0.02 280);
+
+		/* Brand colors — mapped to subsidiary apps */
+		--primitive-coral: oklch(0.75 0.12 18);
+		--primitive-amber: oklch(0.85 0.12 85);
+		--primitive-violet: oklch(0.72 0.14 300);
+		--primitive-mint: oklch(0.82 0.1 170);
+
+		/* Borders */
+		--primitive-border-subtle: oklch(0.22 0.01 280);
+		--primitive-border-emphasis: oklch(0.3 0.01 280);
+
+		/* ── Tier 2: Semantic ── */
+
+		/* Surfaces */
+		--color-surface-0: var(--primitive-void);
+		--color-surface-raised: var(--primitive-surface-1);
+		--color-surface-overlay: var(--primitive-surface-2);
+		--color-surface-emphasis: var(--primitive-surface-3);
+
+		/* Text */
+		--color-text-1: var(--primitive-text-high);
+		--color-text-2: var(--primitive-text-mid);
+		--color-text-3: var(--primitive-text-low);
+
+		/* Borders */
+		--color-border-default: var(--primitive-border-subtle);
+		--color-border-hover: var(--primitive-border-emphasis);
+
+		/* Interactive */
+		--color-interactive-primary: var(--primitive-coral);
+		--color-interactive-hover: oklch(0.8 0.1 18);
+
+		/* Status */
+		--color-status-active: var(--primitive-mint);
+		--color-status-pending: var(--primitive-amber);
+
+		/* ── Tier 3: Accent (Studio Brand) ── */
+
+		--color-accent-primary: var(--primitive-coral);
+		--color-accent-secondary: var(--primitive-amber);
+		--color-accent-tertiary: var(--primitive-violet);
+
+		/* Per-app accents */
+		--color-app-munseo: var(--primitive-coral);
+		--color-app-umbracast: var(--primitive-amber);
+		--color-app-sincheong: var(--primitive-violet);
+
+		/* ── Typography — Cinematic Contrast (Kit: glw6csk) ── */
+
+		--font-display:
+			"freight-display-pro", "freight-display-fallback", "Pretendard Variable",
+			serif;
+		--font-body:
+			"acumin-pro", "acumin-fallback", "Pretendard Variable", sans-serif;
+		--font-ui:
+			"aktiv-grotesk", "aktiv-fallback", "Pretendard Variable", sans-serif;
+		--font-data: "sandoll-gothicneo3", "Pretendard Variable", sans-serif;
+		--font-mono: "source-code-pro", "SF Mono", monospace;
+		--font-kr-serif: "sandoll-myeongjoneo1", "Pretendard Variable", serif;
+
+		/* Fluid Type Scale */
+		--font-size-display: clamp(2.5rem, 2rem + 2.5vw, 4rem);
+		--font-size-h1: clamp(2rem, 1.5rem + 2vw, 3.5rem);
+		--font-size-h2: clamp(1.5rem, 1.25rem + 1.25vw, 2.5rem);
+		--font-size-h3: clamp(1.25rem, 1.1rem + 0.75vw, 1.75rem);
+		--font-size-body: clamp(1rem, 0.95rem + 0.25vw, 1.125rem);
+		--font-size-small: clamp(0.875rem, 0.85rem + 0.125vw, 0.9375rem);
+		--font-size-caption: clamp(0.75rem, 0.72rem + 0.15vw, 0.8125rem);
+
+		/* ── 8pt Spacing Grid ── */
+
+		--space-1: 0.25rem;
+		--space-2: 0.5rem;
+		--space-3: 0.75rem;
+		--space-4: 1rem;
+		--space-6: 1.5rem;
+		--space-8: 2rem;
+		--space-10: 2.5rem;
+		--space-12: 3rem;
+		--space-16: 4rem;
+		--space-20: 5rem;
+		--space-24: 6rem;
+
+		/* ── Border Radius ── */
+
+		--radius-sm: 6px;
+		--radius-md: 10px;
+		--radius-lg: 16px;
+		--radius-xl: 24px;
+		--radius-full: 9999px;
+
+		/* ── Shadows ── */
+
+		--shadow-sm: 0 2px 8px oklch(0 0 0 / 0.25);
+		--shadow-md: 0 6px 20px oklch(0 0 0 / 0.3);
+		--shadow-lg: 0 12px 32px oklch(0 0 0 / 0.35);
+
+		/* ── Motion ── */
+
+		--ease-smooth: cubic-bezier(0.16, 1, 0.3, 1);
+		--ease-out: cubic-bezier(0.33, 1, 0.68, 1);
+		--dur-fast: 0.15s;
+		--dur-base: 0.3s;
+		--dur-slow: 0.6s;
+	}
+}

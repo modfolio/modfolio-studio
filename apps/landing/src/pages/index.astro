@@ -1,141 +1,648 @@
 ---
-const user = Astro.locals.user;
+import Base from "../layouts/Base.astro";
+import { STUDIO_APPS } from "../lib/apps";
 
-const apps = [
-	{
-		id: "munseo",
-		name: "Munseo",
-		desc: "AI 문서 어시스턴트",
-		domain: "munseo.app",
-		url: "https://app.munseo.app",
-		status: "landing" as const,
-		accent: "#F0A0A0",
-	},
-	{
-		id: "umbracast",
-		name: "Umbracast",
-		desc: "날씨 + 분위기 캐스팅",
-		domain: "umbracast.com",
-		url: "https://app.umbracast.com",
-		status: "landing" as const,
-		accent: "#FFD97A",
-	},
-	{
-		id: "sincheong",
-		name: "Sincheong",
-		desc: "민원 접수 자동화",
-		domain: "sincheong.app",
-		url: "https://app.sincheong.app",
-		status: "landing" as const,
-		accent: "#C4A0F0",
-	},
-];
+const user = Astro.locals.user;
 ---
 
-<html lang="ko">
-<head>
-	<meta charset="utf-8" />
-	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-	<title>{user ? "포털 — Modfolio Studio" : "Modfolio Studio"}</title>
-	<meta name="description" content="엔터테인먼트 & 유틸리티 그룹 — Munseo, Umbracast, Sincheong" />
-	<link rel="stylesheet" href="https://use.typekit.net/auk2qdl.css" />
-	<link rel="preconnect" href="https://fonts.googleapis.com" />
-	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-	<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
-	<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" />
-	<style>
-		:root {
-			--bg: #0A0A0F; --surface: #13131A; --surface2: #1C1C26;
-			--text: #EDE8F0; --text2: #A09AAC;
-			--a1: #F0A0A0; --a2: #FFD97A;
-			--border: rgba(255,255,255,0.05); --border-hover: rgba(255,255,255,0.12);
-			--magic-heading: "goldenbook", "sandoll-jebi2", "Noto Serif KR", serif;
-			--poetic-quote: "mrs-eaves", "sandoll-jebi2", "Noto Serif KR", serif;
-			--storybook-body: "adobe-caslon-pro", "sandoll-myeongjoneo1", "Noto Serif KR", serif;
-			--warm-tech: "brandon-grotesque", "Pretendard", sans-serif;
-			--clear-data: "proxima-nova", "Pretendard", sans-serif;
-		}
-		* { margin:0; padding:0; box-sizing:border-box; }
-		body { font-family:var(--storybook-body); background:var(--bg); color:var(--text); min-height:100vh; }
-		.glow { position:fixed; width:600px; height:600px; border-radius:50%; filter:blur(120px); opacity:0.06; pointer-events:none; }
-		.glow-1 { background:var(--a1); top:-200px; right:-200px; }
-		.glow-2 { background:var(--a2); bottom:-200px; left:-200px; }
-
-		.landing { display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:100vh; text-align:center; padding:2rem; position:relative; z-index:1; }
-		.landing h1 { font-family:var(--magic-heading); font-size:clamp(2.5rem,8vw,5rem); font-weight:700; background:linear-gradient(135deg,var(--a1),var(--a2)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; margin-bottom:1rem; letter-spacing:-0.02em; }
-		.landing .tagline { font-family:var(--poetic-quote); font-size:clamp(1rem,3vw,1.5rem); font-style:italic; margin-bottom:0.5rem; }
-		.landing .desc { font-size:clamp(0.875rem,2vw,1.125rem); color:var(--text2); max-width:40ch; margin:0 auto 2rem; line-height:1.6; }
-		.btn-login { display:inline-flex; align-items:center; gap:0.5rem; padding:0.875rem 2rem; background:linear-gradient(135deg,var(--a1),var(--a2)); border:none; border-radius:8px; color:var(--bg); font-family:var(--warm-tech); font-size:1rem; font-weight:600; cursor:pointer; text-decoration:none; transition:opacity 0.2s; }
-		.btn-login:hover { opacity:0.9; }
-
-		.portal { max-width:960px; margin:0 auto; padding:3rem 1.5rem; position:relative; z-index:1; }
-		.portal-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:2.5rem; }
-		.portal-header h1 { font-family:var(--magic-heading); font-size:1.75rem; font-weight:700; }
-		.portal-header .user-info { display:flex; align-items:center; gap:1rem; font-family:var(--clear-data); font-size:0.875rem; color:var(--text2); }
-		.btn-logout { padding:0.5rem 1rem; border:1px solid var(--border); border-radius:6px; background:transparent; color:var(--text2); font-family:var(--clear-data); font-size:0.75rem; cursor:pointer; text-decoration:none; transition:border-color 0.2s; }
-		.btn-logout:hover { border-color:var(--border-hover); color:var(--text); }
-
-		.card-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(280px, 1fr)); gap:1.25rem; }
-		.card { background:var(--surface); border:1px solid var(--border); border-radius:16px; padding:1.75rem; transition:transform 0.2s, border-color 0.2s; cursor:default; }
-		.card:hover { transform:translateY(-2px); border-color:var(--border-hover); }
-		.card-top { display:flex; align-items:center; gap:0.75rem; margin-bottom:1rem; }
-		.dot { width:10px; height:10px; border-radius:50%; flex-shrink:0; }
-		.card-name { font-family:var(--magic-heading); font-size:1.25rem; font-weight:700; }
-		.card-desc { font-family:var(--storybook-body); font-size:0.9375rem; color:var(--text2); line-height:1.5; margin-bottom:1.25rem; }
-		.card-footer { display:flex; justify-content:space-between; align-items:center; }
-		.card-domain { font-family:var(--clear-data); font-size:0.75rem; color:var(--text2); }
-		.card-status { font-family:var(--clear-data); font-size:0.6875rem; text-transform:uppercase; letter-spacing:0.05em; padding:0.25rem 0.625rem; border-radius:999px; }
-		.status-active { background:rgba(138,224,204,0.12); color:#8AE0CC; }
-		.status-landing { background:rgba(255,217,122,0.12); color:#FFD97A; }
-		.card-link { display:inline-flex; align-items:center; gap:0.375rem; font-family:var(--warm-tech); font-size:0.875rem; font-weight:600; color:var(--text); text-decoration:none; margin-top:1rem; transition:color 0.2s; }
-		.card-link:hover { color:var(--a1); }
-	</style>
-</head>
-<body>
-	<div class="glow glow-1"></div>
-	<div class="glow glow-2"></div>
-
-	{user ? (
-		<main class="portal">
-			<header class="portal-header">
-				<h1>Studio Portal</h1>
-				<div class="user-info">
-					<span>{user.email}</span>
-					<a href="/auth/logout" class="btn-logout">로그아웃</a>
-				</div>
-			</header>
-			<div class="card-grid">
-				{apps.map((app) => (
-					<div class="card">
-						<div class="card-top">
-							<div class="dot" style={`background:${app.accent}`}></div>
-							<span class="card-name">{app.name}</span>
+<Base
+	title={user ? "포탈 — Modfolio Studio" : "Modfolio Studio"}
+	description="엔터테인먼트 & 유틸리티 그룹 — Munseo, Umbracast, Sincheong"
+>
+	{
+		user ? (
+			<main class="portal">
+				<header class="portal-header">
+					<h1 class="portal-title">Studio</h1>
+					<div class="user-area">
+						<div class="avatar-badge">
+							{(user.name ?? user.email)[0].toUpperCase()}
 						</div>
-						<p class="card-desc">{app.desc}</p>
-						<div class="card-footer">
-							<span class="card-domain">{app.domain}</span>
-							<span class={`card-status ${app.status === "active" ? "status-active" : "status-landing"}`}>
-								{app.status === "active" ? "Active" : "준비 중"}
-							</span>
+						<div class="user-meta">
+							<span class="user-name">{user.name ?? "사용자"}</span>
+							<span class="user-email">{user.email}</span>
 						</div>
-						{app.status === "active" ? (
-							<a href={app.url} class="card-link" target="_blank" rel="noopener">
-								앱 열기 &rarr;
-							</a>
-						) : (
-							<span class="card-link" style="color:var(--text2);cursor:default;">준비 중</span>
-						)}
+						<a href="/auth/logout" class="btn-logout">
+							로그아웃
+						</a>
 					</div>
-				))}
-			</div>
-		</main>
-	) : (
-		<main class="landing">
-			<h1>Modfolio Studio</h1>
-			<p class="tagline">Entertainment & Utility</p>
-			<p class="desc">엔터테인먼트 & 유틸리티 그룹 — Munseo, Umbracast, Sincheong</p>
-			<a href="/auth/login" class="btn-login">Modfolio Connect로 로그인</a>
-		</main>
-	)}
-</body>
-</html>
+				</header>
+
+				<section class="app-grid">
+					{STUDIO_APPS.map((app) => (
+						<article class="app-card" data-app={app.id}>
+							<div class="card-accent" />
+							<div class="card-content">
+								<div class="card-head">
+									<h2 class="card-name">{app.name}</h2>
+									<span
+										class={`card-status ${app.status === "active" ? "status-active" : "status-landing"}`}
+									>
+										{app.status === "active" ? "Active" : "준비 중"}
+									</span>
+								</div>
+								<p class="card-desc">{app.desc}</p>
+								<p class="card-tagline">{app.tagline}</p>
+								<div class="card-foot">
+									<span class="card-domain">{app.domain}</span>
+									{app.status === "active" ? (
+										<a
+											href={app.url}
+											class="card-action"
+											target="_blank"
+											rel="noopener"
+										>
+											열기 &rarr;
+										</a>
+									) : (
+										<span class="card-action card-action--muted">
+											준비 중
+										</span>
+									)}
+								</div>
+							</div>
+						</article>
+					))}
+				</section>
+
+				<section class="feed-area">
+					<h2 class="feed-title">새로운 소식</h2>
+					<p class="feed-placeholder">
+						Studio 앱들의 최신 소식이 여기에 표시됩니다.
+					</p>
+				</section>
+			</main>
+		) : (
+			<main class="landing">
+				<div class="glow glow-1" />
+				<div class="glow glow-2" />
+
+				<section class="hero">
+					<div class="hero-content">
+						<p class="hero-eyebrow">Entertainment & Utility Group</p>
+						<h1 class="hero-title">
+							흩어진 도구를,
+							<br />
+							하나의 스튜디오로.
+						</h1>
+						<p class="hero-body">
+							문서 변환, 오디오 처리, 폼 관리 — 매번 다른 도구, 다른 계정, 다른
+							워크플로우. Modfolio Studio는 하나의 SSO 로그인으로 세 가지
+							유틸리티에 즉시 접근합니다.
+						</p>
+						<a href="/auth/login" class="btn-cta">
+							Modfolio Connect로 시작하기
+						</a>
+					</div>
+
+					<div class="hero-apps">
+						{STUDIO_APPS.map((app, i) => (
+							<div
+								class="app-preview"
+								data-app={app.id}
+								style={`--stagger: ${i}`}
+							>
+								<span class="app-preview-name">{app.name}</span>
+								<span class="app-preview-desc">{app.desc}</span>
+							</div>
+						))}
+					</div>
+				</section>
+
+				<section class="features">
+					{STUDIO_APPS.map((app) => (
+						<div class="feature-card" data-app={app.id}>
+							<h3 class="feature-name">{app.name}</h3>
+							<p class="feature-tagline">{app.tagline}</p>
+							<span class="feature-domain">{app.domain}</span>
+						</div>
+					))}
+				</section>
+
+				<section class="cta-section">
+					<h2 class="cta-heading">하나의 계정, 세 가지 도구</h2>
+					<p class="cta-body">
+						Modfolio Connect 계정 하나로 Studio의 모든 유틸리티를 사용하세요.
+					</p>
+					<a href="/auth/login" class="btn-cta">
+						시작하기
+					</a>
+				</section>
+			</main>
+		)
+	}
+</Base>
+
+<style>
+	/* ── Global ── */
+
+	body {
+		font-family: var(--font-body);
+		background: var(--color-surface-0);
+		color: var(--color-text-1);
+		min-height: 100vh;
+		line-height: 1.6;
+	}
+
+	/* ── Landing: Logged-Out ── */
+
+	.landing {
+		position: relative;
+		overflow: hidden;
+	}
+
+	.glow {
+		position: fixed;
+		width: 600px;
+		height: 600px;
+		border-radius: 50%;
+		filter: blur(120px);
+		opacity: 0.05;
+		pointer-events: none;
+	}
+
+	.glow-1 {
+		background: var(--color-accent-primary);
+		top: -200px;
+		right: -200px;
+	}
+
+	.glow-2 {
+		background: var(--color-accent-secondary);
+		bottom: -200px;
+		left: -200px;
+	}
+
+	/* ── Hero ── */
+
+	.hero {
+		display: grid;
+		grid-template-columns: 1.2fr 0.8fr;
+		gap: var(--space-12);
+		align-items: center;
+		min-height: 100vh;
+		max-width: 1120px;
+		margin: 0 auto;
+		padding: var(--space-12) var(--space-6);
+		position: relative;
+		z-index: 1;
+	}
+
+	.hero-eyebrow {
+		font-family: var(--font-ui);
+		font-size: var(--font-size-caption);
+		font-weight: 500;
+		text-transform: uppercase;
+		letter-spacing: 0.12em;
+		color: var(--color-accent-primary);
+		margin-bottom: var(--space-4);
+	}
+
+	.hero-title {
+		font-family: var(--font-display);
+		font-size: var(--font-size-display);
+		font-weight: 700;
+		line-height: 1.1;
+		letter-spacing: -0.02em;
+		margin-bottom: var(--space-6);
+	}
+
+	.hero-body {
+		font-family: var(--font-body);
+		font-size: var(--font-size-body);
+		color: var(--color-text-2);
+		max-width: 48ch;
+		margin-bottom: var(--space-8);
+		line-height: 1.7;
+	}
+
+	/* ── Hero: App Preview (Waterfall) ── */
+
+	.hero-apps {
+		display: flex;
+		flex-direction: column;
+		gap: var(--space-4);
+	}
+
+	.app-preview {
+		display: flex;
+		flex-direction: column;
+		gap: var(--space-1);
+		padding: var(--space-4) var(--space-6);
+		border-left: 2px solid var(--color-border-default);
+		margin-left: calc(var(--stagger) * var(--space-8));
+		transition: border-color var(--dur-base) var(--ease-smooth);
+	}
+
+	.app-preview[data-app="munseo"] {
+		border-color: var(--color-app-munseo);
+	}
+
+	.app-preview[data-app="umbracast"] {
+		border-color: var(--color-app-umbracast);
+	}
+
+	.app-preview[data-app="sincheong"] {
+		border-color: var(--color-app-sincheong);
+	}
+
+	.app-preview-name {
+		font-family: var(--font-display);
+		font-size: var(--font-size-h3);
+		font-weight: 700;
+	}
+
+	.app-preview-desc {
+		font-family: var(--font-ui);
+		font-size: var(--font-size-small);
+		color: var(--color-text-2);
+	}
+
+	/* ── CTA Button ── */
+
+	.btn-cta {
+		display: inline-flex;
+		align-items: center;
+		gap: var(--space-2);
+		padding: var(--space-3) var(--space-8);
+		background: var(--color-interactive-primary);
+		border: none;
+		border-radius: var(--radius-md);
+		color: var(--color-surface-0);
+		font-family: var(--font-ui);
+		font-size: var(--font-size-body);
+		font-weight: 700;
+		text-decoration: none;
+		cursor: pointer;
+		transition: background var(--dur-fast) var(--ease-smooth);
+	}
+
+	.btn-cta:hover {
+		background: var(--color-interactive-hover);
+	}
+
+	/* ── Features Section ── */
+
+	.features {
+		display: grid;
+		grid-template-columns: repeat(3, 1fr);
+		gap: var(--space-6);
+		max-width: 1120px;
+		margin: 0 auto;
+		padding: var(--space-16) var(--space-6);
+		position: relative;
+		z-index: 1;
+	}
+
+	.feature-card {
+		padding: var(--space-8);
+		border: 1px solid var(--color-border-default);
+		border-radius: var(--radius-lg);
+		background: var(--color-surface-raised);
+		transition:
+			border-color var(--dur-base) var(--ease-smooth),
+			transform var(--dur-fast) var(--ease-smooth);
+	}
+
+	.feature-card:hover {
+		transform: translateY(-2px);
+		border-color: var(--color-border-hover);
+	}
+
+	.feature-card[data-app="munseo"]:hover {
+		border-color: var(--color-app-munseo);
+	}
+
+	.feature-card[data-app="umbracast"]:hover {
+		border-color: var(--color-app-umbracast);
+	}
+
+	.feature-card[data-app="sincheong"]:hover {
+		border-color: var(--color-app-sincheong);
+	}
+
+	.feature-name {
+		font-family: var(--font-display);
+		font-size: var(--font-size-h3);
+		font-weight: 700;
+		margin-bottom: var(--space-3);
+	}
+
+	.feature-tagline {
+		font-family: var(--font-body);
+		font-size: var(--font-size-small);
+		color: var(--color-text-2);
+		line-height: 1.6;
+		margin-bottom: var(--space-6);
+	}
+
+	.feature-domain {
+		font-family: var(--font-mono);
+		font-size: var(--font-size-caption);
+		color: var(--color-text-3);
+	}
+
+	/* ── CTA Section ── */
+
+	.cta-section {
+		text-align: center;
+		padding: var(--space-20) var(--space-6);
+		position: relative;
+		z-index: 1;
+	}
+
+	.cta-heading {
+		font-family: var(--font-display);
+		font-size: var(--font-size-h1);
+		font-weight: 700;
+		margin-bottom: var(--space-4);
+	}
+
+	.cta-body {
+		font-family: var(--font-body);
+		font-size: var(--font-size-body);
+		color: var(--color-text-2);
+		margin-bottom: var(--space-8);
+	}
+
+	/* ── Portal: Logged-In ── */
+
+	.portal {
+		max-width: 1120px;
+		margin: 0 auto;
+		padding: var(--space-10) var(--space-6);
+	}
+
+	.portal-header {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		margin-bottom: var(--space-10);
+		padding-bottom: var(--space-6);
+		border-bottom: 1px solid var(--color-border-default);
+	}
+
+	.portal-title {
+		font-family: var(--font-display);
+		font-size: var(--font-size-h2);
+		font-weight: 700;
+		letter-spacing: -0.01em;
+	}
+
+	.user-area {
+		display: flex;
+		align-items: center;
+		gap: var(--space-3);
+	}
+
+	.avatar-badge {
+		width: var(--space-10);
+		height: var(--space-10);
+		border-radius: var(--radius-full);
+		background: var(--color-surface-emphasis);
+		border: 1px solid var(--color-border-default);
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		font-family: var(--font-ui);
+		font-size: var(--font-size-small);
+		font-weight: 700;
+		color: var(--color-text-1);
+	}
+
+	.user-meta {
+		display: flex;
+		flex-direction: column;
+		gap: var(--space-1);
+	}
+
+	.user-name {
+		font-family: var(--font-ui);
+		font-size: var(--font-size-small);
+		font-weight: 500;
+	}
+
+	.user-email {
+		font-family: var(--font-mono);
+		font-size: var(--font-size-caption);
+		color: var(--color-text-3);
+	}
+
+	.btn-logout {
+		margin-left: var(--space-4);
+		padding: var(--space-2) var(--space-4);
+		border: 1px solid var(--color-border-default);
+		border-radius: var(--radius-sm);
+		background: transparent;
+		color: var(--color-text-2);
+		font-family: var(--font-ui);
+		font-size: var(--font-size-caption);
+		text-decoration: none;
+		transition: border-color var(--dur-fast) var(--ease-smooth);
+	}
+
+	.btn-logout:hover {
+		border-color: var(--color-border-hover);
+		color: var(--color-text-1);
+	}
+
+	/* ── App Card Grid ── */
+
+	.app-grid {
+		display: grid;
+		grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+		gap: var(--space-6);
+		margin-bottom: var(--space-16);
+	}
+
+	.app-card {
+		position: relative;
+		background: var(--color-surface-raised);
+		border: 1px solid var(--color-border-default);
+		border-radius: var(--radius-lg);
+		overflow: hidden;
+		transition:
+			transform var(--dur-fast) var(--ease-smooth),
+			border-color var(--dur-fast) var(--ease-smooth),
+			box-shadow var(--dur-base) var(--ease-smooth);
+	}
+
+	.app-card:hover {
+		transform: translateY(-2px);
+		border-color: var(--color-border-hover);
+		box-shadow: var(--shadow-md);
+	}
+
+	/* Per-app accent top border */
+	.card-accent {
+		height: 3px;
+	}
+
+	.app-card[data-app="munseo"] .card-accent {
+		background: linear-gradient(
+			90deg,
+			var(--color-app-munseo),
+			transparent 80%
+		);
+	}
+
+	.app-card[data-app="umbracast"] .card-accent {
+		background: linear-gradient(
+			90deg,
+			var(--color-app-umbracast),
+			transparent 80%
+		);
+	}
+
+	.app-card[data-app="sincheong"] .card-accent {
+		background: linear-gradient(
+			90deg,
+			var(--color-app-sincheong),
+			transparent 80%
+		);
+	}
+
+	/* Active card emphasis */
+	.app-card[data-app="sincheong"] {
+		border-color: var(--color-border-hover);
+	}
+
+	.card-content {
+		padding: var(--space-6);
+	}
+
+	.card-head {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		margin-bottom: var(--space-3);
+	}
+
+	.card-name {
+		font-family: var(--font-display);
+		font-size: var(--font-size-h3);
+		font-weight: 700;
+	}
+
+	.card-status {
+		font-family: var(--font-ui);
+		font-size: var(--font-size-caption);
+		text-transform: uppercase;
+		letter-spacing: 0.05em;
+		padding: var(--space-1) var(--space-3);
+		border-radius: var(--radius-full);
+	}
+
+	.status-active {
+		background: oklch(0.82 0.1 170 / 0.12);
+		color: var(--color-status-active);
+	}
+
+	.status-landing {
+		background: oklch(0.85 0.12 85 / 0.12);
+		color: var(--color-status-pending);
+	}
+
+	.card-desc {
+		font-family: var(--font-ui);
+		font-size: var(--font-size-body);
+		color: var(--color-text-2);
+		margin-bottom: var(--space-2);
+	}
+
+	.card-tagline {
+		font-family: var(--font-body);
+		font-size: var(--font-size-small);
+		color: var(--color-text-3);
+		line-height: 1.5;
+		margin-bottom: var(--space-6);
+	}
+
+	.card-foot {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+	}
+
+	.card-domain {
+		font-family: var(--font-mono);
+		font-size: var(--font-size-caption);
+		color: var(--color-text-3);
+	}
+
+	.card-action {
+		font-family: var(--font-ui);
+		font-size: var(--font-size-small);
+		font-weight: 600;
+		color: var(--color-text-1);
+		text-decoration: none;
+		transition: color var(--dur-fast) var(--ease-smooth);
+	}
+
+	.card-action:hover {
+		color: var(--color-accent-primary);
+	}
+
+	.card-action--muted {
+		color: var(--color-text-3);
+		cursor: default;
+	}
+
+	/* ── Feed Area (Placeholder) ── */
+
+	.feed-area {
+		padding-top: var(--space-10);
+		border-top: 1px solid var(--color-border-default);
+	}
+
+	.feed-title {
+		font-family: var(--font-display);
+		font-size: var(--font-size-h3);
+		font-weight: 700;
+		margin-bottom: var(--space-4);
+	}
+
+	.feed-placeholder {
+		font-family: var(--font-body);
+		font-size: var(--font-size-small);
+		color: var(--color-text-3);
+		padding: var(--space-10) 0;
+		text-align: center;
+		border: 1px dashed var(--color-border-default);
+		border-radius: var(--radius-lg);
+	}
+
+	/* ── Responsive ── */
+
+	@media (max-width: 768px) {
+		.hero {
+			grid-template-columns: 1fr;
+			min-height: auto;
+			padding: var(--space-16) var(--space-4) var(--space-10);
+		}
+
+		.hero-apps {
+			margin-top: var(--space-8);
+		}
+
+		.features {
+			grid-template-columns: 1fr;
+			padding: var(--space-10) var(--space-4);
+		}
+
+		.portal-header {
+			flex-direction: column;
+			align-items: flex-start;
+			gap: var(--space-4);
+		}
+
+		.user-area {
+			width: 100%;
+			flex-wrap: wrap;
+		}
+
+		.app-grid {
+			grid-template-columns: 1fr;
+		}
+	}
+</style>

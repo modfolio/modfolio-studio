@@ -1,9 +1,3 @@
----
-description: 개발 저널 기록
-effort: low
-model: sonnet
----
-
 # Skill: /journal — 개발 저널 기록
 
 개발 중 판단, 실수, 발견, 시행착오, 외부 레퍼런스를 기록하는 가이드.
@@ -42,7 +36,7 @@ decision | mistake | discovery | trial-and-error | reference | lesson
 [최종 해결책 또는 결론]
 
 ## 관련 파일
-[영향받은 파일, 관련 ADR, 관련 review 문서]
+[영향받은 파일, 관련 review 문서]
 ```
 
 ## 카테고리 정의
@@ -50,7 +44,7 @@ decision | mistake | discovery | trial-and-error | reference | lesson
 | 카테고리 | 언제 사용 | 예시 |
 |---------|----------|------|
 | **decision** | 기술적 판단을 내렸을 때 | 프레임워크 전환, DB 선택, 아키텍처 변경 |
-| **mistake** | 실수를 발견/수정했을 때 | CF Pages Direct Upload 문제, 잘못된 설정 |
+| **mistake** | 실수를 발견/수정했을 때 | 잘못된 설정, 잘못된 가정 |
 | **discovery** | 새로운 사실을 알게 됐을 때 | 프레임워크 한계, API 동작 방식 |
 | **trial-and-error** | 여러 방법을 시도한 과정 | 디버깅, 성능 최적화, 호환성 문제 |
 | **reference** | 외부 지식을 기록할 때 | 영상, 기사, 문서에서 얻은 인사이트 |
@@ -59,8 +53,7 @@ decision | mistake | discovery | trial-and-error | reference | lesson
 ## 작성 후 필수
 
 1. `knowledge/journal/_index.md` 인덱스에 항목 추가
-2. 중요한 발견이면 `knowledge/claude/gotchas.md`에도 짧게 추가
-3. 생태계 전체에 영향이면 `knowledge/global.md` 또는 해당 프로젝트 파일 갱신
+2. **생태계 전체에 영향이 있는 발견**이면 `docs/updates/`에도 엔트리 생성 (`/updates` skill 참조)
 
 ## 태그 컨벤션
 
@@ -68,4 +61,3 @@ decision | mistake | discovery | trial-and-error | reference | lesson
 - 인프라: `#cf-pages` `#cf-workers` `#d1` `#neon` `#r2` `#doppler`
 - 기능: `#sso` `#deployment` `#auth` `#database` `#styling`
 - 도구: `#biome` `#drizzle` `#turborepo` `#bun` `#wrangler`
-- 앱: `#naviaca` `#gistcore` `#connect` `#sincheong` 등

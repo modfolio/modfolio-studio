@@ -1,0 +1,12 @@
+{
+	"name": "modfolio-studio",
+	"compatibility_date": "2026-03-01",
+	"compatibility_flags": ["nodejs_compat"],
+	"pages_build_output_dir": "dist",
+	"observability": {
+		"logs": {
+			"enabled": true,
+			"head_sampling_rate": 1
+		}
+	}
+}

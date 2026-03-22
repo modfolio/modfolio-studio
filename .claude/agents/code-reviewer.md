@@ -34,7 +34,7 @@ Modfolio Universe 생태계 규칙 기반 코드 리뷰 에이전트.
 2. **접근성 누락**: `prefers-reduced-motion` 없는 애니메이션
 3. **금지 속성**: `text-align: justify`
 4. **토큰 미사용**: 직접 `font-family` 지정, 비스케일 `border-radius`
-5. **Layout 애니메이션**: `width`, `height`, `top`, `left` 등 애니메이션 (transform/opacity만 허용)
+5. **Layout 애니메이션**: `width`, `height`, `top`, `left` 등 (transform/opacity만 허용)
 
 ### 보안
 
