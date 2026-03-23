@@ -4,14 +4,18 @@
       "Bash(bun run check:*)",
       "Bash(bun run check)",
       "Bash(bun run typecheck)",
+      "Bash(bun run typecheck:*)",
       "Bash(bun run dev)",
       "Bash(bun run dev:*)",
       "Bash(bun run build)",
+      "Bash(bun run build:*)",
       "Bash(bun run test:*)",
       "Bash(bun run lint)",
       "Bash(bun run lint:*)",
       "Bash(bun run format)",
-      "Bash(bun run format:*)"
+      "Bash(bun run format:*)",
+      "Bash(bun run preview)",
+      "Bash(bun run preview:*)"
     ]
   },
   "hooks": {
@@ -32,7 +36,31 @@
         "hooks": [
           {
             "type": "command",
-            "command": "echo $TOOL_INPUT | grep -q 'git commit' && bun run check && bun run typecheck || true"
+            "command": "if echo \"$TOOL_INPUT\" | grep -q 'git commit'; then bun run check && bun run typecheck; fi"
+          },
+          {
+            "type": "command",
+            "command": "if echo \"$TOOL_INPUT\" | grep -q 'git push'; then bun run check && bun run typecheck; fi"
+          },
+          {
+            "type": "command",
+            "command": "if echo \"$TOOL_INPUT\" | grep -qE 'gh api|gh pr|gh issue|gh run'; then echo '⚠ GitHub API 호출 감지. 로컬에서 가능한 작업인지 먼저 확인하세요. rate limit 낭비 주의.'; fi"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "agent",
+            "prompt": "End-of-turn quality gate. Check changed files for violations.\n\nSTEP 1: Run `git status --porcelain` to identify changed files.\nCategorize: UI (.astro/.tsx/.jsx/.css), API (.ts in routes/api/server), Config (wrangler/tsconfig/biome).\n\nSTEP 2: Per category, grep changed files for:\n- UI: hardcoded colors (#hex, rgb(, hsl( outside var()), hardcoded spacing (raw px not var(--space-*)), animation without prefers-reduced-motion, animate on width/height/top/left\n- API/TS: @ts-ignore, biome-ignore, eslint-disable, as any, hardcoded secrets\n- Astro: client:load on non-interactive components, missing lang on <html>\n\nSTEP 3: Check AND UPDATE memory/pattern-history.md:\n- If violations found: read the table. If the violation pattern already exists, increment count and update date. If new, append a row: | violation description | 1 | today's date | TRACKING |.\n- If any pattern reaches count 3, change its status to ESCALATE.\n- If no violations found: read only, do not modify.\n\nRESPONSE FORMAT: You MUST respond with ONLY a JSON object, no other text.\nIf no violations: {\"ok\": true}\nIf violations found: {\"ok\": false, \"reason\": \"## Quality Gate: FAIL\\n- [severity] file:line — description\"}",
+            "timeout": 30
+          },
+          {
+            "type": "agent",
+            "prompt": "Check if architecture/design decisions were made in this turn. If yes, append to memory/decisions-log.md with format:\n\n## [date] [title]\n- 결정: ...\n- 근거: ...\n- 대안: ...\n- 선택 이유: ...\n\nRESPONSE FORMAT: You MUST respond with ONLY a JSON object, no other text.\nIf no decisions were made: {\"ok\": true}\nIf decisions were logged: {\"ok\": true}",
+            "timeout": 15
           }
         ]
       }
