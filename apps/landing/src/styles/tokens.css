@@ -132,16 +132,18 @@
 
 		/* ── Typography — Cinematic Contrast (Kit: glw6csk) ── */
 
+		/* EN serif → KR 명조 (serif pair) */
 		--font-display:
-			"freight-display-pro", "freight-display-fallback", "Pretendard Variable",
+			"freight-display-pro", "freight-display-fallback", "sandoll-myeongjoneo1",
 			serif;
+		/* EN sans → KR 고딕 (sans pair) */
 		--font-body:
-			"acumin-pro", "acumin-fallback", "Pretendard Variable", sans-serif;
+			"acumin-pro", "acumin-fallback", "sandoll-gothicneo3", sans-serif;
 		--font-ui:
-			"aktiv-grotesk", "aktiv-fallback", "Pretendard Variable", sans-serif;
-		--font-data: "sandoll-gothicneo3", "Pretendard Variable", sans-serif;
+			"aktiv-grotesk", "aktiv-fallback", "sandoll-gothicneo3", sans-serif;
+		--font-data: "sandoll-gothicneo3", sans-serif;
 		--font-mono: "source-code-pro", "SF Mono", monospace;
-		--font-kr-serif: "sandoll-myeongjoneo1", "Pretendard Variable", serif;
+		--font-kr-serif: "sandoll-myeongjoneo1", serif;
 
 		/* Font Weight Hierarchy */
 		--font-weight-light: 300;
