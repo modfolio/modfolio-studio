@@ -2,8 +2,8 @@
 	"mcpServers": {
 		"context7": {
 			"type": "stdio",
-			"command": "bunx",
-			"args": ["-y", "@upstash/context7-mcp@latest"]
+			"command": "/home/mod/.bun/bin/context7-mcp",
+			"args": []
 		},
 		"github": {
 			"type": "http",
@@ -18,32 +18,23 @@
 		},
 		"playwright": {
 			"type": "stdio",
-			"command": "npx",
-			"args": ["-y", "@playwright/mcp@latest"]
+			"command": "/home/mod/.bun/bin/playwright-mcp",
+			"args": []
 		},
 		"neon": {
 			"type": "stdio",
-			"command": "npx",
-			"args": ["-y", "mcp-remote", "https://mcp.neon.tech/mcp"]
+			"command": "/home/mod/.bun/bin/mcp-remote",
+			"args": ["https://mcp.neon.tech/mcp"]
 		},
 		"svelte": {
 			"type": "stdio",
-			"command": "npx",
-			"args": ["-y", "@sveltejs/mcp"]
-		},
-		"sequential-thinking": {
-			"type": "stdio",
-			"command": "npx",
-			"args": ["-y", "@modelcontextprotocol/server-sequential-thinking"]
+			"command": "/home/mod/.bun/bin/svelte-mcp",
+			"args": []
 		},
 		"filesystem": {
 			"type": "stdio",
-			"command": "npx",
-			"args": [
-				"-y",
-				"@modelcontextprotocol/server-filesystem",
-				"/mnt/c/Projects/modfolio-universe"
-			]
+			"command": "/home/mod/.bun/bin/mcp-server-filesystem",
+			"args": ["/mnt/c/Projects/modfolio-universe"]
 		}
 	}
 }

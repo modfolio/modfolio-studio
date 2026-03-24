@@ -5,6 +5,7 @@
       "Bash(bun run check)",
       "Bash(bun run typecheck)",
       "Bash(bun run typecheck:*)",
+      "Bash(bun run quality:*)",
       "Bash(bun run dev)",
       "Bash(bun run dev:*)",
       "Bash(bun run build)",
@@ -15,7 +16,8 @@
       "Bash(bun run format)",
       "Bash(bun run format:*)",
       "Bash(bun run preview)",
-      "Bash(bun run preview:*)"
+      "Bash(bun run preview:*)",
+      "Bash(bash scripts/quality-gate.sh*)"
     ]
   },
   "hooks": {
@@ -25,7 +27,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bun run check 2>&1 | tail -5"
+            "command": "bun run check 2>&1 | tail -8"
           }
         ]
       }
@@ -36,15 +38,27 @@
         "hooks": [
           {
             "type": "command",
-            "command": "if echo \"$TOOL_INPUT\" | grep -q 'git commit'; then bun run check && bun run typecheck; fi"
+            "command": "if echo \"$TOOL_INPUT\" | grep -q 'git commit'; then bun run quality:all; fi"
           },
           {
             "type": "command",
-            "command": "if echo \"$TOOL_INPUT\" | grep -q 'git push'; then bun run check && bun run typecheck; fi"
+            "command": "if echo \"$TOOL_INPUT\" | grep -q 'git push'; then bun run quality:all; fi"
+          },
+          {
+            "type": "command",
+            "command": "if echo \"$TOOL_INPUT\" | grep -qE -- '--force|--no-verify'; then echo '🚫 Git safety violation: --force/--no-verify 금지 (CLAUDE.md 불변원칙 #5).' && exit 1; fi"
+          },
+          {
+            "type": "command",
+            "command": "if echo \"$TOOL_INPUT\" | grep -qE 'git (reset --hard|clean -f|checkout \\.)'; then echo '🚫 파괴적 git 명령 감지. 사용자 확인 필요.' && exit 1; fi"
           },
           {
             "type": "command",
             "command": "if echo \"$TOOL_INPUT\" | grep -qE 'gh api|gh pr|gh issue|gh run'; then echo '⚠ GitHub API 호출 감지. 로컬에서 가능한 작업인지 먼저 확인하세요. rate limit 낭비 주의.'; fi"
+          },
+          {
+            "type": "command",
+            "command": "if echo \"$TOOL_INPUT\" | grep -qE 'bun add|bun install|npm install'; then if echo \"$TOOL_INPUT\" | grep -qE '@modfolio/(ui|components|design-system|shared)'; then echo '🚫 House of Brands 위반: 공유 UI 라이브러리 설치 금지. 앱별 독립 디자인 시스템.' && exit 1; fi; fi"
           }
         ]
       }
@@ -53,14 +67,23 @@
       {
         "hooks": [
           {
+            "type": "command",
+            "command": "bash scripts/quality-gate.sh 2>&1 | tail -30"
+          },
+          {
             "type": "agent",
-            "prompt": "End-of-turn quality gate. Check changed files for violations.\n\nSTEP 1: Run `git status --porcelain` to identify changed files.\nCategorize: UI (.astro/.tsx/.jsx/.css), API (.ts in routes/api/server), Config (wrangler/tsconfig/biome).\n\nSTEP 2: Per category, grep changed files for:\n- UI: hardcoded colors (#hex, rgb(, hsl( outside var()), hardcoded spacing (raw px not var(--space-*)), animation without prefers-reduced-motion, animate on width/height/top/left\n- API/TS: @ts-ignore, biome-ignore, eslint-disable, as any, hardcoded secrets\n- Astro: client:load on non-interactive components, missing lang on <html>\n\nSTEP 3: Check AND UPDATE memory/pattern-history.md:\n- If violations found: read the table. If the violation pattern already exists, increment count and update date. If new, append a row: | violation description | 1 | today's date | TRACKING |.\n- If any pattern reaches count 3, change its status to ESCALATE.\n- If no violations found: read only, do not modify.\n\nRESPONSE FORMAT: You MUST respond with ONLY a JSON object, no other text.\nIf no violations: {\"ok\": true}\nIf violations found: {\"ok\": false, \"reason\": \"## Quality Gate: FAIL\\n- [severity] file:line — description\"}",
-            "timeout": 30
+            "prompt": "Read /tmp is not needed. Instead, run `bash scripts/quality-gate.sh 2>&1` and read the output.\n\nIf the output contains 'PASS', respond {\"ok\": true}.\n\nIf the output contains 'FAIL':\n1. Read memory/pattern-history.md\n2. For each violation pattern in the output:\n   - If the pattern already exists in the table: increment count, update date to today\n   - If new: append row: | pattern description | 1 | today's date | TRACKING |\n   - If any pattern count reaches 3: change status to ESCALATE\n3. Write updated memory/pattern-history.md\n4. Respond {\"ok\": false, \"reason\": \"<summary of violations>\"}\n\nRESPONSE FORMAT: You MUST respond with ONLY a JSON object, no other text.",
+            "timeout": 15
           },
           {
             "type": "agent",
             "prompt": "Check if architecture/design decisions were made in this turn. If yes, append to memory/decisions-log.md with format:\n\n## [date] [title]\n- 결정: ...\n- 근거: ...\n- 대안: ...\n- 선택 이유: ...\n\nRESPONSE FORMAT: You MUST respond with ONLY a JSON object, no other text.\nIf no decisions were made: {\"ok\": true}\nIf decisions were logged: {\"ok\": true}",
             "timeout": 15
+          },
+          {
+            "type": "agent",
+            "prompt": "Track skill effectiveness. Check if any skills (slash commands like /component, /page, /design, etc.) were invoked in this turn.\n\nIf skills were invoked:\n1. Read memory/skill-effectiveness.md\n2. For each skill invoked, update or append a row: | skill-name | count | last date | outcome |\n   - outcome: success (task completed), partial (needed manual fix), fail (abandoned)\n3. Write updated file\n\nIf no skills were invoked, do nothing.\n\nRESPONSE FORMAT: You MUST respond with ONLY a JSON object, no other text.\n{\"ok\": true}",
+            "timeout": 10
           }
         ]
       }

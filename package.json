@@ -6,13 +6,14 @@
 	],
 	"packageManager": "bun@1.2.4",
 	"scripts": {
+		"quality:all": "bun run check && bun run typecheck && bun run typecheck:app && bash scripts/quality-gate.sh",
 		"build": "cd apps/landing && bun run build",
 		"build:app": "cd apps/app && bun run build",
 		"dev": "cd apps/landing && bun run dev",
 		"dev:app": "cd apps/app && bun run dev",
 		"check": "biome check .",
 		"check:fix": "biome check --write .",
-		"typecheck": "cd apps/landing && astro check",
+		"typecheck": "cd apps/landing && bun run check",
 		"typecheck:app": "cd apps/app && bun run check"
 	},
 	"devDependencies": {
