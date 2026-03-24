@@ -1,0 +1,148 @@
+---
+import Base from "../layouts/Base.astro";
+---
+
+<Base
+	title="Contact — Modfolio Studio"
+	description="Modfolio Studio 연락처 및 사업자 정보."
+>
+	<main id="main">
+		<section class="contact-hero">
+			<p class="contact-label">Contact</p>
+			<h1 class="contact-title">Contact</h1>
+		</section>
+
+		<section class="contact-content">
+			<div class="contact-section">
+				<dl class="info-list">
+					<div class="info-item">
+						<dt>Email</dt>
+						<dd><a href="mailto:contact@modfolio.io">contact@modfolio.io</a></dd>
+					</div>
+					<div class="info-item">
+						<dt>Address</dt>
+						<dd>경기도 수원시 팔달구 효원로 278, 6층 602호</dd>
+					</div>
+				</dl>
+			</div>
+
+			<div class="contact-section">
+				<h2 class="contact-section-heading">사업자 정보</h2>
+				<dl class="info-list">
+					<div class="info-item">
+						<dt>상호</dt>
+						<dd>모드폴리오</dd>
+					</div>
+					<div class="info-item">
+						<dt>대표</dt>
+						<dd>김동헌</dd>
+					</div>
+					<div class="info-item">
+						<dt>사업자등록번호</dt>
+						<dd>104-95-65636</dd>
+					</div>
+					<div class="info-item">
+						<dt>통신판매업</dt>
+						<dd>제2025-수원팔달-0953호</dd>
+					</div>
+					<div class="info-item">
+						<dt>출판사 등록</dt>
+						<dd>제2024-000037호</dd>
+					</div>
+					<div class="info-item">
+						<dt>소재지</dt>
+						<dd>경기도 수원시 팔달구 효원로 278, 6층 602호</dd>
+					</div>
+				</dl>
+			</div>
+		</section>
+	</main>
+</Base>
+
+<style>
+	.contact-hero {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		min-height: 40vh;
+		padding: var(--header-height) var(--layout-padding-x) var(--space-8);
+		text-align: center;
+	}
+
+	.contact-label {
+		font-family: var(--font-ui);
+		font-size: var(--font-size-caption);
+		text-transform: uppercase;
+		letter-spacing: 0.15em;
+		color: var(--color-accent-primary);
+		margin-bottom: var(--space-4);
+	}
+
+	.contact-title {
+		font-family: var(--font-display);
+		font-size: var(--font-size-display);
+		font-weight: var(--font-weight-light);
+		letter-spacing: -0.03em;
+	}
+
+	.contact-content {
+		max-width: 720px;
+		margin: 0 auto;
+		padding: 0 var(--layout-padding-x) var(--space-24);
+	}
+
+	.contact-section {
+		margin-bottom: var(--space-12);
+	}
+
+	.contact-section-heading {
+		font-family: var(--font-display);
+		font-size: var(--font-size-h3);
+		font-weight: var(--font-weight-medium);
+		margin-bottom: var(--space-6);
+		padding-bottom: var(--space-3);
+		border-bottom: 1px solid var(--color-border-default);
+	}
+
+	.info-list {
+		display: flex;
+		flex-direction: column;
+		gap: var(--space-4);
+	}
+
+	.info-item {
+		display: grid;
+		grid-template-columns: 160px 1fr;
+		gap: var(--space-4);
+		align-items: baseline;
+	}
+
+	.info-item dt {
+		font-family: var(--font-ui);
+		font-size: var(--font-size-small);
+		font-weight: var(--font-weight-medium);
+		color: var(--color-text-3);
+	}
+
+	.info-item dd {
+		font-family: var(--font-body);
+		font-size: var(--font-size-small);
+		color: var(--color-text-2);
+	}
+
+	.info-item a {
+		color: var(--color-accent-primary);
+		text-decoration: none;
+	}
+
+	.info-item a:hover {
+		text-decoration: underline;
+	}
+
+	@media (max-width: 768px) {
+		.info-item {
+			grid-template-columns: 1fr;
+		}
+	}
+</style>

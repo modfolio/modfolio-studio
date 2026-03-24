@@ -1,13 +1,14 @@
 ---
-import type { GetStaticPaths } from "astro";
+import type { GetStaticPaths, InferGetStaticParamsType } from "astro";
 import Base from "../../layouts/Base.astro";
 import { getAllAppIds, getAppDetail } from "../../lib/app-details";
 
-export const getStaticPaths: GetStaticPaths = () => {
+export const getStaticPaths = (() => {
 	return getAllAppIds().map((id) => ({ params: { app: id } }));
-};
+}) satisfies GetStaticPaths;
 
-const { app: appId } = Astro.params;
+type Params = InferGetStaticParamsType<typeof getStaticPaths>;
+const { app: appId } = Astro.params as Params;
 const detail = getAppDetail(appId);
 
 if (!detail) {
@@ -25,7 +26,7 @@ if (!detail) {
 			<div class="app-hero-content">
 				<nav class="breadcrumb" aria-label="현재 위치">
 					<a href="/">Studio</a> <span aria-hidden="true">→</span>
-					<a href="/apps">앱</a> <span aria-hidden="true">→</span>
+					<a href="/apps">Apps</a> <span aria-hidden="true">→</span>
 					<span>{detail.name}</span>
 				</nav>
 				<p class="app-hero-label">{detail.name}</p>
@@ -44,18 +45,6 @@ if (!detail) {
 					<div class="feature-card" data-app={detail.id}>
 						<h3 class="feature-title">{f.title}</h3>
 						<p class="feature-desc">{f.desc}</p>
-					</div>
-				))}
-			</div>
-		</section>
-
-		<section class="usecases-section">
-			<h2 class="section-heading">이런 상황에서 씁니다</h2>
-			<div class="usecases-grid">
-				{detail.useCases.map((u) => (
-					<div class="usecase-card">
-						<h3 class="usecase-persona">{u.persona}</h3>
-						<p class="usecase-scenario">{u.scenario}</p>
 					</div>
 				))}
 			</div>
@@ -233,42 +222,6 @@ if (!detail) {
 		color: var(--color-text-2);
 		line-height: 1.7;
 		max-width: 45ch;
-	}
-
-	/* ═══ Use Cases ═══ */
-
-	.usecases-section {
-		max-width: var(--layout-max-width);
-		margin: 0 auto;
-		padding: var(--space-20) var(--layout-padding-x);
-	}
-
-	.usecases-grid {
-		display: grid;
-		grid-template-columns: repeat(2, 1fr);
-		gap: var(--space-6);
-		max-width: 800px;
-		margin: 0 auto;
-	}
-
-	.usecase-card {
-		padding: var(--space-8);
-		border-left: 4px solid var(--color-border-default);
-	}
-
-	.usecase-persona {
-		font-family: var(--font-display);
-		font-size: var(--font-size-h3);
-		font-weight: var(--font-weight-medium);
-		margin-bottom: var(--space-3);
-	}
-
-	.usecase-scenario {
-		font-family: var(--font-body);
-		font-size: var(--font-size-small);
-		font-weight: var(--font-weight-regular);
-		color: var(--color-text-2);
-		line-height: 1.7;
 	}
 
 	/* ═══ App CTA ═══ */
