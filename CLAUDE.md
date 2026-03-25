@@ -28,6 +28,22 @@
 2. **Zero Physical Sharing** — 코드 공유는 SSO 토큰 / 데이터 스키마(`@modfolio/contracts`) / Webhook API로만.
 3. **100% Cloudflare Edge Native** — Vercel, AWS, GCP 배제. CF Pages + Workers만.
 
+## 도메인 아키텍처 (2-프로젝트 모델)
+
+각 브랜드는 두 개의 독립 프로젝트로 분리된다:
+- `domain.com` = 앱 (SvelteKit / SolidStart 등)
+- `www.domain.com` = 랜딩 (Astro)
+
+**entryMode** (`app.domain.com` 폐기, naked 도메인 = 항상 앱):
+- `app-first` — `domain.com/` → 앱 홈 직접 표시 (예: Umbracast, GistCore, Sincheong)
+- `landing-first` — `domain.com/` → `www.domain.com/home` 302 redirect (예: Naviaca, Fortiscribe)
+
+**인프라 앱**: 서브도메인 모델 유지 (`*.modfolio.io`). 2-프로젝트 분리 적용 안 함.
+
+**그룹 포털** (4개 그룹, 크리에이티브 도메인):
+- Works, LS, Axiom, Studio 각 그룹은 독립 포털 도메인 보유
+- 각 포털은 Astro 랜딩 + 그룹 앱 링크 허브
+
 ## 앱별 기술 스택 (2026-03-15 갱신)
 
 ### 인프라 앱
@@ -60,20 +76,19 @@
 | Worthee | LS | SolidStart | Neon (Postgres) | 셀프 관리 |
 | Amberstella | Axiom | SvelteKit 5 | D1 + Durable Objects | 실시간 셔틀 |
 | Munseo | Studio | Hono (CF Workers) | D1 + R2 | 문서 변환 |
-| Umbracast | Studio | Hono (CF Workers) | D1 + R2 | 오디오 변환 |
+| Umbracast | Studio | SvelteKit 5 | D1 + R2 | 오디오 변환 |
 | Sincheong | Studio | SvelteKit 5 | Neon (Postgres) | 폼 빌더 |
 
-### 프레임워크 분포 (7종)
+### 프레임워크 분포 (6종)
 
 | 프레임워크 | 앱 수 |
 |---|---|
-| SvelteKit 5 | 8 (modfolio app, modfolio-connect, modfolio-press app, modfolio-pay, GistCore, Fortiscribe, Amberstella, Sincheong) |
+| SvelteKit 5 | 9 (modfolio app, modfolio-connect, modfolio-press app, modfolio-pay, GistCore, Fortiscribe, Amberstella, Sincheong, Umbracast) |
 | SolidStart | 4 (modfolio-dev, modfolio-on, KeepNBuild, Worthee) |
-| Astro | 3 (modfolio landing, press landing, docs) + 자회사 그룹 랜딩 3 + 각 앱 랜딩 |
-| Hono (CF Workers) | 2 (Munseo, Umbracast) |
-| Qwik City | 1 (modfolio-admin) |
+| Astro | 3 (modfolio landing, press landing, docs) + 그룹 랜딩 4 + 각 앱 랜딩 |
+| Hono (CF Workers) | 1 (Munseo) |
+| Qwik City | 2 (modfolio-admin, modfolio-axiom app) |
 | Nuxt 3 | 1 (Naviaca) |
-| Qwik | 1 (Modfolio Axiom landing) |
 
 ### DB 분포 (6종)
 
@@ -267,7 +282,7 @@ npx wrangler pages secret put NPM_TOKEN --project-name={cf-project-name}
 - **Modfolio Axiom** (`modfolio-axiom`, v0.1.0, landing): 
 - **Amberstella** (`amberstella`, v0.2.0-sso, landing): **셔틀/모빌리티 실시간 앱**. 셔틀 위치 추적, 탑승 관리.
 - **Munseo** (`munseo`, v0.2.0-sso, active): Document conversion/management utility
-- **Umbracast** (`umbracast`, v0.2.0-sso, landing): **오디오 변환/관리 유틸리티**. 오디오 파일 형식 변환.
+- **Umbracast** (`umbracast`, v1.1.0, active): **오디오 변환/관리 유틸리티**. YouTube/SoundCloud/직접 업로드 오디오 변환, 편집, 라이브러리 관리.
 - **Sincheong** (`sincheong`, v0.4.0-sveltekit5, active): **범용 폼 빌더 및 관리 앱**. 동적 폼 생성, 제출 관리, 대기열 자동화.
 
 ---
@@ -282,11 +297,14 @@ npx wrangler pages secret put NPM_TOKEN --project-name={cf-project-name}
 
 ## 기술 스택
 
-- **Framework**: Astro SSR (랜딩 포탈 전용)
+| 경로 | 프레임워크 | 도메인 | CF 프로젝트 | 역할 |
+|------|-----------|--------|------------|------|
+| `apps/landing` | Astro SSR | studio.modfolio.io | modfolio-studio | 그룹 랜딩 포탈 |
+| `apps/app` | SvelteKit 5 | lab.modfolio.io | modfolio-studio-app | Studio Lab (SSO 연동) |
+
 - **DB**: 없음 (하위 앱들이 각자 DB 보유)
 - **인증**: modfolio-connect SSO (OIDC PKCE)
-- **도메인**: `studio.modfolio.io`
-- **배포**: CF Pages (`modfolio-studio`)
+- **배포**: CF Pages
 - **버전**: `0.1.0`
 
 ## 하위 앱
@@ -297,18 +315,34 @@ npx wrangler pages secret put NPM_TOKEN --project-name={cf-project-name}
 | Umbracast | umbracast.com | 오디오 변환/관리 |
 | Sincheong | sincheong.app | 폼 빌더/관리 |
 
+## 비주얼 아이덴티티: Cinematic Contrast
+
+- **컨셉**: 엔터테인먼트 그룹의 영화적 대비 — 무거운 Display + 가벼운 Body
+- **Adobe Fonts 킷**: `glw6csk` (생태계 공용 `fmh4fod` 아님)
+- **폰트 역할**: freight-display-pro(Display), acumin-pro(Body), aktiv-grotesk(UI), sandoll-gothicneo3(한국어), source-code-pro(Mono)
+- **색상**: oklch hue 280 (purple-blue) 서피스 + 앱별 액센트 (Munseo=coral, Umbracast=amber, Sincheong=violet)
+
 ## 구현된 기능
 
-- SSO 로그인 포탈
-- 하위 앱 카드 그리드 (3개 앱)
-- Adobe Fonts 타이포그래피
+- 스크롤 기반 스토리텔링 랜딩 레이아웃 (vision-first restructure)
+- 서브앱 카드 그리드 + 틸트 카드 애니메이션
+- 서브앱 상세 페이지 (`/apps/[app]`)
+- SSO 로그인 포탈 (Studio Lab)
+- 3-tier 디자인 토큰 시스템
+- 404, Privacy, Terms, Contact 페이지
+- Adobe Fonts 타이포그래피 (Cinematic Contrast)
 
 ## 현재 상태
 
-- **status**: `landing` — Portal shell
-- **다음**: 디자인 고도화, 하위 앱 상태 연동
+- **status**: `landing` — Vision-first restructure 완료, 디자인 고도화 단계
+- **다음**: 하위 앱 상태 연동, Studio Lab 기능 확장
 
 <!-- ECOSYSTEM_END -->
+
+
+
+
+
 
 
 
