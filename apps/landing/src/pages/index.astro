@@ -183,8 +183,8 @@ const faqs = [
 
 	.philosophy { max-width: var(--layout-max-width-mid); margin: 0 auto; padding: var(--space-24) var(--layout-padding-x); }
 	.philosophy-grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-8); }
-	.philosophy-block { padding: var(--space-8); background: color-mix(in oklch, var(--color-surface-1) 30%, transparent); backdrop-filter: blur(12px); border: 1px solid color-mix(in oklch, var(--color-border-default) 50%, transparent); border-radius: var(--radius-lg); transition: background var(--dur-base) var(--ease-smooth), border-color var(--dur-base) var(--ease-smooth); }
-	.philosophy-block:hover { background: color-mix(in oklch, var(--color-surface-1) 50%, transparent); border-color: var(--color-border-hover); }
+	.philosophy-block { padding: var(--space-8); border: 1px solid transparent; border-radius: var(--radius-lg); transition: border-color var(--dur-base) var(--ease-smooth), background var(--dur-base) var(--ease-smooth); }
+	.philosophy-block:hover { border-color: var(--color-border-default); background: var(--color-surface-raised); }
 	.philosophy-label { font-family: var(--font-ui); font-size: var(--font-size-caption); font-weight: var(--font-weight-medium); text-transform: uppercase; letter-spacing: 0.12em; color: var(--color-accent-primary); margin-bottom: var(--space-4); }
 	.philosophy-text { font-family: var(--font-body); font-size: var(--font-size-body); font-weight: var(--font-weight-regular); line-height: 1.8; color: var(--color-text-2); }
 
@@ -192,8 +192,7 @@ const faqs = [
 	.showcase-eyebrow { font-family: var(--font-ui); font-size: var(--font-size-caption); font-weight: var(--font-weight-medium); text-transform: uppercase; letter-spacing: 0.15em; color: var(--color-accent-primary); margin-bottom: var(--space-4); }
 	.showcase-heading { font-family: var(--font-display); font-size: var(--font-size-h1); font-weight: var(--font-weight-light); letter-spacing: -0.02em; }
 
-	#apps { scroll-snap-type: y proximity; }
-	.app-section { position: relative; display: flex; align-items: center; justify-content: center; min-height: 100vh; padding: var(--space-24) var(--layout-padding-x); overflow: hidden; scroll-snap-align: start; }
+	.app-section { position: relative; display: flex; align-items: center; justify-content: center; min-height: 100vh; padding: var(--space-24) var(--layout-padding-x); overflow: hidden; }
 	.app-inner { position: relative; z-index: 1; text-align: center; max-width: var(--layout-max-width-mid); margin: 0 auto; animation: fadeUp var(--dur-slow) var(--ease-smooth) both; animation-timeline: view(); animation-range: entry 0% entry 40%; }
 	@keyframes fadeUp { from { opacity: 0; transform: translateY(var(--space-8)); } to { opacity: 1; transform: translateY(0); } }
 	@supports not (animation-timeline: view()) { .app-inner { opacity: 1; transform: none; animation: none; } }
@@ -221,13 +220,12 @@ const faqs = [
 
 	.how { max-width: var(--layout-max-width-mid); margin: 0 auto; padding: var(--space-24) var(--layout-padding-x); }
 	.steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-6); }
-	.step { padding: var(--space-6) var(--space-8); border: 1px solid var(--color-border-default); border-radius: var(--radius-lg); transition: background var(--dur-base) var(--ease-smooth), border-color var(--dur-base) var(--ease-smooth); }
+	.step { position: relative; overflow: hidden; padding: var(--space-6) var(--space-8); border: 1px solid var(--color-border-default); border-radius: var(--radius-lg); transition: background var(--dur-base) var(--ease-smooth), border-color var(--dur-base) var(--ease-smooth); }
 	.step:hover { background: var(--color-surface-raised); border-color: var(--color-border-hover); }
 	.step[data-step="0"]:hover { border-color: var(--color-app-munseo); }
 	.step[data-step="1"]:hover { border-color: var(--color-app-umbracast); }
 	.step[data-step="2"]:hover { border-color: var(--color-app-sincheong); }
-	.step { position: relative; overflow: hidden; }
-	.step-num { display: block; font-family: var(--font-display); font-size: clamp(4rem, 8vw, 8rem); font-weight: var(--font-weight-light); line-height: 1; opacity: 0.15; margin-bottom: calc(var(--space-4) * -1); }
+	.step-num { display: block; font-family: var(--font-display); font-size: clamp(4rem, 8vw, 8rem); font-weight: var(--font-weight-light); line-height: 0.8; opacity: 0.1; }
 	.step[data-step="0"] .step-num { color: var(--color-app-munseo); }
 	.step[data-step="1"] .step-num { color: var(--color-app-umbracast); }
 	.step[data-step="2"] .step-num { color: var(--color-app-sincheong); }

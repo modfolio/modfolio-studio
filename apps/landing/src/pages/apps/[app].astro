@@ -197,11 +197,11 @@ if (!detail) {
 		border-radius: var(--radius-lg);
 		transition:
 			border-color var(--dur-base) var(--ease-smooth),
-			transform var(--dur-fast) var(--ease-smooth);
+			background var(--dur-base) var(--ease-smooth);
 	}
 
 	.feature-card:hover {
-		transform: translateY(-3px);
+		background: var(--color-surface-raised);
 	}
 
 	.feature-card[data-app="munseo"]:hover { border-color: var(--color-app-munseo); }
