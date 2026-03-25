@@ -163,10 +163,10 @@ if (!detail) {
 		background: var(--color-app-sincheong);
 	}
 
-	.app-hero-cta:hover {
-		transform: scale(1.05);
-		box-shadow: 0 0 32px color-mix(in oklch, var(--color-accent-primary) 25%, transparent);
-	}
+	.app-hero-cta:hover { transform: scale(1.05); }
+	.app-hero[data-app="munseo"] .app-hero-cta:hover { box-shadow: 0 0 32px color-mix(in oklch, var(--color-app-munseo) 25%, transparent); }
+	.app-hero[data-app="umbracast"] .app-hero-cta:hover { box-shadow: 0 0 32px color-mix(in oklch, var(--color-app-umbracast) 25%, transparent); }
+	.app-hero[data-app="sincheong"] .app-hero-cta:hover { box-shadow: 0 0 32px color-mix(in oklch, var(--color-app-sincheong) 25%, transparent); }
 
 	/* ═══ Features ═══ */
 
@@ -262,13 +262,12 @@ if (!detail) {
 	.app-cta[data-app="umbracast"] .app-cta-btn { background: var(--color-app-umbracast); }
 	.app-cta[data-app="sincheong"] .app-cta-btn { background: var(--color-app-sincheong); }
 
-	.app-cta-btn:hover {
-		transform: scale(1.05);
-		box-shadow: 0 0 40px color-mix(in oklch, var(--color-accent-primary) 30%, transparent);
-	}
+	.app-cta-btn:hover { transform: scale(1.05); }
+	.app-cta[data-app="munseo"] .app-cta-btn:hover { box-shadow: 0 0 40px color-mix(in oklch, var(--color-app-munseo) 30%, transparent); }
+	.app-cta[data-app="umbracast"] .app-cta-btn:hover { box-shadow: 0 0 40px color-mix(in oklch, var(--color-app-umbracast) 30%, transparent); }
+	.app-cta[data-app="sincheong"] .app-cta-btn:hover { box-shadow: 0 0 40px color-mix(in oklch, var(--color-app-sincheong) 30%, transparent); }
 
 	@media (max-width: 768px) {
 		.features-grid { grid-template-columns: 1fr; }
-		.usecases-grid { grid-template-columns: 1fr; }
 	}
 </style>
