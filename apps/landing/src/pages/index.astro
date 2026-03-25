@@ -4,48 +4,18 @@ import { STUDIO_APPS } from "../lib/apps";
 
 const portalUrl = "https://lab.modfolio.io";
 
-const steps = [
+const principles = [
 	{
-		num: "01",
-		title: "계정 하나면 됩니다",
-		desc: "Modfolio Connect로 로그인하세요. 별도 가입 없이 모든 Studio 앱에 접근합니다.",
+		title: "형식을 가리지 않는다",
+		desc: "글이든, 소리든, 데이터든. 표현하고 싶은 것이 있다면 형식은 Studio가 해결합니다.",
 	},
 	{
-		num: "02",
-		title: "필요한 도구를 고르세요",
-		desc: "문서, 오디오, 폼. 각 도구가 독립적으로 동작하면서도 하나의 계정 안에 있습니다.",
+		title: "원본은 밖으로 나가지 않는다",
+		desc: "파일은 디바이스 안에서 처리됩니다. 서버로 전송하지 않습니다. 당신의 표현은 당신의 것입니다.",
 	},
 	{
-		num: "03",
-		title: "열면 바로 시작",
-		desc: "설치도, 대기도 없습니다. 브라우저를 열면 이미 준비되어 있습니다.",
-	},
-];
-
-const faqs = [
-	{
-		q: "계정을 따로 만들어야 하나요?",
-		a: "아닙니다. Modfolio Connect 계정이 있다면 별도 가입 없이 모든 앱을 바로 사용할 수 있습니다.",
-	},
-	{
-		q: "앱끼리 데이터가 섞이지 않나요?",
-		a: "각 앱의 데이터는 완전히 분리되어 있습니다. 공유되는 것은 로그인 인증뿐입니다.",
-	},
-	{
-		q: "비용이 드나요?",
-		a: "현재 모든 기능을 무료로 이용할 수 있습니다. 향후 고급 기능에 한해 유료 플랜이 추가될 수 있습니다.",
-	},
-	{
-		q: "어떤 브라우저에서 동작하나요?",
-		a: "Chrome, Firefox, Safari, Edge 등 최신 브라우저에서 동작합니다. 설치가 필요 없습니다.",
-	},
-	{
-		q: "모바일에서도 쓸 수 있나요?",
-		a: "네. 모든 앱이 반응형으로 설계되어 있어 모바일 브라우저에서도 동일하게 동작합니다.",
-	},
-	{
-		q: "Modfolio의 다른 서비스와는 어떤 관계인가요?",
-		a: "Studio는 Modfolio 생태계의 크리에이티브 그룹입니다. 같은 Connect 계정으로 Works, LS, Axiom 등 다른 그룹의 서비스에도 접근할 수 있습니다.",
+		title: "열면 바로 시작된다",
+		desc: "설치도, 가입도, 대기도 없습니다. 브라우저를 열면 이미 준비되어 있습니다.",
 	},
 ];
 ---
@@ -55,6 +25,7 @@ const faqs = [
 	description="표현되지 못한 것들에 형태를 부여합니다. Modfolio의 크리에이티브 그룹."
 >
 	<main id="main">
+		<!-- ── Hero ── -->
 		<section class="hero">
 			<div class="hero-bg">
 				<div class="hero-glow"></div>
@@ -63,97 +34,66 @@ const faqs = [
 			<div class="hero-content">
 				<p class="hero-eyebrow">Modfolio Studio</p>
 				<h1 class="hero-title">표현되지 못한 것들에<br />형태를 부여합니다.</h1>
-				<a href={portalUrl} class="btn-outline">Open Lab</a>
+			</div>
+		</section>
+
+		<!-- ── Manifesto ── -->
+		<section class="manifesto" id="manifesto">
+			<div class="manifesto-content">
+				<p class="manifesto-line manifesto-lead">표현은 타고나는 것이 아닙니다.</p>
+				<div class="manifesto-body">
+					<p>누구에게나 말하고 싶은 것이 있고,<br />보여주고 싶은 것이 있고,<br />들려주고 싶은 것이 있습니다.</p>
+					<p>부족한 건 재능이 아닙니다.<br />적절한 수단입니다.</p>
+					<p>Studio는 그 수단을 만듭니다.<br />글로, 소리로, 데이터로 —<br />형식을 가리지 않고<br />생각이 형태를 갖출 수 있는 환경을.</p>
+				</div>
 			</div>
 		</section>
 
 		<div class="section-divider" aria-hidden="true"></div>
 
-		<section class="philosophy">
-			<div class="philosophy-grid">
-				<div class="philosophy-block">
-					<h2 class="philosophy-label">우리가 믿는 것</h2>
-					<p class="philosophy-text">누구에게나 표현하고 싶은 것이 있습니다.<br />부족한 건 재능이 아니라 적절한 수단입니다.</p>
-				</div>
-				<div class="philosophy-block">
-					<h2 class="philosophy-label">우리가 만드는 것</h2>
-					<p class="philosophy-text">글로, 소리로, 데이터로, 영상으로.<br />형식을 가리지 않고 생각이 형태를 갖출 수 있는<br />환경을 만듭니다.</p>
-				</div>
+		<!-- ── Principles ── -->
+		<section class="principles">
+			<p class="section-eyebrow">Principles</p>
+			<h2 class="section-heading">우리가 일하는 방식</h2>
+			<div class="principles-grid">
+				{principles.map((p, i) => (
+					<div class="principle-card" data-idx={i}>
+						<h3 class="principle-title">{p.title}</h3>
+						<p class="principle-desc">{p.desc}</p>
+					</div>
+				))}
 			</div>
 		</section>
-
-		<header class="showcase-header">
-			<p class="showcase-eyebrow">Apps</p>
-			<h2 class="showcase-heading">지금, 여기서부터.</h2>
-		</header>
-		<div id="apps">
-			{STUDIO_APPS.map((app) => (
-				<section class={`app-section app-${app.id}`} data-app={app.id}>
-					<div class="app-inner">
-						<p class="app-label">{app.name}</p>
-						<h2 class="app-headline">{app.headline}</h2>
-						<p class="app-desc">{app.desc}</p>
-						<div class="app-actions">
-							<a href={`/apps/${app.id}`} class="btn-outline">자세히 보기</a>
-							<a href={`https://${app.domain}`} class="btn-filled" target="_blank" rel="noopener" aria-label={`${app.name} 앱 방문`}>앱 방문 →</a>
-						</div>
-					</div>
-				</section>
-			))}
-		</div>
 
 		<div class="section-divider" aria-hidden="true"></div>
 
-		<section class="how">
-			<h2 class="section-heading">시작하는 데 5분이면 됩니다</h2>
-			<div class="steps">
-				{steps.map((s, i) => (
-					<div class="step" data-step={i}>
-						<span class="step-num">{s.num}</span>
-						<h3 class="step-title">{s.title}</h3>
-						<p class="step-desc">{s.desc}</p>
-					</div>
+		<!-- ── Works ── -->
+		<section class="works">
+			<p class="section-eyebrow">Works</p>
+			<h2 class="section-heading">Studio의 시선이 닿은 곳</h2>
+			<div class="works-grid">
+				{STUDIO_APPS.map((app) => (
+					<a href={`/apps/${app.id}`} class={`works-card works-${app.id}`}>
+						<p class="works-label">{app.name}</p>
+						<h3 class="works-headline">{app.headline}</h3>
+						<p class="works-desc">{app.desc}</p>
+						<span class="works-domain">{app.domain}</span>
+					</a>
 				))}
 			</div>
 		</section>
 
-		<section class="faq" id="faq">
-			<h2 class="section-heading">자주 묻는 질문</h2>
-			<div class="faq-list">
-				{faqs.map((f) => (
-					<details class="faq-item">
-						<summary class="faq-q">{f.q}</summary>
-						<p class="faq-a">{f.a}</p>
-					</details>
-				))}
-			</div>
-		</section>
-
-		<section class="closing">
-			<div class="closing-glow"></div>
-			<h2 class="closing-title">만들 준비가 되셨다면.</h2>
+		<!-- ── Horizon ── -->
+		<section class="horizon">
+			<div class="horizon-glow"></div>
+			<h2 class="horizon-title">표현은 계속됩니다.</h2>
 			<a href={portalUrl} class="btn-filled">Open Lab</a>
 		</section>
 	</main>
 </Base>
 
 <style>
-	.btn-outline {
-		display: inline-flex;
-		align-items: center;
-		justify-content: center;
-		min-height: 44px;
-		padding: var(--space-3) var(--space-6);
-		font-family: var(--font-ui);
-		font-size: var(--font-size-small);
-		font-weight: var(--font-weight-medium);
-		color: var(--color-text-2);
-		border: 1px solid var(--color-border-default);
-		border-radius: var(--radius-full);
-		transition: color var(--dur-fast) var(--ease-smooth), border-color var(--dur-fast) var(--ease-smooth), transform var(--dur-fast) var(--ease-smooth), box-shadow var(--dur-base) var(--ease-smooth);
-	}
-	.btn-outline:hover { color: var(--color-text-1); border-color: var(--color-text-1); }
-	.btn-outline:active { transform: scale(0.97); }
+	/* ── Buttons ── */
 
 	.btn-filled {
 		display: inline-flex;
@@ -173,87 +113,73 @@ const faqs = [
 	.btn-filled:hover { transform: scale(1.03); box-shadow: 0 0 32px color-mix(in oklch, var(--color-accent-primary) 25%, transparent); }
 	.btn-filled:active { transform: scale(0.97); }
 
+	/* ── Hero ── */
+
 	.hero { position: relative; display: flex; align-items: center; justify-content: center; min-height: 100vh; padding: var(--header-height) var(--layout-padding-x) var(--space-16); overflow: hidden; }
 	.hero-bg { position: absolute; inset: 0; pointer-events: none; }
 	.hero-glow { position: absolute; inset: 0; background: radial-gradient(ellipse 50% 40% at 50% 45%, color-mix(in oklch, var(--color-accent-primary) 10%, transparent), transparent); }
 	.hero-grid-pattern { position: absolute; inset: 0; background: radial-gradient(circle, color-mix(in oklch, var(--color-border-default) 40%, transparent) 1px, transparent 1px); background-size: 40px 40px; opacity: 0.5; }
 	.hero-content { position: relative; text-align: center; max-width: var(--layout-max-width-mid); }
 	.hero-eyebrow { font-family: var(--font-ui); font-size: var(--font-size-caption); font-weight: var(--font-weight-medium); text-transform: uppercase; letter-spacing: 0.15em; color: var(--color-accent-primary); margin-bottom: var(--space-4); }
-	.hero-title { font-family: var(--font-display); font-size: var(--font-size-hero); font-weight: var(--font-weight-light); line-height: 1.15; letter-spacing: -0.03em; margin-bottom: var(--space-12); text-shadow: 0 4px 40px color-mix(in oklch, var(--color-accent-primary) 15%, transparent); }
+	.hero-title { font-family: var(--font-display); font-size: var(--font-size-hero); font-weight: var(--font-weight-light); line-height: 1.15; letter-spacing: -0.03em; text-shadow: 0 4px 40px color-mix(in oklch, var(--color-accent-primary) 15%, transparent); }
 
-	.philosophy { max-width: var(--layout-max-width-mid); margin: 0 auto; padding: var(--space-24) var(--layout-padding-x); }
-	.philosophy-grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-8); }
-	.philosophy-block { padding: var(--space-8); border: 1px solid transparent; border-radius: var(--radius-lg); transition: border-color var(--dur-base) var(--ease-smooth), background var(--dur-base) var(--ease-smooth); }
-	.philosophy-block:hover { border-color: var(--color-border-default); background: var(--color-surface-raised); }
-	.philosophy-label { font-family: var(--font-ui); font-size: var(--font-size-caption); font-weight: var(--font-weight-medium); text-transform: uppercase; letter-spacing: 0.12em; color: var(--color-accent-primary); margin-bottom: var(--space-4); }
-	.philosophy-text { font-family: var(--font-body); font-size: var(--font-size-body); font-weight: var(--font-weight-regular); line-height: 1.8; color: var(--color-text-2); }
+	/* ── Manifesto ── */
 
-	.showcase-header { text-align: center; padding: var(--space-24) var(--layout-padding-x) var(--space-8); }
-	.showcase-eyebrow { font-family: var(--font-ui); font-size: var(--font-size-caption); font-weight: var(--font-weight-medium); text-transform: uppercase; letter-spacing: 0.15em; color: var(--color-accent-primary); margin-bottom: var(--space-4); }
-	.showcase-heading { font-family: var(--font-display); font-size: var(--font-size-h1); font-weight: var(--font-weight-light); letter-spacing: -0.02em; }
+	.manifesto { max-width: var(--layout-max-width-mid); margin: 0 auto; padding: var(--space-24) var(--layout-padding-x); }
+	.manifesto-content { max-width: 640px; }
+	.manifesto-lead { font-family: var(--font-display); font-size: var(--font-size-h1); font-weight: var(--font-weight-light); line-height: 1.3; letter-spacing: -0.02em; margin-bottom: var(--space-12); }
+	.manifesto-body { display: flex; flex-direction: column; gap: var(--space-8); }
+	.manifesto-body p { font-family: var(--font-body); font-size: var(--font-size-h3); font-weight: var(--font-weight-regular); line-height: 1.8; color: var(--color-text-2); }
 
-	.app-section { position: relative; display: flex; align-items: center; justify-content: center; min-height: 100vh; padding: var(--space-24) var(--layout-padding-x); overflow: hidden; }
-	.app-inner { position: relative; z-index: 1; text-align: center; max-width: var(--layout-max-width-mid); margin: 0 auto; animation: fadeUp var(--dur-slow) var(--ease-smooth) both; animation-timeline: view(); animation-range: entry 0% entry 40%; }
-	@keyframes fadeUp { from { opacity: 0; transform: translateY(var(--space-8)); } to { opacity: 1; transform: translateY(0); } }
-	@supports not (animation-timeline: view()) { .app-inner { opacity: 1; transform: none; animation: none; } }
-	.app-label { font-family: var(--font-ui); font-size: var(--font-size-caption); font-weight: var(--font-weight-medium); text-transform: uppercase; letter-spacing: 0.15em; margin-bottom: var(--space-4); }
-	.app-headline { font-family: var(--font-display); font-size: var(--font-size-display); font-weight: var(--font-weight-light); line-height: 1.2; letter-spacing: -0.02em; margin-bottom: var(--space-4); transition: text-shadow var(--dur-base) var(--ease-smooth); }
-	.app-munseo .app-inner:hover .app-headline { text-shadow: 0 0 40px color-mix(in oklch, var(--color-app-munseo) 25%, transparent); }
-	.app-umbracast .app-inner:hover .app-headline { text-shadow: 0 0 40px color-mix(in oklch, var(--color-app-umbracast) 25%, transparent); }
-	.app-sincheong .app-inner:hover .app-headline { text-shadow: 0 0 40px color-mix(in oklch, var(--color-app-sincheong) 25%, transparent); }
-	.app-desc { font-family: var(--font-ui); font-size: var(--font-size-small); font-weight: var(--font-weight-regular); color: var(--color-text-3); margin-bottom: var(--space-6); }
-	.app-actions { display: flex; align-items: center; justify-content: center; gap: var(--space-3); flex-wrap: wrap; }
-	.app-munseo .app-label { color: var(--color-app-munseo); }
-	.app-umbracast .app-label { color: var(--color-app-umbracast); }
-	.app-sincheong .app-label { color: var(--color-app-sincheong); }
-	.app-munseo .btn-filled { background: var(--color-app-munseo); }
-	.app-munseo .btn-filled:hover { box-shadow: 0 0 32px color-mix(in oklch, var(--color-app-munseo) 30%, transparent); }
-	.app-umbracast .btn-filled { background: var(--color-app-umbracast); }
-	.app-umbracast .btn-filled:hover { box-shadow: 0 0 32px color-mix(in oklch, var(--color-app-umbracast) 30%, transparent); }
-	.app-sincheong .btn-filled { background: var(--color-app-sincheong); }
-	.app-sincheong .btn-filled:hover { box-shadow: 0 0 32px color-mix(in oklch, var(--color-app-sincheong) 30%, transparent); }
-	.app-munseo { background: radial-gradient(ellipse 60% 50% at 70% 50%, color-mix(in oklch, var(--color-app-munseo) 12%, transparent), var(--color-surface-0) 65%); }
-	.app-umbracast { background: radial-gradient(ellipse 60% 50% at 50% 40%, color-mix(in oklch, var(--color-app-umbracast) 12%, transparent), var(--color-surface-0) 65%); }
-	.app-sincheong { background: radial-gradient(ellipse 60% 50% at 30% 50%, color-mix(in oklch, var(--color-app-sincheong) 12%, transparent), var(--color-surface-0) 65%); }
+	/* ── Shared Section Styles ── */
 
+	.section-eyebrow { font-family: var(--font-ui); font-size: var(--font-size-caption); font-weight: var(--font-weight-medium); text-transform: uppercase; letter-spacing: 0.15em; color: var(--color-accent-primary); text-align: center; margin-bottom: var(--space-4); }
 	.section-heading { font-family: var(--font-display); font-size: var(--font-size-h2); font-weight: var(--font-weight-light); text-align: center; letter-spacing: -0.02em; margin-bottom: var(--space-12); }
-
-	.how { max-width: var(--layout-max-width-mid); margin: 0 auto; padding: var(--space-24) var(--layout-padding-x); }
-	.steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-6); }
-	.step { padding: var(--space-6) var(--space-8); border: 1px solid var(--color-border-default); border-radius: var(--radius-lg); transition: background var(--dur-base) var(--ease-smooth), border-color var(--dur-base) var(--ease-smooth); }
-	.step:hover { background: var(--color-surface-raised); border-color: var(--color-border-hover); }
-	.step[data-step="0"]:hover { border-color: var(--color-app-munseo); }
-	.step[data-step="1"]:hover { border-color: var(--color-app-umbracast); }
-	.step[data-step="2"]:hover { border-color: var(--color-app-sincheong); }
-	.step-num { display: block; font-family: var(--font-mono); font-size: var(--font-size-display); font-weight: var(--font-weight-bold); margin-bottom: var(--space-4); }
-	.step[data-step="0"] .step-num { color: var(--color-app-munseo); }
-	.step[data-step="1"] .step-num { color: var(--color-app-umbracast); }
-	.step[data-step="2"] .step-num { color: var(--color-app-sincheong); }
-	.step-title { font-family: var(--font-display); font-size: var(--font-size-h3); font-weight: var(--font-weight-medium); margin-bottom: var(--space-2); }
-	.step-desc { font-family: var(--font-body); font-size: var(--font-size-small); font-weight: var(--font-weight-regular); color: var(--color-text-2); line-height: 1.7; }
-
-	.faq { max-width: var(--layout-max-width-narrow); margin: 0 auto; padding: var(--space-24) var(--layout-padding-x); }
-	.faq-list { display: flex; flex-direction: column; }
-	.faq-item { border-bottom: 1px solid var(--color-border-default); border-left: 4px solid transparent; padding-left: var(--space-4); transition: background var(--dur-fast) var(--ease-smooth), border-left-color var(--dur-fast) var(--ease-smooth); }
-	.faq-item[open] { background: var(--color-surface-raised); border-left-color: var(--color-accent-primary); }
-	.faq-q { font-family: var(--font-ui); font-size: var(--font-size-body); font-weight: var(--font-weight-medium); padding: var(--space-6) 0; cursor: pointer; list-style: none; display: flex; align-items: center; gap: var(--space-3); min-height: 44px; transition: color var(--dur-fast) var(--ease-smooth); }
-	.faq-q::-webkit-details-marker { display: none; }
-	.faq-q::before { content: "+"; flex-shrink: 0; font-family: var(--font-mono); font-weight: var(--font-weight-light); font-size: var(--font-size-h3); color: var(--color-accent-primary); transition: transform var(--dur-fast) var(--ease-smooth); }
-	.faq-item[open] .faq-q::before { transform: rotate(45deg); }
-	.faq-q:hover { color: var(--color-accent-primary); }
-	.faq-a { font-family: var(--font-body); font-size: var(--font-size-small); font-weight: var(--font-weight-regular); color: var(--color-text-2); line-height: 1.7; padding: 0 0 var(--space-6) var(--space-8); max-width: 60ch; }
-
-	.closing { position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 50vh; padding: var(--space-24) var(--layout-padding-x); text-align: center; overflow: hidden; }
-	.closing-glow { position: absolute; inset: 0; background: radial-gradient(ellipse 30% 40% at 30% 50%, color-mix(in oklch, var(--color-app-munseo) 8%, transparent), transparent), radial-gradient(ellipse 30% 40% at 50% 60%, color-mix(in oklch, var(--color-app-umbracast) 8%, transparent), transparent), radial-gradient(ellipse 30% 40% at 70% 40%, color-mix(in oklch, var(--color-app-sincheong) 8%, transparent), transparent); pointer-events: none; }
-	.closing-title { position: relative; font-family: var(--font-display); font-size: var(--font-size-h1); font-weight: var(--font-weight-light); letter-spacing: -0.02em; margin-bottom: var(--space-8); }
-
 	.section-divider { width: 48px; height: 1px; background: var(--color-border-default); margin: 0 auto; }
+
+	/* ── Principles ── */
+
+	.principles { max-width: var(--layout-max-width-mid); margin: 0 auto; padding: var(--space-24) var(--layout-padding-x); }
+	.principles-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-6); }
+	.principle-card { padding: var(--space-6) var(--space-8); border: 1px solid var(--color-border-default); border-radius: var(--radius-lg); transition: border-color var(--dur-base) var(--ease-smooth), background var(--dur-base) var(--ease-smooth); }
+	.principle-card:hover { background: var(--color-surface-raised); border-color: var(--color-border-hover); }
+	.principle-card[data-idx="0"]:hover { border-color: var(--color-app-munseo); }
+	.principle-card[data-idx="1"]:hover { border-color: var(--color-app-umbracast); }
+	.principle-card[data-idx="2"]:hover { border-color: var(--color-app-sincheong); }
+	.principle-title { font-family: var(--font-display); font-size: var(--font-size-h3); font-weight: var(--font-weight-medium); margin-bottom: var(--space-3); }
+	.principle-desc { font-family: var(--font-body); font-size: var(--font-size-small); font-weight: var(--font-weight-regular); color: var(--color-text-2); line-height: 1.7; }
+
+	/* ── Works ── */
+
+	.works { max-width: var(--layout-max-width-mid); margin: 0 auto; padding: var(--space-24) var(--layout-padding-x); }
+	.works-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-6); }
+	.works-card { display: flex; flex-direction: column; padding: var(--space-8); border: 1px solid var(--color-border-default); border-radius: var(--radius-lg); text-decoration: none; color: inherit; transition: border-color var(--dur-base) var(--ease-smooth), background var(--dur-base) var(--ease-smooth); }
+	.works-card:hover { background: var(--color-surface-raised); border-color: var(--color-border-hover); }
+	.works-munseo:hover { border-color: var(--color-app-munseo); }
+	.works-umbracast:hover { border-color: var(--color-app-umbracast); }
+	.works-sincheong:hover { border-color: var(--color-app-sincheong); }
+	.works-label { font-family: var(--font-ui); font-size: var(--font-size-caption); font-weight: var(--font-weight-medium); text-transform: uppercase; letter-spacing: 0.12em; margin-bottom: var(--space-3); }
+	.works-munseo .works-label { color: var(--color-app-munseo); }
+	.works-umbracast .works-label { color: var(--color-app-umbracast); }
+	.works-sincheong .works-label { color: var(--color-app-sincheong); }
+	.works-headline { font-family: var(--font-display); font-size: var(--font-size-h3); font-weight: var(--font-weight-medium); margin-bottom: var(--space-2); }
+	.works-desc { font-family: var(--font-body); font-size: var(--font-size-small); color: var(--color-text-3); margin-bottom: var(--space-6); flex-grow: 1; }
+	.works-domain { font-family: var(--font-ui); font-size: var(--font-size-caption); color: var(--color-text-3); }
+
+	/* ── Horizon ── */
+
+	.horizon { position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 50vh; padding: var(--space-24) var(--layout-padding-x); text-align: center; overflow: hidden; }
+	.horizon-glow { position: absolute; inset: 0; background: radial-gradient(ellipse 30% 40% at 30% 50%, color-mix(in oklch, var(--color-app-munseo) 8%, transparent), transparent), radial-gradient(ellipse 30% 40% at 50% 60%, color-mix(in oklch, var(--color-app-umbracast) 8%, transparent), transparent), radial-gradient(ellipse 30% 40% at 70% 40%, color-mix(in oklch, var(--color-app-sincheong) 8%, transparent), transparent); pointer-events: none; }
+	.horizon-title { position: relative; font-family: var(--font-display); font-size: var(--font-size-h1); font-weight: var(--font-weight-light); letter-spacing: -0.02em; margin-bottom: var(--space-8); }
+
+	/* ── Responsive ── */
 
 	@media (max-width: 768px) {
 		.hero-title { font-size: clamp(2rem, 6vw, 3.5rem); }
-		.philosophy-grid { grid-template-columns: 1fr; }
-		.app-headline { font-size: var(--font-size-h1); }
-		.steps { grid-template-columns: 1fr; }
+		.manifesto-lead { font-size: var(--font-size-h2); }
+		.manifesto-body p { font-size: var(--font-size-body); }
+		.principles-grid { grid-template-columns: 1fr; }
+		.works-grid { grid-template-columns: 1fr; }
 	}
 	@media (max-width: 480px) {
 		.hero-title { font-size: clamp(1.75rem, 5vw, 2.5rem); }
