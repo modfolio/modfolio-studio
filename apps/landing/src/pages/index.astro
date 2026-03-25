@@ -67,6 +67,8 @@ const faqs = [
 			</div>
 		</section>
 
+		<div class="section-divider" aria-hidden="true"></div>
+
 		<section class="philosophy">
 			<div class="philosophy-grid">
 				<div class="philosophy-block">
@@ -99,6 +101,8 @@ const faqs = [
 				</section>
 			))}
 		</div>
+
+		<div class="section-divider" aria-hidden="true"></div>
 
 		<section class="how">
 			<h2 class="section-heading">시작하는 데 5분이면 됩니다</h2>
@@ -172,15 +176,15 @@ const faqs = [
 	.hero { position: relative; display: flex; align-items: center; justify-content: center; min-height: 100vh; padding: var(--header-height) var(--layout-padding-x) var(--space-16); overflow: hidden; }
 	.hero-bg { position: absolute; inset: 0; pointer-events: none; }
 	.hero-glow { position: absolute; inset: 0; background: radial-gradient(ellipse 50% 40% at 50% 45%, color-mix(in oklch, var(--color-accent-primary) 10%, transparent), transparent); }
-	.hero-grid-pattern { position: absolute; inset: 0; background: repeating-linear-gradient(0deg, transparent, transparent 79px, color-mix(in oklch, var(--color-border-default) 30%, transparent) 80px), repeating-linear-gradient(90deg, transparent, transparent 79px, color-mix(in oklch, var(--color-border-default) 30%, transparent) 80px); opacity: 0.4; }
+	.hero-grid-pattern { position: absolute; inset: 0; background: radial-gradient(circle, color-mix(in oklch, var(--color-border-default) 40%, transparent) 1px, transparent 1px); background-size: 40px 40px; opacity: 0.5; }
 	.hero-content { position: relative; text-align: center; max-width: var(--layout-max-width-mid); }
 	.hero-eyebrow { font-family: var(--font-ui); font-size: var(--font-size-caption); font-weight: var(--font-weight-medium); text-transform: uppercase; letter-spacing: 0.15em; color: var(--color-accent-primary); margin-bottom: var(--space-4); }
 	.hero-title { font-family: var(--font-display); font-size: var(--font-size-hero); font-weight: var(--font-weight-light); line-height: 1.15; letter-spacing: -0.03em; margin-bottom: var(--space-12); text-shadow: 0 4px 40px color-mix(in oklch, var(--color-accent-primary) 15%, transparent); }
 
 	.philosophy { max-width: var(--layout-max-width-mid); margin: 0 auto; padding: var(--space-24) var(--layout-padding-x); }
 	.philosophy-grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-8); }
-	.philosophy-block { padding: var(--space-8); border: 1px solid var(--color-border-default); border-radius: var(--radius-lg); transition: background var(--dur-base) var(--ease-smooth), border-color var(--dur-base) var(--ease-smooth); }
-	.philosophy-block:hover { background: var(--color-surface-raised); border-color: var(--color-border-hover); }
+	.philosophy-block { padding: var(--space-8); background: color-mix(in oklch, var(--color-surface-1) 30%, transparent); backdrop-filter: blur(12px); border: 1px solid color-mix(in oklch, var(--color-border-default) 50%, transparent); border-radius: var(--radius-lg); transition: background var(--dur-base) var(--ease-smooth), border-color var(--dur-base) var(--ease-smooth); }
+	.philosophy-block:hover { background: color-mix(in oklch, var(--color-surface-1) 50%, transparent); border-color: var(--color-border-hover); }
 	.philosophy-label { font-family: var(--font-ui); font-size: var(--font-size-caption); font-weight: var(--font-weight-medium); text-transform: uppercase; letter-spacing: 0.12em; color: var(--color-accent-primary); margin-bottom: var(--space-4); }
 	.philosophy-text { font-family: var(--font-body); font-size: var(--font-size-body); font-weight: var(--font-weight-regular); line-height: 1.8; color: var(--color-text-2); }
 
@@ -188,7 +192,8 @@ const faqs = [
 	.showcase-eyebrow { font-family: var(--font-ui); font-size: var(--font-size-caption); font-weight: var(--font-weight-medium); text-transform: uppercase; letter-spacing: 0.15em; color: var(--color-accent-primary); margin-bottom: var(--space-4); }
 	.showcase-heading { font-family: var(--font-display); font-size: var(--font-size-h1); font-weight: var(--font-weight-light); letter-spacing: -0.02em; }
 
-	.app-section { position: relative; display: flex; align-items: center; justify-content: center; min-height: 80vh; padding: var(--space-24) var(--layout-padding-x); overflow: hidden; }
+	#apps { scroll-snap-type: y proximity; }
+	.app-section { position: relative; display: flex; align-items: center; justify-content: center; min-height: 100vh; padding: var(--space-24) var(--layout-padding-x); overflow: hidden; scroll-snap-align: start; }
 	.app-inner { position: relative; z-index: 1; text-align: center; max-width: var(--layout-max-width-mid); margin: 0 auto; animation: fadeUp var(--dur-slow) var(--ease-smooth) both; animation-timeline: view(); animation-range: entry 0% entry 40%; }
 	@keyframes fadeUp { from { opacity: 0; transform: translateY(var(--space-8)); } to { opacity: 1; transform: translateY(0); } }
 	@supports not (animation-timeline: view()) { .app-inner { opacity: 1; transform: none; animation: none; } }
@@ -208,9 +213,9 @@ const faqs = [
 	.app-umbracast .btn-filled:hover { box-shadow: 0 0 32px color-mix(in oklch, var(--color-app-umbracast) 30%, transparent); }
 	.app-sincheong .btn-filled { background: var(--color-app-sincheong); }
 	.app-sincheong .btn-filled:hover { box-shadow: 0 0 32px color-mix(in oklch, var(--color-app-sincheong) 30%, transparent); }
-	.app-munseo { background: radial-gradient(ellipse 60% 50% at 70% 50%, color-mix(in oklch, var(--color-app-munseo) 8%, transparent), var(--color-surface-0) 65%); }
-	.app-umbracast { background: radial-gradient(ellipse 60% 50% at 50% 40%, color-mix(in oklch, var(--color-app-umbracast) 8%, transparent), var(--color-surface-0) 65%); }
-	.app-sincheong { background: radial-gradient(ellipse 60% 50% at 30% 50%, color-mix(in oklch, var(--color-app-sincheong) 8%, transparent), var(--color-surface-0) 65%); }
+	.app-munseo { background: radial-gradient(ellipse 60% 50% at 70% 50%, color-mix(in oklch, var(--color-app-munseo) 12%, transparent), var(--color-surface-0) 65%); }
+	.app-umbracast { background: radial-gradient(ellipse 60% 50% at 50% 40%, color-mix(in oklch, var(--color-app-umbracast) 12%, transparent), var(--color-surface-0) 65%); }
+	.app-sincheong { background: radial-gradient(ellipse 60% 50% at 30% 50%, color-mix(in oklch, var(--color-app-sincheong) 12%, transparent), var(--color-surface-0) 65%); }
 
 	.section-heading { font-family: var(--font-display); font-size: var(--font-size-h2); font-weight: var(--font-weight-light); text-align: center; letter-spacing: -0.02em; margin-bottom: var(--space-12); }
 
@@ -221,7 +226,8 @@ const faqs = [
 	.step[data-step="0"]:hover { border-color: var(--color-app-munseo); }
 	.step[data-step="1"]:hover { border-color: var(--color-app-umbracast); }
 	.step[data-step="2"]:hover { border-color: var(--color-app-sincheong); }
-	.step-num { display: block; font-family: var(--font-mono); font-size: var(--font-size-display); font-weight: var(--font-weight-bold); margin-bottom: var(--space-4); }
+	.step { position: relative; overflow: hidden; }
+	.step-num { display: block; font-family: var(--font-display); font-size: clamp(4rem, 8vw, 8rem); font-weight: var(--font-weight-light); line-height: 1; opacity: 0.15; margin-bottom: calc(var(--space-4) * -1); }
 	.step[data-step="0"] .step-num { color: var(--color-app-munseo); }
 	.step[data-step="1"] .step-num { color: var(--color-app-umbracast); }
 	.step[data-step="2"] .step-num { color: var(--color-app-sincheong); }
@@ -240,8 +246,10 @@ const faqs = [
 	.faq-a { font-family: var(--font-body); font-size: var(--font-size-small); font-weight: var(--font-weight-regular); color: var(--color-text-2); line-height: 1.7; padding: 0 0 var(--space-6) var(--space-8); max-width: 60ch; }
 
 	.closing { position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 50vh; padding: var(--space-24) var(--layout-padding-x); text-align: center; overflow: hidden; }
-	.closing-glow { position: absolute; inset: 0; background: radial-gradient(ellipse 30% 40% at 30% 50%, color-mix(in oklch, var(--color-app-munseo) 5%, transparent), transparent), radial-gradient(ellipse 30% 40% at 50% 60%, color-mix(in oklch, var(--color-app-umbracast) 5%, transparent), transparent), radial-gradient(ellipse 30% 40% at 70% 40%, color-mix(in oklch, var(--color-app-sincheong) 5%, transparent), transparent); pointer-events: none; }
+	.closing-glow { position: absolute; inset: 0; background: radial-gradient(ellipse 30% 40% at 30% 50%, color-mix(in oklch, var(--color-app-munseo) 8%, transparent), transparent), radial-gradient(ellipse 30% 40% at 50% 60%, color-mix(in oklch, var(--color-app-umbracast) 8%, transparent), transparent), radial-gradient(ellipse 30% 40% at 70% 40%, color-mix(in oklch, var(--color-app-sincheong) 8%, transparent), transparent); pointer-events: none; }
 	.closing-title { position: relative; font-family: var(--font-display); font-size: var(--font-size-h1); font-weight: var(--font-weight-light); letter-spacing: -0.02em; margin-bottom: var(--space-8); }
+
+	.section-divider { width: 48px; height: 1px; background: var(--color-border-default); margin: 0 auto; }
 
 	@media (max-width: 768px) {
 		.hero-title { font-size: clamp(2rem, 6vw, 3.5rem); }
