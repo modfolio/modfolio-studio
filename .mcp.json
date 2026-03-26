@@ -9,13 +9,19 @@
     },
     "playwright": {
       "type": "stdio",
-      "command": "/home/mod/.bun/bin/playwright-mcp",
-      "args": []
+      "command": "npx",
+      "args": [
+        "-y",
+        "@anthropic-ai/mcp-playwright"
+      ]
     },
     "svelte": {
       "type": "stdio",
-      "command": "/home/mod/.bun/bin/svelte-mcp",
-      "args": []
+      "command": "npx",
+      "args": [
+        "-y",
+        "svelte-mcp"
+      ]
     },
     "astro": {
       "type": "http",
