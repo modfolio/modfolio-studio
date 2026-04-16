@@ -11,6 +11,8 @@
       "Bash(bun run check)",
       "Bash(bun run typecheck)",
       "Bash(bun run typecheck:*)",
+      "Bash(bun run harness-pull)",
+      "Bash(bun run harness-pull:*)",
       "Bash(bun run test:*)",
       "Bash(bun run lint)",
       "Bash(bun run lint:*)",
