@@ -1,31 +1,25 @@
 {
-  "mcpServers": {
-    "github": {
-      "type": "http",
-      "url": "https://api.githubcopilot.com/mcp/",
-      "headers": {
-        "Authorization": "Bearer ${GITHUB_TOKEN}"
-      }
-    },
-    "playwright": {
-      "type": "stdio",
-      "command": "npx",
-      "args": [
-        "-y",
-        "@anthropic-ai/mcp-playwright"
-      ]
-    },
-    "svelte": {
-      "type": "stdio",
-      "command": "npx",
-      "args": [
-        "-y",
-        "svelte-mcp"
-      ]
-    },
-    "astro": {
-      "type": "http",
-      "url": "https://mcp.docs.astro.build/mcp"
-    }
-  }
+	"mcpServers": {
+		"github": {
+			"type": "http",
+			"url": "https://api.githubcopilot.com/mcp/",
+			"headers": {
+				"Authorization": "Bearer ${GITHUB_TOKEN}"
+			}
+		},
+		"playwright": {
+			"type": "stdio",
+			"command": "bunx",
+			"args": ["--bun", "-y", "@anthropic-ai/mcp-playwright"]
+		},
+		"svelte": {
+			"type": "stdio",
+			"command": "bunx",
+			"args": ["--bun", "-y", "svelte-mcp"]
+		},
+		"astro": {
+			"type": "http",
+			"url": "https://mcp.docs.astro.build/mcp"
+		}
+	}
 }

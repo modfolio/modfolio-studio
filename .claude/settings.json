@@ -1,15 +1,16 @@
 {
   "permissions": {
     "allow": [
+      "Bash(bun run quality:all)",
+      "Bash(bun run quality:*)",
+      "Bash(bun run build)",
+      "Bash(bun run build:*)",
+      "Bash(bun run dev)",
+      "Bash(bun run dev:*)",
       "Bash(bun run check:*)",
       "Bash(bun run check)",
       "Bash(bun run typecheck)",
       "Bash(bun run typecheck:*)",
-      "Bash(bun run quality:*)",
-      "Bash(bun run dev)",
-      "Bash(bun run dev:*)",
-      "Bash(bun run build)",
-      "Bash(bun run build:*)",
       "Bash(bun run test:*)",
       "Bash(bun run lint)",
       "Bash(bun run lint:*)",
@@ -27,6 +28,14 @@
         "hooks": [
           {
             "type": "command",
+            "command": "bun run .claude/hooks/post-biome-check.ts"
+          },
+          {
+            "type": "command",
+            "command": "bun run .claude/hooks/post-contract-touch.ts"
+          },
+          {
+            "type": "command",
             "command": "bun run check 2>&1 | tail -8"
           }
         ]
@@ -38,27 +47,24 @@
         "hooks": [
           {
             "type": "command",
-            "command": "if echo \"$TOOL_INPUT\" | grep -q 'git commit'; then bun run quality:all; fi"
+            "command": "bun run .claude/hooks/pre-destructive-guard.ts"
           },
           {
             "type": "command",
-            "command": "if echo \"$TOOL_INPUT\" | grep -q 'git push'; then bun run quality:all; fi"
+            "command": "bun run .claude/hooks/pre-commit-guard.ts"
           },
           {
             "type": "command",
-            "command": "if echo \"$TOOL_INPUT\" | grep -qE -- '--force|--no-verify'; then echo '🚫 Git safety violation: --force/--no-verify 금지 (CLAUDE.md 불변원칙 #5).' && exit 1; fi"
-          },
+            "command": "bun run .claude/hooks/pre-gh-api-guard.ts"
+          }
+        ]
+      },
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
           {
             "type": "command",
-            "command": "if echo \"$TOOL_INPUT\" | grep -qE 'git (reset --hard|clean -f|checkout \\.)'; then echo '🚫 파괴적 git 명령 감지. 사용자 확인 필요.' && exit 1; fi"
-          },
-          {
-            "type": "command",
-            "command": "if echo \"$TOOL_INPUT\" | grep -qE 'gh api|gh pr|gh issue|gh run'; then echo '⚠ GitHub API 호출 감지. 로컬에서 가능한 작업인지 먼저 확인하세요. rate limit 낭비 주의.'; fi"
-          },
-          {
-            "type": "command",
-            "command": "if echo \"$TOOL_INPUT\" | grep -qE 'bun add|bun install|npm install'; then if echo \"$TOOL_INPUT\" | grep -qE '@modfolio/(ui|components|design-system|shared)'; then echo '🚫 House of Brands 위반: 공유 UI 라이브러리 설치 금지. 앱별 독립 디자인 시스템.' && exit 1; fi; fi"
+            "command": "bun run .claude/hooks/pre-ui-edit-notice.ts"
           }
         ]
       }
@@ -66,6 +72,21 @@
     "Stop": [
       {
         "hooks": [
+          {
+            "type": "agent",
+            "prompt": "End-of-turn quality gate. Detect violations in changed files. Do NOT modify any files.\n\nSTEP 1: Run `git status --porcelain`. If no changed files, respond {\"ok\": true}.\nSTEP 2: Per category, grep changed files for violations:\n  - [Hardcoded color values]: Hardcoded colors (#hex, rgb(), hsl(), oklch() outside var()). Must use CSS custom properties. (files: *.css,*.svelte,*.tsx,*.jsx,*.astro,*.vue) [error]\n  - [TypeScript suppressions]: @ts-ignore, @ts-expect-error, `as any` usage. Must fix root cause. (files: *.ts,*.tsx) [error]\n  - [Biome suppressions]: biome-ignore directives. Must fix the underlying issue. (files: *.ts,*.tsx,*.svelte,*.astro,*.vue) [error]\n  - [Missing accessibility attributes]: Interactive elements (buttons, inputs, links) missing aria-label or accessible text. (files: *.svelte,*.tsx,*.jsx,*.astro,*.vue) [warn]\n  - [Missing reduced-motion]: CSS animations/transitions without prefers-reduced-motion fallback. (files: *.css,*.svelte,*.tsx,*.jsx,*.astro,*.vue) [warn]\n  - [Legacy Svelte 4 API usage]: Legacy Svelte 4 patterns: export let (use $props()), on:event (use onevent), slot (use @render snippet). SvelteKit 5 runes required. (files: *.svelte) [error]\n  - [State mutation inside $effect()]: Direct state mutation inside $effect() — use $derived() for computed values. (files: *.svelte,*.ts) [warn]\n  - [Unnecessary client:* directives]: Unnecessary client:* directives on static components — remove for zero-JS. (files: *.astro) [warn]\nSTEP 3: Overhaul audit — if user requested redesign but only superficial patches detected, report warning.\n\nRESPONSE FORMAT: JSON only.\nIf no violations: {\"ok\": true}\nIf violations found: {\"ok\": false, \"reason\": \"- [severity] file:line — description\"}",
+            "timeout": 45,
+            "model": "haiku",
+            "maxTurns": 3
+          },
+          {
+            "type": "command",
+            "command": "bun run .claude/hooks/stop-pattern-history.ts"
+          },
+          {
+            "type": "command",
+            "command": "bun run .claude/hooks/stop-feedback-log.ts"
+          },
           {
             "type": "command",
             "command": "bash scripts/quality-gate.sh 2>&1 | tail -30"

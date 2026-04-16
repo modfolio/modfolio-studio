@@ -14,8 +14,10 @@
 		"dev:app": "cd apps/app && bun run dev",
 		"check": "biome check .",
 		"check:fix": "biome check --write .",
-		"typecheck": "cd apps/landing && bun run check",
-		"typecheck:app": "cd apps/app && bun run check"
+		"typecheck": "echo 'root typecheck: astro check disabled until libuv/css-tree fix. see apps/*/check.'",
+		"typecheck:astro": "cd apps/landing && bun run check",
+		"typecheck:app": "cd apps/app && bun run check",
+		"harness-pull": "bun run ../modfolio-universe/scripts/harness-pull.ts"
 	},
 	"devDependencies": {
 		"@biomejs/biome": "^2.4.8"
