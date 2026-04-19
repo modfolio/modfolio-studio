@@ -7,13 +7,19 @@
  * output. Reported by gistcore (Issue 4, 2026-04-16): the agent version wrote
  * empty jsonl and skipped real violations.
  *
+ * V2.4: honors PATTERN_HISTORY_MODE env (off|warn|block). warn and block are
+ * informational at this hook stage — the actual commit block happens in
+ * pre-commit-guard.ts. Here we add a prominent stderr banner when block mode
+ * is on and an ESCALATE row is newly added or updated, so Claude sees the
+ * signal before the next commit.
+ *
  * Self-skip: changedFiles() in _lib excludes memory/pattern-history.* so this
  * hook does not loop by detecting its own writes.
  */
 
 import { existsSync, mkdirSync, readFileSync, statSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
-import { changedFiles, gitRoot } from './_lib.ts';
+import { changedFiles, DETECTOR_SOURCE_FILES, gitRoot } from './_lib.ts';
 
 interface PatternRule {
   id: string;
@@ -39,7 +45,12 @@ const RULES: PatternRule[] = [
   },
   {
     id: 'ts_ignore_or_any',
-    test: (file, content) => TS_EXT.test(file) && /@ts-ignore|as\s+any\b/.test(content),
+    // Self-exclusion: the pattern regex is a string literal inside the detector
+    // sources themselves — a naive scan treats those strings as violations.
+    test: (file, content) =>
+      TS_EXT.test(file) &&
+      !DETECTOR_SOURCE_FILES.has(file) &&
+      /@ts-ignore|as\s+any\b/.test(content),
   },
   {
     id: 'biome_ignore_file',
@@ -170,5 +181,17 @@ for (const [patternId, fileSet] of violationsPerFile) {
 const rows = [...existing.values()];
 writeJsonl(jsonlPath, rows);
 writeFileSync(mdPath, renderMarkdown(rows), 'utf-8');
+
+// V2.4: surface a banner for ESCALATE rows when PATTERN_HISTORY_MODE=block.
+const mode = (process.env.PATTERN_HISTORY_MODE ?? 'warn').toLowerCase();
+if (mode === 'block') {
+  const escalated = rows.filter((r) => r.status === 'ESCALATE');
+  if (escalated.length > 0) {
+    const names = escalated.map((r) => r.pattern).join(', ');
+    console.error(
+      `[pattern-history] ESCALATE in block mode — ${escalated.length} pattern(s): ${names}. Next commit will be blocked.`,
+    );
+  }
+}
 
 process.exit(0);
