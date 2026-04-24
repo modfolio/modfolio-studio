@@ -17,9 +17,13 @@
 		"typecheck": "echo 'root typecheck: astro check disabled until libuv/css-tree fix. see apps/*/check.'",
 		"typecheck:astro": "cd apps/landing && bun run check",
 		"typecheck:app": "cd apps/app && bun run check",
-		"harness-pull": "bun run ../modfolio-universe/scripts/harness-pull.ts"
+		"harness-pull": "modfolio-harness-pull"
 	},
 	"devDependencies": {
-		"@biomejs/biome": "^2.4.8"
+		"@biomejs/biome": "^2.4.8",
+		"@modfolio/harness": "^2.12.0"
+	},
+	"overrides": {
+		"@biomejs/cli-linux-x64-musl": "npm:@biomejs/cli-linux-x64@^2.4.8"
 	}
 }
