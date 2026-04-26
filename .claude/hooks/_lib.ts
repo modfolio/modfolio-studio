@@ -10,24 +10,24 @@
  * commands silently failed on member projects using a native Windows shell.
  */
 
-import { execSync } from 'node:child_process';
-import { existsSync } from 'node:fs';
-import { dirname, join, resolve } from 'node:path';
-import { stdin } from 'node:process';
+import { execSync } from "node:child_process";
+import { existsSync } from "node:fs";
+import { dirname, join, resolve } from "node:path";
+import { stdin } from "node:process";
 
 // hooks/_lib 는 hook 프로세스가 spawnSync stdin pipe 로 실행돼 boot-sensitive.
 // relative import 가 stdin race 를 유발했던 회귀 (release-gate pre-destructive-guard
 // exit 0 회귀, 2026-04-22 v2.10) 를 피하기 위해 ecosystem-paths 의
 // FOLDER_CANDIDATES 를 **여기서는 리터럴로 유지**. 다른 scripts 는
 // `lib/ecosystem-paths.ts` 에서 동일 리스트를 import 한다.
-const ECOSYSTEM_FOLDER_CANDIDATES_INLINE = ['modfolio-ecosystem', 'modfolio-universe'] as const;
+const ECOSYSTEM_FOLDER_CANDIDATES_INLINE = ["modfolio-ecosystem", "modfolio-universe"] as const;
 
 export interface HookInput {
-  tool_name?: string;
-  tool_input?: Record<string, unknown>;
-  tool_response?: Record<string, unknown>;
-  stop_hook_active?: boolean;
-  hook_event_name?: string;
+	tool_name?: string;
+	tool_input?: Record<string, unknown>;
+	tool_response?: Record<string, unknown>;
+	stop_hook_active?: boolean;
+	hook_event_name?: string;
 }
 
 /** Maximum ms to wait for the Claude Code hook runner to close stdin. */
@@ -40,53 +40,53 @@ const STDIN_TIMEOUT_MS = 5000;
  * immediately, but a misconfigured runner must never hang the commit.
  */
 export async function readHookInput(): Promise<HookInput> {
-  const read = (async () => {
-    let data = '';
-    for await (const chunk of stdin) data += chunk;
-    return data;
-  })();
+	const read = (async () => {
+		let data = "";
+		for await (const chunk of stdin) data += chunk;
+		return data;
+	})();
 
-  const timer = new Promise<string>((resolveTimer) => {
-    setTimeout(() => resolveTimer(''), STDIN_TIMEOUT_MS).unref?.();
-  });
+	const timer = new Promise<string>((resolveTimer) => {
+		setTimeout(() => resolveTimer(""), STDIN_TIMEOUT_MS).unref?.();
+	});
 
-  const data = await Promise.race([read, timer]);
-  if (!data.trim()) return {};
-  try {
-    return JSON.parse(data) as HookInput;
-  } catch {
-    return {};
-  }
+	const data = await Promise.race([read, timer]);
+	if (!data.trim()) return {};
+	try {
+		return JSON.parse(data) as HookInput;
+	} catch {
+		return {};
+	}
 }
 
 /** Extract the Bash command, if the input was for a Bash tool. */
 export function bashCommand(input: HookInput): string {
-  const cmd = input.tool_input?.command;
-  return typeof cmd === 'string' ? cmd : '';
+	const cmd = input.tool_input?.command;
+	return typeof cmd === "string" ? cmd : "";
 }
 
 /** Extract file paths for Edit / Write / MultiEdit tools. */
 export function editedFiles(input: HookInput): string[] {
-  const out: string[] = [];
-  const fp = input.tool_input?.file_path;
-  if (typeof fp === 'string') out.push(fp);
-  const edits = input.tool_input?.edits;
-  if (Array.isArray(edits) && typeof fp === 'string') {
-    // MultiEdit already captured by file_path above
-  }
-  return out;
+	const out: string[] = [];
+	const fp = input.tool_input?.file_path;
+	if (typeof fp === "string") out.push(fp);
+	const edits = input.tool_input?.edits;
+	if (Array.isArray(edits) && typeof fp === "string") {
+		// MultiEdit already captured by file_path above
+	}
+	return out;
 }
 
 /** Return the current git top-level directory, or cwd on failure. */
 export function gitRoot(): string {
-  try {
-    return execSync('git rev-parse --show-toplevel', {
-      encoding: 'utf-8',
-      stdio: ['ignore', 'pipe', 'ignore'],
-    }).trim();
-  } catch {
-    return process.cwd();
-  }
+	try {
+		return execSync("git rev-parse --show-toplevel", {
+			encoding: "utf-8",
+			stdio: ["ignore", "pipe", "ignore"],
+		}).trim();
+	} catch {
+		return process.cwd();
+	}
 }
 
 /**
@@ -95,17 +95,17 @@ export function gitRoot(): string {
  * — callers decide whether that is fatal.
  */
 export function findEcosystemRoot(startDir: string): string | undefined {
-  let current = resolve(startDir);
-  for (let i = 0; i < 10; i++) {
-    for (const folderName of ECOSYSTEM_FOLDER_CANDIDATES_INLINE) {
-      const candidate = join(current, folderName);
-      if (existsSync(join(candidate, 'ecosystem.json'))) return candidate;
-    }
-    const parent = dirname(current);
-    if (parent === current) break;
-    current = parent;
-  }
-  return undefined;
+	let current = resolve(startDir);
+	for (let i = 0; i < 10; i++) {
+		for (const folderName of ECOSYSTEM_FOLDER_CANDIDATES_INLINE) {
+			const candidate = join(current, folderName);
+			if (existsSync(join(candidate, "ecosystem.json"))) return candidate;
+		}
+		const parent = dirname(current);
+		if (parent === current) break;
+		current = parent;
+	}
+	return undefined;
 }
 
 /**
@@ -117,36 +117,99 @@ export function findEcosystemRoot(startDir: string): string | undefined {
  * functions consult this set to self-exclude.
  */
 export const DETECTOR_SOURCE_FILES: ReadonlySet<string> = new Set([
-  'scripts/hooks/stop-pattern-history.ts',
-  'scripts/hooks/pre-commit-guard.ts',
+	"scripts/hooks/stop-pattern-history.ts",
+	"scripts/hooks/pre-commit-guard.ts",
 ]);
+
+/**
+ * Record a hook execution duration to the OTLP collector when reachable.
+ * Silent fail when the toolkit is offline — hook latency must not regress
+ * (caps at 500ms timeout). Used by post-* hooks to trace timing for
+ * agentic-engineering canon §2.3 untrusted-verification chain.
+ *
+ * Convention: `service.name=modfolio-ecosystem-hooks`, metric name
+ * `hook.duration_ms` with attribute `hook.name=<id>`. Aggregation as gauge
+ * (collector converts to histogram on ingest if configured).
+ */
+export async function recordHookDuration(hookName: string, durationMs: number): Promise<void> {
+	const endpoint = process.env.OTEL_EXPORTER_OTLP_ENDPOINT;
+	if (!endpoint) return;
+	try {
+		const url = new URL("/v1/metrics", endpoint);
+		await fetch(url, {
+			method: "POST",
+			headers: { "Content-Type": "application/json" },
+			body: JSON.stringify({
+				resourceMetrics: [
+					{
+						resource: {
+							attributes: [
+								{
+									key: "service.name",
+									value: { stringValue: "modfolio-ecosystem-hooks" },
+								},
+							],
+						},
+						scopeMetrics: [
+							{
+								metrics: [
+									{
+										name: "hook.duration_ms",
+										unit: "ms",
+										gauge: {
+											dataPoints: [
+												{
+													attributes: [
+														{
+															key: "hook.name",
+															value: { stringValue: hookName },
+														},
+													],
+													asDouble: durationMs,
+													timeUnixNano: String(Date.now() * 1_000_000),
+												},
+											],
+										},
+									},
+								],
+							},
+						],
+					},
+				],
+			}),
+			signal: AbortSignal.timeout(500),
+		});
+	} catch {
+		// silent — toolkit unreachable. Hook must not regress when OTEL is offline.
+	}
+}
 
 /**
  * Git diff names, excluding pattern-history so the Stop pattern hook does
  * not detect itself and loop forever.
  */
 export function changedFiles(cwd: string): string[] {
-  try {
-    const staged = execSync('git diff --name-only --cached', {
-      cwd,
-      encoding: 'utf-8',
-      stdio: ['ignore', 'pipe', 'ignore'],
-    }).trim();
-    const unstaged = execSync('git diff --name-only', {
-      cwd,
-      encoding: 'utf-8',
-      stdio: ['ignore', 'pipe', 'ignore'],
-    }).trim();
-    const merged = new Set<string>();
-    for (const line of `${staged}\n${unstaged}`.split(/\r?\n/)) {
-      const trimmed = line.trim();
-      if (!trimmed) continue;
-      if (trimmed === 'memory/pattern-history.md') continue;
-      if (trimmed === 'memory/pattern-history.jsonl') continue;
-      merged.add(trimmed);
-    }
-    return [...merged].sort();
-  } catch {
-    return [];
-  }
+	try {
+		const staged = execSync("git diff --name-only --cached", {
+			cwd,
+			encoding: "utf-8",
+			stdio: ["ignore", "pipe", "ignore"],
+		}).trim();
+		const unstaged = execSync("git diff --name-only", {
+			cwd,
+			encoding: "utf-8",
+			stdio: ["ignore", "pipe", "ignore"],
+		}).trim();
+		const merged = new Set<string>();
+		for (const line of `${staged}\n${unstaged}`.split(/\r?\n/)) {
+			const trimmed = line.trim();
+			if (!trimmed) continue;
+			if (trimmed === "memory/pattern-history.md") continue;
+			if (trimmed === "memory/pattern-history.jsonl") continue;
+			merged.add(trimmed);
+		}
+		return [...merged].sort();
+	} catch {
+		return [];
+	}
 }
