@@ -156,8 +156,7 @@ const sanitizedEnv = sanitizePath();
 // 이 환경에서는 hook 이 quality:all 을 실행할 수 없는 platform 한계 →
 // informational SKIP. 사용자는 WSL native shell 에서 사전 quality:all
 // 실행을 권고 (CLAUDE.md 의 정공법 워크플로우).
-const isWindowsWslRepo =
-	process.platform === "win32" && /^\\\\wsl/i.test(process.cwd());
+const isWindowsWslRepo = process.platform === "win32" && /^\\\\wsl/i.test(process.cwd());
 
 if (isWindowsWslRepo) {
 	console.error(
