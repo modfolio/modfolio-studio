@@ -12,14 +12,14 @@
 			"command": "bunx",
 			"args": ["--bun", "-y", "@anthropic-ai/mcp-playwright"]
 		},
-		"astro": {
-			"type": "http",
-			"url": "https://mcp.docs.astro.build/mcp"
-		},
 		"svelte": {
 			"type": "stdio",
 			"command": "bunx",
 			"args": ["--bun", "-y", "svelte-mcp"]
+		},
+		"astro": {
+			"type": "http",
+			"url": "https://mcp.docs.astro.build/mcp"
 		}
 	}
 }
