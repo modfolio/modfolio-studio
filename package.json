@@ -21,7 +21,7 @@
 		"modfolio": "modfolio-check"
 	},
 	"devDependencies": {
-		"@biomejs/biome": "^2.4.8",
+		"@biomejs/biome": "^2.4.15",
 		"@modfolio/harness": "^3.4.0"
 	},
 	"overrides": {
