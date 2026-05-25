@@ -10,12 +10,12 @@
 		"playwright": {
 			"type": "stdio",
 			"command": "bunx",
-			"args": ["--bun", "-y", "@anthropic-ai/mcp-playwright"]
+			"args": ["--bun", "-y", "@playwright/mcp"]
 		},
 		"svelte": {
 			"type": "stdio",
 			"command": "bunx",
-			"args": ["--bun", "-y", "svelte-mcp"]
+			"args": ["--bun", "-y", "@sveltejs/mcp"]
 		},
 		"astro": {
 			"type": "http",

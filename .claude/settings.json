@@ -1,139 +1,181 @@
 {
-  "permissions": {
-    "allow": [
-      "Bash(bun run quality:all)",
-      "Bash(bun run quality:*)",
-      "Bash(bun run build)",
-      "Bash(bun run build:*)",
-      "Bash(bun run dev)",
-      "Bash(bun run dev:*)",
-      "Bash(bun run check:*)",
-      "Bash(bun run check)",
-      "Bash(bun run typecheck)",
-      "Bash(bun run typecheck:*)",
-      "Bash(bun run harness-pull)",
-      "Bash(bun run harness-pull:*)",
-      "Bash(bun run modfolio)",
-      "Bash(bun run modfolio:*)",
-      "Bash(bun run test:*)",
-      "Bash(bun run lint)",
-      "Bash(bun run lint:*)",
-      "Bash(bun run format)",
-      "Bash(bun run format:*)",
-      "Bash(bun run preview)",
-      "Bash(bun run preview:*)",
-      "Bash(bash scripts/quality-gate.sh*)"
-    ],
-    "defaultMode": "bypassPermissions"
-  },
-  "hooks": {
-    "PostToolUse": [
-      {
-        "matcher": "Edit|Write",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "bun run .claude/hooks/post-biome-check.ts"
-          },
-          {
-            "type": "command",
-            "command": "bun run .claude/hooks/post-contract-touch.ts"
-          },
-          {
-            "type": "command",
-            "command": "bun run check 2>&1 | tail -8"
-          }
-        ]
-      }
-    ],
-    "PreToolUse": [
-      {
-        "matcher": "Bash",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "bun run .claude/hooks/pre-destructive-guard.ts"
-          },
-          {
-            "type": "command",
-            "command": "bun run .claude/hooks/pre-commit-guard.ts"
-          },
-          {
-            "type": "command",
-            "command": "bun run .claude/hooks/pre-push-guard.ts"
-          },
-          {
-            "type": "command",
-            "command": "bun run .claude/hooks/pre-gh-api-guard.ts"
-          }
-        ]
-      },
-      {
-        "matcher": "Edit|Write",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "bun run .claude/hooks/pre-ui-edit-notice.ts"
-          }
-        ]
-      }
-    ],
-    "PreCompact": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "bun run .claude/hooks/pre-compact-guard.ts"
-          }
-        ]
-      }
-    ],
-    "Stop": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "bun run .claude/hooks/stop-pattern-history.ts"
-          },
-          {
-            "type": "command",
-            "command": "bun run .claude/hooks/stop-feedback-log.ts"
-          },
-          {
-            "type": "command",
-            "command": "bash scripts/quality-gate.sh 2>&1 | tail -30"
-          },
-          {
-            "type": "agent",
-            "prompt": "Read /tmp is not needed. Instead, run `bash scripts/quality-gate.sh 2>&1` and read the output.\n\nIf the output contains 'PASS', respond {\"ok\": true}.\n\nIf the output contains 'FAIL':\n1. Read memory/pattern-history.md\n2. For each violation pattern in the output:\n   - If the pattern already exists in the table: increment count, update date to today\n   - If new: append row: | pattern description | 1 | today's date | TRACKING |\n   - If any pattern count reaches 3: change status to ESCALATE\n3. Write updated memory/pattern-history.md\n4. Respond {\"ok\": false, \"reason\": \"<summary of violations>\"}\n\nRESPONSE FORMAT: You MUST respond with ONLY a JSON object, no other text.",
-            "timeout": 15
-          },
-          {
-            "type": "agent",
-            "prompt": "Check if architecture/design decisions were made in this turn. If yes, append to memory/decisions-log.md with format:\n\n## [date] [title]\n- 결정: ...\n- 근거: ...\n- 대안: ...\n- 선택 이유: ...\n\nRESPONSE FORMAT: You MUST respond with ONLY a JSON object, no other text.\nIf no decisions were made: {\"ok\": true}\nIf decisions were logged: {\"ok\": true}",
-            "timeout": 15
-          },
-          {
-            "type": "agent",
-            "prompt": "Track skill effectiveness. Check if any skills (slash commands like /component, /page, /design, etc.) were invoked in this turn.\n\nIf skills were invoked:\n1. Read memory/skill-effectiveness.md\n2. For each skill invoked, update or append a row: | skill-name | count | last date | outcome |\n   - outcome: success (task completed), partial (needed manual fix), fail (abandoned)\n3. Write updated file\n\nIf no skills were invoked, do nothing.\n\nRESPONSE FORMAT: You MUST respond with ONLY a JSON object, no other text.\n{\"ok\": true}",
-            "timeout": 10
-          }
-        ]
-      }
-    ],
-    "SessionStart": [
-      {
-        "matcher": ".*",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "bun run .claude/hooks/session-start-pickup.ts"
-          }
-        ]
-      }
-    ]
-  },
-  "env": {
-    "CLAUDE_CODE_EFFORT_LEVEL": "max"
-  }
+	"permissions": {
+		"allow": [
+			"Bash(bun run quality:all)",
+			"Bash(bun run quality:*)",
+			"Bash(bun run build)",
+			"Bash(bun run build:*)",
+			"Bash(bun run dev)",
+			"Bash(bun run dev:*)",
+			"Bash(bun run check:*)",
+			"Bash(bun run check)",
+			"Bash(bun run typecheck)",
+			"Bash(bun run typecheck:*)",
+			"Bash(bun run harness-pull)",
+			"Bash(bun run harness-pull:*)",
+			"Bash(bun run modfolio)",
+			"Bash(bun run modfolio:*)",
+			"Bash(bun run test:*)",
+			"Bash(bun run lint)",
+			"Bash(bun run lint:*)",
+			"Bash(bun run format)",
+			"Bash(bun run format:*)",
+			"Bash(bun run preview)",
+			"Bash(bun run preview:*)",
+			"Bash(bash scripts/quality-gate.sh*)"
+		],
+		"defaultMode": "bypassPermissions"
+	},
+	"hooks": {
+		"PostToolUse": [
+			{
+				"matcher": "Edit|Write",
+				"hooks": [
+					{
+						"type": "command",
+						"command": "bun run .claude/hooks/post-biome-check.ts"
+					},
+					{
+						"type": "command",
+						"command": "bun run .claude/hooks/post-contract-touch.ts"
+					},
+					{
+						"type": "command",
+						"command": "bun run check 2>&1 | tail -8"
+					}
+				]
+			},
+			{
+				"matcher": "Bash|Read",
+				"hooks": [
+					{
+						"type": "command",
+						"command": "bun run .claude/hooks/post-secret-redact.ts"
+					}
+				]
+			}
+		],
+		"PreToolUse": [
+			{
+				"matcher": "Bash",
+				"hooks": [
+					{
+						"type": "command",
+						"command": "bun run .claude/hooks/pre-destructive-guard.ts"
+					},
+					{
+						"type": "command",
+						"command": "bun run .claude/hooks/pre-commit-guard.ts"
+					},
+					{
+						"type": "command",
+						"command": "bun run .claude/hooks/pre-push-guard.ts"
+					},
+					{
+						"type": "command",
+						"command": "bun run .claude/hooks/pre-gh-api-guard.ts"
+					},
+					{
+						"type": "command",
+						"command": "bun run .claude/hooks/pre-injection-detect.ts"
+					}
+				]
+			},
+			{
+				"matcher": "Read|WebFetch|WebSearch",
+				"hooks": [
+					{
+						"type": "command",
+						"command": "bun run .claude/hooks/pre-injection-detect.ts"
+					}
+				]
+			},
+			{
+				"matcher": "Edit|Write",
+				"hooks": [
+					{
+						"type": "command",
+						"command": "bun run .claude/hooks/pre-ui-edit-notice.ts"
+					}
+				]
+			}
+		],
+		"PreCompact": [
+			{
+				"hooks": [
+					{
+						"type": "command",
+						"command": "bun run .claude/hooks/pre-compact-guard.ts"
+					}
+				]
+			}
+		],
+		"Stop": [
+			{
+				"hooks": [
+					{
+						"type": "command",
+						"command": "bun run .claude/hooks/stop-pattern-history.ts"
+					},
+					{
+						"type": "command",
+						"command": "bun run .claude/hooks/stop-feedback-log.ts"
+					},
+					{
+						"type": "command",
+						"command": "bash scripts/quality-gate.sh 2>&1 | tail -30"
+					},
+					{
+						"type": "agent",
+						"prompt": "Read /tmp is not needed. Instead, run `bash scripts/quality-gate.sh 2>&1` and read the output.\n\nIf the output contains 'PASS', respond {\"ok\": true}.\n\nIf the output contains 'FAIL':\n1. Read memory/pattern-history.md\n2. For each violation pattern in the output:\n   - If the pattern already exists in the table: increment count, update date to today\n   - If new: append row: | pattern description | 1 | today's date | TRACKING |\n   - If any pattern count reaches 3: change status to ESCALATE\n3. Write updated memory/pattern-history.md\n4. Respond {\"ok\": false, \"reason\": \"<summary of violations>\"}\n\nRESPONSE FORMAT: You MUST respond with ONLY a JSON object, no other text.",
+						"timeout": 15
+					},
+					{
+						"type": "agent",
+						"prompt": "Check if architecture/design decisions were made in this turn. If yes, append to memory/decisions-log.md with format:\n\n## [date] [title]\n- 결정: ...\n- 근거: ...\n- 대안: ...\n- 선택 이유: ...\n\nRESPONSE FORMAT: You MUST respond with ONLY a JSON object, no other text.\nIf no decisions were made: {\"ok\": true}\nIf decisions were logged: {\"ok\": true}",
+						"timeout": 15
+					},
+					{
+						"type": "agent",
+						"prompt": "Track skill effectiveness. Check if any skills (slash commands like /component, /page, /design, etc.) were invoked in this turn.\n\nIf skills were invoked:\n1. Read memory/skill-effectiveness.md\n2. For each skill invoked, update or append a row: | skill-name | count | last date | outcome |\n   - outcome: success (task completed), partial (needed manual fix), fail (abandoned)\n3. Write updated file\n\nIf no skills were invoked, do nothing.\n\nRESPONSE FORMAT: You MUST respond with ONLY a JSON object, no other text.\n{\"ok\": true}",
+						"timeout": 10
+					}
+				]
+			}
+		],
+		"SessionEnd": [
+			{
+				"hooks": [
+					{
+						"type": "command",
+						"command": "bun run .claude/hooks/stop-session-end.ts"
+					}
+				]
+			}
+		],
+		"SubagentStop": [
+			{
+				"hooks": [
+					{
+						"type": "command",
+						"command": "bun run .claude/hooks/stop-subagent.ts"
+					}
+				]
+			}
+		],
+		"SessionStart": [
+			{
+				"matcher": ".*",
+				"hooks": [
+					{
+						"type": "command",
+						"command": "bun run .claude/hooks/session-start-pickup.ts"
+					}
+				]
+			}
+		]
+	},
+	"env": {
+		"CLAUDE_CODE_EFFORT_LEVEL": "max"
+	}
 }

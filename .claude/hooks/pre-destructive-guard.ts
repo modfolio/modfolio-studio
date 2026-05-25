@@ -65,10 +65,7 @@ for (const { re, why } of CATASTROPHIC) {
 //    benign `git push origin main` next to an unrelated `-f` token elsewhere
 //    (`[ -f "$x" ]`, `grep -f`, `rm -f`, `tar -f`) blocked the safe push.
 for (const invocation of cmd.match(/\bgit\s+push\b[^\n;|&]*/gi) ?? []) {
-	if (
-		/(?:^|\s)(?:--force|-f)\b/.test(invocation) &&
-		!/--force-with-lease\b/.test(invocation)
-	) {
+	if (/(?:^|\s)(?:--force|-f)\b/.test(invocation) && !/--force-with-lease\b/.test(invocation)) {
 		console.error(
 			"BLOCKED: git push --force rewrites remote history. Use --force-with-lease if you really must. (pre-destructive-guard)",
 		);
