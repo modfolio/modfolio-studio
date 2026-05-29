@@ -5,12 +5,17 @@ interface Props {
 
 const { portalUrl = "https://lab.modfolio.io" } = Astro.props;
 const pathname = Astro.url.pathname;
+const user = Astro.locals.user;
 
 const navLinks = [
 	{ href: "/#manifesto", label: "Vision" },
 	{ href: "/apps", label: "Works" },
 	{ href: "/contact", label: "Contact" },
 ];
+
+const ctaHref = user ? portalUrl : "/auth/login";
+const ctaLabel = user ? "Open Lab" : "로그인";
+const mobileCtaLabel = user ? "Lab 열기" : "로그인";
 ---
 
 <header class="header" id="header">
@@ -28,7 +33,7 @@ const navLinks = [
 		))}
 	</nav>
 
-	<a href={portalUrl} class="header-cta">Open Lab</a>
+	<a href={ctaHref} class="header-cta">{ctaLabel}</a>
 
 	<!-- 모바일 메뉴 (CSS-only) -->
 	<input type="checkbox" id="mobile-menu-toggle" class="mobile-toggle" aria-hidden="true" />
@@ -42,7 +47,7 @@ const navLinks = [
 			{navLinks.map((link) => (
 				<a href={link.href} class="mobile-link">{link.label}</a>
 			))}
-			<a href={portalUrl} class="mobile-link mobile-link-cta">Lab 열기</a>
+			<a href={ctaHref} class="mobile-link mobile-link-cta">{mobileCtaLabel}</a>
 		</nav>
 	</div>
 </header>
