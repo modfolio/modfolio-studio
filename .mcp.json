@@ -20,6 +20,11 @@
 		"astro": {
 			"type": "http",
 			"url": "https://mcp.docs.astro.build/mcp"
+		},
+		"athsra": {
+			"type": "stdio",
+			"command": "athsra",
+			"args": ["mcp"]
 		}
 	}
 }
