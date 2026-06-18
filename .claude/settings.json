@@ -74,11 +74,6 @@
 					{
 						"type": "command",
 						"command": "bash scripts/quality-gate.sh 2>&1 | tail -30"
-					},
-					{
-						"type": "agent",
-						"prompt": "Read /tmp is not needed. Instead, run `bash scripts/quality-gate.sh 2>&1` and read the output.\n\nIf the output contains 'PASS', respond {\"ok\": true}.\n\nIf the output contains 'FAIL':\n1. Read memory/pattern-history.md\n2. For each violation pattern in the output:\n   - If the pattern already exists in the table: increment count, update date to today\n   - If new: append row: | pattern description | 1 | today's date | TRACKING |\n   - If any pattern count reaches 3: change status to ESCALATE\n3. Write updated memory/pattern-history.md\n4. Respond {\"ok\": false, \"reason\": \"<summary of violations>\"}\n\nRESPONSE FORMAT: You MUST respond with ONLY a JSON object, no other text.",
-						"timeout": 15
 					}
 				]
 			}
