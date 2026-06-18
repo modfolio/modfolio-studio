@@ -79,16 +79,6 @@
 						"type": "agent",
 						"prompt": "Read /tmp is not needed. Instead, run `bash scripts/quality-gate.sh 2>&1` and read the output.\n\nIf the output contains 'PASS', respond {\"ok\": true}.\n\nIf the output contains 'FAIL':\n1. Read memory/pattern-history.md\n2. For each violation pattern in the output:\n   - If the pattern already exists in the table: increment count, update date to today\n   - If new: append row: | pattern description | 1 | today's date | TRACKING |\n   - If any pattern count reaches 3: change status to ESCALATE\n3. Write updated memory/pattern-history.md\n4. Respond {\"ok\": false, \"reason\": \"<summary of violations>\"}\n\nRESPONSE FORMAT: You MUST respond with ONLY a JSON object, no other text.",
 						"timeout": 15
-					},
-					{
-						"type": "agent",
-						"prompt": "Check if architecture/design decisions were made in this turn. If yes, append to memory/decisions-log.md with format:\n\n## [date] [title]\n- 결정: ...\n- 근거: ...\n- 대안: ...\n- 선택 이유: ...\n\nRESPONSE FORMAT: You MUST respond with ONLY a JSON object, no other text.\nIf no decisions were made: {\"ok\": true}\nIf decisions were logged: {\"ok\": true}",
-						"timeout": 15
-					},
-					{
-						"type": "agent",
-						"prompt": "Track skill effectiveness. Check if any skills (slash commands like /component, /page, /design, etc.) were invoked in this turn.\n\nIf skills were invoked:\n1. Read memory/skill-effectiveness.md\n2. For each skill invoked, update or append a row: | skill-name | count | last date | outcome |\n   - outcome: success (task completed), partial (needed manual fix), fail (abandoned)\n3. Write updated file\n\nIf no skills were invoked, do nothing.\n\nRESPONSE FORMAT: You MUST respond with ONLY a JSON object, no other text.\n{\"ok\": true}",
-						"timeout": 10
 					}
 				]
 			}
