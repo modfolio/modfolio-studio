@@ -22,9 +22,12 @@
 	},
 	"devDependencies": {
 		"@biomejs/biome": "^2.4.15",
-		"@modfolio/harness": "^3.4.0"
+		"@modfolio/harness": "^3.13.2"
 	},
 	"overrides": {
-		"@biomejs/cli-linux-x64-musl": "npm:@biomejs/cli-linux-x64@^2.4.8"
+		"@biomejs/cli-linux-x64-musl": "npm:@biomejs/cli-linux-x64@^2.4.15"
+	},
+	"dependencies": {
+		"@modfolio/contracts": "1.2.0"
 	}
 }
