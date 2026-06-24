@@ -3,5 +3,6 @@
 declare namespace App {
 	interface Locals {
 		user: import("@modfolio/connect-sdk/astro").ConnectUser | null;
+		[key: string]: unknown;
 	}
 }
