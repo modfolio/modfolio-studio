@@ -1,6 +1,6 @@
 import { createSvelteKitAuth } from "@modfolio/connect-sdk/sveltekit";
 
 export const auth = createSvelteKitAuth({
-	clientId: "modfolio-studio",
+	clientId: "studio",
 	protectedPaths: ["/portal"],
 });
