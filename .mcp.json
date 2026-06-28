@@ -12,14 +12,14 @@
 			"command": "bunx",
 			"args": ["--bun", "-y", "@playwright/mcp"]
 		},
+		"astro": {
+			"type": "http",
+			"url": "https://mcp.docs.astro.build/mcp"
+		},
 		"svelte": {
 			"type": "stdio",
 			"command": "bunx",
 			"args": ["--bun", "-y", "@sveltejs/mcp"]
-		},
-		"astro": {
-			"type": "http",
-			"url": "https://mcp.docs.astro.build/mcp"
 		},
 		"athsra": {
 			"type": "stdio",
