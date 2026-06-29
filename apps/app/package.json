@@ -3,7 +3,7 @@
   "type": "module",
   "scripts": {
     "dev": "athsra run modfolio-studio -- vite dev --port 4060",
-    "build": "athsra run modfolio-studio -- vite build",
+    "build": "vite build",
     "preview": "athsra run modfolio-studio -- vite preview",
     "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json"
   },
