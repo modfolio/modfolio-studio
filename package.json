@@ -21,11 +21,11 @@
 		"modfolio": "modfolio-check"
 	},
 	"devDependencies": {
-		"@biomejs/biome": "^2.4.15",
+		"@biomejs/biome": "^2.5.1",
 		"@modfolio/harness": "^3.16.1"
 	},
 	"overrides": {
-		"@biomejs/cli-linux-x64-musl": "npm:@biomejs/cli-linux-x64@^2.4.15"
+		"@biomejs/cli-linux-x64-musl": "npm:@biomejs/cli-linux-x64@^2.5.1"
 	},
 	"dependencies": {
 		"@modfolio/connect-sdk": "^8.2.1",
