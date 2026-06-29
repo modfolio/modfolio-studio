@@ -35,46 +35,64 @@ let { data }: { data: PageData } = $props();
 
 <main class="portal">
 
-	<section class="app-grid">
-		{#each data.apps as app, i (app.id)}
-			<article
-				class="app-card"
-				data-app={app.id}
-				style="animation-delay: {i * 80}ms"
+	{#if data.apps.length === 0}
+		<section class="empty-state">
+			<div class="empty-accent"></div>
+			<h2 class="empty-title">아직 연결된 앱이 없습니다</h2>
+			<p class="empty-desc">
+				Studio에 앱이 추가되면 이곳에서 바로 열 수 있습니다.
+			</p>
+			<a
+				href="https://studio.modfolio.io/apps"
+				class="empty-link"
+				target="_blank"
+				rel="noopener"
 			>
-				<div class="card-accent"></div>
-				<div class="card-content">
-					<div class="card-head">
-						<h2 class="card-name">{app.name}</h2>
-						<span
-							class="card-status"
-							class:status-active={app.status === "active"}
-							class:status-landing={app.status === "landing"}
-						>
-							{app.status === "active" ? "Active" : "준비 중"}
-						</span>
-					</div>
-					<p class="card-desc">{app.desc}</p>
-					<p class="card-tagline">{app.tagline}</p>
-					<div class="card-foot">
-						<span class="card-domain">{app.domain}</span>
-						{#if app.status === "active"}
-							<a
-								href={app.url}
-								class="card-action"
-								target="_blank"
-								rel="noopener"
+				Studio 앱 둘러보기 &rarr;
+			</a>
+		</section>
+	{:else}
+		<section class="app-grid">
+			{#each data.apps as app, i (app.id)}
+				<article
+					class="app-card"
+					data-app={app.id}
+					style="animation-delay: {i * 80}ms"
+				>
+					<div class="card-accent"></div>
+					<div class="card-content">
+						<div class="card-head">
+							<h2 class="card-name">{app.name}</h2>
+							<span
+								class="card-status"
+								class:status-active={app.status === "active"}
+								class:status-landing={app.status === "landing"}
 							>
-								열기 &rarr;
-							</a>
-						{:else}
-							<span class="card-action card-action--muted">준비 중</span>
-						{/if}
+								{app.status === "active" ? "Active" : "준비 중"}
+							</span>
+						</div>
+						<p class="card-desc">{app.desc}</p>
+						<p class="card-tagline">{app.tagline}</p>
+						<div class="card-foot">
+							<span class="card-domain">{app.domain}</span>
+							{#if app.status === "active"}
+								<a
+									href={app.url}
+									class="card-action"
+									target="_blank"
+									rel="noopener"
+								>
+									열기 &rarr;
+								</a>
+							{:else}
+								<span class="card-action card-action--muted">준비 중</span>
+							{/if}
+						</div>
 					</div>
-				</div>
-			</article>
-		{/each}
-	</section>
+				</article>
+			{/each}
+		</section>
+	{/if}
 
 	<footer class="portal-footer">
 		<a href="https://studio.modfolio.io" class="back-link" target="_blank" rel="noopener">
@@ -365,6 +383,69 @@ let { data }: { data: PageData } = $props();
 	.card-action--muted {
 		color: var(--color-text-3);
 		cursor: default;
+	}
+
+	/* ── Empty State ── */
+
+	.empty-state {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		text-align: center;
+		padding: var(--space-20) var(--space-6);
+		margin-bottom: var(--space-16);
+		background: var(--color-surface-raised);
+		border: 1px solid var(--color-border-default);
+		border-radius: var(--radius-lg);
+	}
+
+	.empty-accent {
+		width: var(--space-12);
+		height: 3px;
+		margin-bottom: var(--space-6);
+		border-radius: var(--radius-full);
+		background: linear-gradient(
+			90deg,
+			var(--color-accent-primary),
+			var(--color-accent-tertiary)
+		);
+	}
+
+	.empty-title {
+		font-family: var(--font-display);
+		font-size: var(--font-size-h3);
+		font-weight: var(--font-weight-bold);
+		color: var(--color-text-1);
+		margin-bottom: var(--space-3);
+	}
+
+	.empty-desc {
+		font-family: var(--font-body);
+		font-size: var(--font-size-body);
+		color: var(--color-text-2);
+		line-height: 1.6;
+		max-width: 42ch;
+		margin-bottom: var(--space-8);
+	}
+
+	.empty-link {
+		font-family: var(--font-ui);
+		font-size: var(--font-size-small);
+		font-weight: var(--font-weight-medium);
+		color: var(--color-text-1);
+		text-decoration: none;
+		padding: var(--space-3) var(--space-6);
+		border: 1px solid var(--color-border-hover);
+		border-radius: var(--radius-full);
+		background: var(--color-surface-emphasis);
+		transition:
+			color var(--dur-fast) var(--ease-smooth),
+			border-color var(--dur-fast) var(--ease-smooth);
+	}
+
+	.empty-link:hover {
+		color: var(--color-accent-primary);
+		border-color: var(--color-accent-primary);
 	}
 
 	/* ── Footer ── */
