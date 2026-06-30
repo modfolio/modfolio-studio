@@ -7,7 +7,7 @@
 			"project": "modfolio-studio"
 		},
 		"connect": {
-			"clientId": "modfolio-studio",
+			"clientId": "studio",
 			"agent": false
 		}
 	},

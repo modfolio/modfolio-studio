@@ -2,6 +2,15 @@
 import type { PageData } from "./$types";
 
 let { data }: { data: PageData } = $props();
+
+// `ConnectUser.name` is typed `string` but may be empty — `??` only guards
+// null/undefined, so `name ?? email` would yield "" for a blank name and
+// crash on `""[0].toUpperCase()`. Use `||` to fall through on empty string
+// and a final non-empty fallback so the indexed access is always defined.
+const displayName = $derived(data.user?.name?.trim() || "사용자");
+const avatarInitial = $derived(
+	(data.user?.name?.trim() || data.user?.email || "?").charAt(0).toUpperCase(),
+);
 </script>
 
 <svelte:head>
@@ -20,11 +29,11 @@ let { data }: { data: PageData } = $props();
 		</div>
 		<div class="user-area">
 			{#if data.user}
-				<div class="avatar-badge">
-					{(data.user.name ?? data.user.email)[0].toUpperCase()}
+				<div class="avatar-badge" aria-hidden="true">
+					{avatarInitial}
 				</div>
 				<div class="user-meta">
-					<span class="user-name">{data.user.name ?? "사용자"}</span>
+					<span class="user-name">{displayName}</span>
 					<span class="user-email">{data.user.email}</span>
 				</div>
 				<a href="/auth/logout" class="btn-logout">로그아웃</a>

@@ -3,6 +3,11 @@ import type { GetStaticPaths, InferGetStaticParamsType } from "astro";
 import Base from "../../layouts/Base.astro";
 import { getAllAppIds, getAppDetail } from "../../lib/app-details";
 
+// Prerender the per-app detail pages to static HTML at build time. Without this,
+// `output: "server"` ignores getStaticPaths and renders every request on the
+// edge — these pages are fully static content keyed on a closed set of app ids.
+export const prerender = true;
+
 export const getStaticPaths = (() => {
 	return getAllAppIds().map((id) => ({ params: { app: id } }));
 }) satisfies GetStaticPaths;

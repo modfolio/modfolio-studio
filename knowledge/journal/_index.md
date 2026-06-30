@@ -5,7 +5,7 @@
 ## 카테고리별
 
 ### decision
-(아직 없음)
+- [20260701-completeness-round.md](20260701-completeness-round.md) — 완결성/견고성 라운드. gate false-green 폐쇄(astro check 미연결) + `as unknown as` 근본 제거 + `[app].astro` prerender + OG/favicon 자산 + portal robustness. quality:all PASS.
 
 ### mistake
 (아직 없음)
