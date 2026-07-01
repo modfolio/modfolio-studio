@@ -51,6 +51,28 @@
 	outline-offset: 2px;
 }
 
+/* Skip-to-content link (WCAG 2.2 SC 2.4.1). Off-screen until focused. */
+.skip-link {
+	position: absolute;
+	left: var(--space-4);
+	top: calc(-1 * var(--space-16));
+	z-index: 100;
+	padding: var(--space-3) var(--space-4);
+	background: var(--color-surface-emphasis);
+	color: var(--color-text-1);
+	border: 1px solid var(--color-border-hover);
+	border-radius: var(--radius-sm);
+	font-family: var(--font-ui);
+	font-size: var(--font-size-small);
+	font-weight: var(--font-weight-medium);
+	text-decoration: none;
+	transition: top var(--dur-fast) var(--ease-smooth);
+}
+
+.skip-link:focus {
+	top: var(--space-4);
+}
+
 html {
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;

@@ -42,7 +42,7 @@ const avatarInitial = $derived(
 	</div>
 </header>
 
-<main class="portal">
+<main class="portal" id="main">
 
 	{#if data.apps.length === 0}
 		<section class="empty-state">

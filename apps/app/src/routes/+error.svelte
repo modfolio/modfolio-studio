@@ -20,7 +20,7 @@ const detail = $derived(
 	<meta name="robots" content="noindex" />
 </svelte:head>
 
-<main class="error-page">
+<main class="error-page" id="main">
 	<div class="error-accent"></div>
 	<p class="error-code">{page.status}</p>
 	<h1 class="error-heading">{heading}</h1>
