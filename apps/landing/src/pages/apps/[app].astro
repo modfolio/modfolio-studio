@@ -19,11 +19,34 @@ const detail = getAppDetail(appId);
 if (!detail) {
 	return Astro.redirect("/");
 }
+
+// schema.org SoftwareApplication — each Studio sub-app is a browser-based tool.
+const appSchema = {
+	"@context": "https://schema.org",
+	"@type": "SoftwareApplication",
+	name: detail.name,
+	url: `https://${detail.domain}`,
+	description: `${detail.headline} ${detail.desc}`,
+	applicationCategory: "WebApplication",
+	operatingSystem: "Web",
+	featureList: detail.features.map((f) => f.title),
+	offers: {
+		"@type": "Offer",
+		price: "0",
+		priceCurrency: "KRW",
+	},
+	publisher: {
+		"@type": "Organization",
+		name: "Modfolio Studio",
+		url: "https://studio.modfolio.io",
+	},
+};
 ---
 
 <Base
 	title={`${detail.name} — Modfolio Studio`}
 	description={`${detail.headline} ${detail.desc}`}
+	structuredData={appSchema}
 >
 	<main id="main">
 		<section class="app-hero" data-app={detail.id}>

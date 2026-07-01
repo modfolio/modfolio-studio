@@ -7,15 +7,26 @@ import Header from "../components/Header.astro";
 interface Props {
 	title?: string;
 	description?: string;
+	/**
+	 * Optional schema.org JSON-LD emitted into <head>. Pass one node or several;
+	 * pages supply Organization / SoftwareApplication for rich-result eligibility.
+	 */
+	structuredData?: Record<string, unknown> | Record<string, unknown>[];
 }
 
 const {
 	title = "Modfolio Studio",
 	description = "표현되지 못한 것들에 형태를 부여합니다. Modfolio의 크리에이티브 그룹.",
+	structuredData,
 } = Astro.props;
 
 const siteUrl = "https://studio.modfolio.io";
 const canonicalUrl = new URL(Astro.url.pathname, siteUrl).href;
+const jsonLdNodes = structuredData
+	? Array.isArray(structuredData)
+		? structuredData
+		: [structuredData]
+	: [];
 ---
 
 <html lang="ko">
@@ -56,6 +67,16 @@ const canonicalUrl = new URL(Astro.url.pathname, siteUrl).href;
 			rel="stylesheet"
 			href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css"
 		/>
+
+		{
+			jsonLdNodes.map((node) => (
+				<script
+					type="application/ld+json"
+					is:inline
+					set:html={JSON.stringify(node)}
+				/>
+			))
+		}
 
 		<!--
 			SPA-like navigation between the (fully static, no-island) landing pages.

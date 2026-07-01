@@ -3,6 +3,28 @@ import Base from "../layouts/Base.astro";
 import { STUDIO_APPS } from "../lib/apps";
 
 const portalUrl = "https://lab.modfolio.io";
+const siteUrl = "https://studio.modfolio.io";
+
+// schema.org Organization — identifies Studio as a brand within Modfolio and
+// lists its sub-apps so search engines can associate the domains.
+const organizationSchema = {
+	"@context": "https://schema.org",
+	"@type": "Organization",
+	name: "Modfolio Studio",
+	url: siteUrl,
+	description:
+		"표현되지 못한 것들에 형태를 부여합니다. Modfolio의 크리에이티브 그룹.",
+	parentOrganization: {
+		"@type": "Organization",
+		name: "Modfolio",
+		url: "https://modfolio.io",
+	},
+	subOrganization: STUDIO_APPS.map((app) => ({
+		"@type": "Organization",
+		name: app.name,
+		url: `https://${app.domain}`,
+	})),
+};
 
 const principles = [
 	{
@@ -23,6 +45,7 @@ const principles = [
 <Base
 	title="Modfolio Studio — Creative Expression"
 	description="표현되지 못한 것들에 형태를 부여합니다. Modfolio의 크리에이티브 그룹."
+	structuredData={organizationSchema}
 >
 	<main id="main">
 		<!-- ── Hero ── -->
