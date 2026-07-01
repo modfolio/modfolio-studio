@@ -31,12 +31,18 @@ if [[ "${1:-}" == "--all" ]]; then
   FILES=$(find "$REPO_ROOT/apps" -type f \( -name '*.ts' -o -name '*.svelte' -o -name '*.astro' -o -name '*.css' \) \
     -not -path '*node_modules*' -not -path '*/.svelte-kit/*' -not -path '*dist/*' | sort)
 else
-  FILES=$(cd "$REPO_ROOT" && git status --porcelain 2>/dev/null \
+  # `grep` exits 1 when nothing matches (e.g. a clean tree or only non-code
+  # files changed). Under `set -o pipefail` that non-zero would propagate out of
+  # the command substitution and, with `set -e`, abort the whole script *before*
+  # the empty-guard below — turning "nothing to check" into a false failure.
+  # `|| true` keeps the assignment succeeding with an empty result so the guard
+  # can report the clean case.
+  FILES=$( { cd "$REPO_ROOT" && git status --porcelain 2>/dev/null \
     | grep -E '^\s*[AMRC?]' \
     | awk '{print $NF}' \
     | grep -E '\.(ts|svelte|astro|css)$' \
     | while IFS= read -r f; do echo "$REPO_ROOT/$f"; done \
-    | sort)
+    | sort; } || true)
 fi
 
 if [[ -z "$FILES" ]]; then
