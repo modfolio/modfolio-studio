@@ -44,7 +44,10 @@
 			"apps/*/src/**/*.css",
 			"apps/*/*.ts",
 			"apps/*/*.js",
-			"*.json"
+			"*.json",
+			"!.claude/app-registry.json",
+			"!.claude/payment-approval.json",
+			"!**/migrations"
 		]
 	}
 }

@@ -62,7 +62,7 @@
 
 - **DB**: 없음 (하위 앱들이 각자 DB 보유)
 - **인증**: modfolio-connect SSO (OIDC PKCE)
-- **배포**: CF Pages
+- **배포**: CF Workers (Workers Builds push-to-deploy) — 2026-06-29 app plane go-live
 - **버전**: `0.1.0`
 
 ## 하위 앱
