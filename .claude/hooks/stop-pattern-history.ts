@@ -19,7 +19,7 @@
 
 import { existsSync, mkdirSync, readFileSync, statSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
-import { changedFiles, DETECTOR_SOURCE_FILES, gitRoot } from "./_lib.ts";
+import { changedFiles, gitRoot, isDetectorSource } from "./_lib.ts";
 
 interface PatternRule {
 	id: string;
@@ -48,9 +48,7 @@ const RULES: PatternRule[] = [
 		// Self-exclusion: the pattern regex is a string literal inside the detector
 		// sources themselves — a naive scan treats those strings as violations.
 		test: (file, content) =>
-			TS_EXT.test(file) &&
-			!DETECTOR_SOURCE_FILES.has(file) &&
-			/@ts-ignore|as\s+any\b/.test(content),
+			TS_EXT.test(file) && !isDetectorSource(file) && /@ts-ignore|as\s+any\b/.test(content),
 	},
 	{
 		id: "biome_ignore_file",

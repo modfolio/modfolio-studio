@@ -31,7 +31,7 @@
 import { execSync, spawnSync } from "node:child_process";
 import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
 import { join } from "node:path";
-import { findEcosystemRoot, gitRoot, readHookInput, recordHookDuration } from "./_lib.ts";
+import { bunExec, findEcosystemRoot, gitRoot, readHookInput, recordHookDuration } from "./_lib.ts";
 
 interface PackageJson {
 	name?: string;
@@ -209,7 +209,7 @@ export function harnessDriftPickup(root: string, installed: string, latest: stri
 		// 1. npm dep 를 실제로 상향 — caret 만으로는 lockfile 이 구버전에 고착돼 pull 이
 		//    구 binary/assets 로 돌아간다 (Codex 점검: sibling 들이 3.2~3.5 에 멈춰 있음).
 		//    @modfolio/contracts 미보유 sibling 은 no-op (bun update 는 기존 dep 만 갱신).
-		const upd = spawnSync("bun", ["update", "@modfolio/harness", "@modfolio/contracts"], {
+		const upd = spawnSync(bunExec(), ["update", "@modfolio/harness", "@modfolio/contracts"], {
 			cwd: root,
 			encoding: "utf-8",
 			timeout: 180_000,
@@ -219,7 +219,9 @@ export function harnessDriftPickup(root: string, installed: string, latest: stri
 		// bun update 실패(보통 GITHUB_TOKEN 부재) → advisory degrade. 구 binary pull 은 무의미.
 		if (upd.status !== 0) return advisory;
 		// 2. 갱신된 binary 로 pull.
-		const pull = spawnSync("bunx", ["modfolio-harness-pull", "--apply"], {
+		// `bunx foo` == `bun x foo` — routed through bunExec() so the child uses the
+		// same bun as this hook rather than whatever $PATH resolves.
+		const pull = spawnSync(bunExec(), ["x", "modfolio-harness-pull", "--apply"], {
 			cwd: root,
 			encoding: "utf-8",
 			timeout: 120_000,
