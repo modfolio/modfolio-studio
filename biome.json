@@ -47,7 +47,8 @@
 			"*.json",
 			"!.claude/app-registry.json",
 			"!.claude/payment-approval.json",
-			"!**/migrations"
+			"!**/migrations",
+			"!.claude/harness-feedback"
 		]
 	}
 }
