@@ -133,17 +133,13 @@
 		/* ── Typography — Cinematic Contrast (Kit: glw6csk) ── */
 
 		/* EN serif → KR 명조 (serif pair) */
-		--font-display:
-			"freight-display-pro", "freight-display-fallback", "sandoll-myeongjoneo1",
-			serif;
+		--font-display:"Gambetta", "Paperlogy", "Pretendard", serif;
 		/* EN sans → KR 고딕 (sans pair) */
-		--font-body:
-			"acumin-pro", "acumin-fallback", "sandoll-gothicneo3", sans-serif;
-		--font-ui:
-			"aktiv-grotesk", "aktiv-fallback", "sandoll-gothicneo3", sans-serif;
-		--font-data: "sandoll-gothicneo3", sans-serif;
-		--font-mono: "source-code-pro", "SF Mono", monospace;
-		--font-kr-serif: "sandoll-myeongjoneo1", serif;
+		--font-body:"Cabinet", "Paperlogy", "Pretendard", sans-serif;
+		--font-ui:"Cabinet", "Paperlogy", "Pretendard", sans-serif;
+		--font-data: "Cabinet", "Paperlogy", "Pretendard", sans-serif;
+		--font-mono: "Sligoil", "Paperlogy", "Pretendard", monospace;
+		--font-kr-serif: "MaruBuri", "Pretendard", serif;
 
 		/* Font Weight Hierarchy */
 		--font-weight-light: 300;
