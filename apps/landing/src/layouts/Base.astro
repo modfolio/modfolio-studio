@@ -8,7 +8,11 @@ interface Props {
 	title?: string;
 	description?: string;
 	/**
-	 * Optional schema.org JSON-LD emitted into <head>. Pass one node or several;
+	 * Optional schema.org JSON-LD emitted into <head>
+		<!-- v4 type — self-host. @font-face 는 fonts.css(생성물,
+		     modfolio-fonts/scripts/webfont.mjs). -->
+		<link rel="stylesheet" href="/fonts.css" />
+. Pass one node or several;
 	 * pages supply Organization / SoftwareApplication for rich-result eligibility.
 	 */
 	structuredData?: Record<string, unknown> | Record<string, unknown>[];

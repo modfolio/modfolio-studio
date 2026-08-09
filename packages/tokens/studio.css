@@ -127,16 +127,12 @@
 
 		/* ── Typography — Cinematic Contrast (Kit: glw6csk) ── */
 
-		--font-display:
-			"freight-display-pro", "freight-display-fallback", "Pretendard Variable",
-			serif;
-		--font-body:
-			"acumin-pro", "acumin-fallback", "Pretendard Variable", sans-serif;
-		--font-ui:
-			"aktiv-grotesk", "aktiv-fallback", "Pretendard Variable", sans-serif;
-		--font-data: "sandoll-gothicneo3", "Pretendard Variable", sans-serif;
-		--font-mono: "source-code-pro", "SF Mono", monospace;
-		--font-kr-serif: "sandoll-myeongjoneo1", "Pretendard Variable", serif;
+		--font-display:"Gambetta", "Paperlogy", "Pretendard", serif;
+		--font-body:"Cabinet", "Paperlogy", "Pretendard", sans-serif;
+		--font-ui:"Cabinet", "Paperlogy", "Pretendard", sans-serif;
+		--font-data: "Cabinet", "Paperlogy", "Pretendard", sans-serif;
+		--font-mono: "Sligoil", "Paperlogy", "Pretendard", monospace;
+		--font-kr-serif: "MaruBuri", "Pretendard", serif;
 
 		/* Fluid Type Scale */
 		--font-size-display: clamp(2.5rem, 2rem + 2.5vw, 4rem);
