@@ -133,9 +133,9 @@ html {
 
 	/* ── Typography — Cinematic Contrast (Kit: glw6csk) ── */
 
-	--font-display:"Gambetta", "Paperlogy", "Pretendard", serif;
-	--font-body:"Cabinet", "Paperlogy", "Pretendard", sans-serif;
-	--font-ui:"Cabinet", "Paperlogy", "Pretendard", sans-serif;
+	--font-display: "Gambetta", "Paperlogy", "Pretendard", serif;
+	--font-body: "Cabinet", "Paperlogy", "Pretendard", sans-serif;
+	--font-ui: "Cabinet", "Paperlogy", "Pretendard", sans-serif;
 	--font-data: "Cabinet", "Paperlogy", "Pretendard", sans-serif;
 	--font-mono: "Sligoil", "Paperlogy", "Pretendard", monospace;
 	--font-kr-serif: "MaruBuri", "Pretendard", serif;

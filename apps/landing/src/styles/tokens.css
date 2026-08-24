@@ -133,10 +133,10 @@
 		/* ── Typography — Cinematic Contrast (Kit: glw6csk) ── */
 
 		/* EN serif → KR 명조 (serif pair) */
-		--font-display:"Gambetta", "Paperlogy", "Pretendard", serif;
+		--font-display: "Gambetta", "Paperlogy", "Pretendard", serif;
 		/* EN sans → KR 고딕 (sans pair) */
-		--font-body:"Cabinet", "Paperlogy", "Pretendard", sans-serif;
-		--font-ui:"Cabinet", "Paperlogy", "Pretendard", sans-serif;
+		--font-body: "Cabinet", "Paperlogy", "Pretendard", sans-serif;
+		--font-ui: "Cabinet", "Paperlogy", "Pretendard", sans-serif;
 		--font-data: "Cabinet", "Paperlogy", "Pretendard", sans-serif;
 		--font-mono: "Sligoil", "Paperlogy", "Pretendard", monospace;
 		--font-kr-serif: "MaruBuri", "Pretendard", serif;
