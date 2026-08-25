@@ -1,3 +1,11 @@
+---
+title: Opus 5 행동 보정
+applicability: agent·skill 프롬프트를 쓸 때 · 위임할지 정할 때 · 출력이 길어질 때
+consumers: [all-agents]
+related_canon: [opus-4-7-effort-policy, model-escalation]
+# `paths:` 없음 = 의도. 상시 주입 6편이며 frontmatter 는 Codex 색인용이라 주입을 바꾸지 않는다.
+---
+
 # Opus 5 행동 보정 — 하네스 적용 규칙
 
 Opus 5 (2026-07-24 릴리즈) 는 Opus 4.8 과 **행동이 다르다**. 아래는 그 차이가 이 하네스의 agent/skill 프롬프트와 부딪히는 지점만 다룬다. 일반적인 Opus 5 프롬프팅 지침은 Claude Code 자체 시스템 프롬프트가 이미 주입하므로 여기서 반복하지 않는다.

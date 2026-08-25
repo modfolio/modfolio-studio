@@ -8,8 +8,9 @@ sync_to_siblings: true
 tier: law
 applicability: always
 consumers: [all-agents, ops, deploy, infra, connect]
-related_canon: [nas-infra, platform-plane, project-infrastructure-registry, cf-workers-builds-api, cf-deploy]
+related_canon: [nas-infra, platform-plane, project-infrastructure-registry, cf-workers-builds-api, cf-deploy, concurrency-safety]
 related_rules: [contracts]
+related_skills: [contracts]
 ---
 
 # Registry Redundancy — NAS↔GitHub 이중화 (git repo + npm package)

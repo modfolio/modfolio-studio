@@ -1,3 +1,11 @@
+---
+title: 정공법 — 근본 수정 + 장기 시야 + 확장성
+applicability: 오너가 「정공법」이라고 말할 때 · 우회하고 싶을 때 · 「일단 동작만」이 떠오를 때
+consumers: [all-agents]
+related_canon: [evergreen-principle, attention-budget]
+# `paths:` 없음 = 의도. 상시 주입 6편이며 frontmatter 는 Codex 색인용이라 주입을 바꾸지 않는다.
+---
+
 # 정공법 — 근본 수정 + 장기 시야 + 확장성
 
 사용자가 "정공법" 이라고 말하면 아래 정의가 곧바로 활성화된다. 매번 설명하지 않아도 된다.

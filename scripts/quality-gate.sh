@@ -81,9 +81,17 @@ done <<< "$FILES"
 # ============================================================
 
 # ── P0: 오류 우회 금지 ──
+#
+# ⚠ **검출기 소스는 제외한다.** 하네스가 배포하는 `.claude/hooks/*` 중 일부는 억제
+#    지시문을 *탐지하기 위해* 그 문자열을 담는다 — 우회가 아니라 검출이다. 그 파일들은
+#    `@modfolio-detector-source` 마커를 달고 오고, 마커는 파일과 함께 이동하므로
+#    스캐너가 언어와 무관하게 자기 제외 목록을 만들 수 있다.
+#    (실측 2026-08-25: 이 검사가 `_lib.ts`·`pre-commit-guard.ts`·`stop-pattern-history.ts`
+#     를 P0 4건으로 잡아 이 repo 의 quality:all 을 막고 있었다. 넷 다 탐지 코드다.)
 while IFS= read -r f; do
   [[ -z "$f" ]] && continue
   [[ ! -f "$f" ]] && continue
+  grep -q '@modfolio-detector-source' "$f" 2>/dev/null && continue
 
   while IFS=: read -r line content; do
     [[ -z "$line" ]] && continue

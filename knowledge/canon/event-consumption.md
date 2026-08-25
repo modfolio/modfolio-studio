@@ -7,6 +7,7 @@ changelog: ["1.0.0 (2026-07-05): 초판 — @modfolio/contracts/webhook 소비/�
 sync_to_siblings: true
 applicability: always
 consumers: [all-agents, api, contracts, sso-integrate]
+related_adr: [ADR-005]
 related_canon: [platform-plane, visualize-architecture, billing-architecture]
 related_rules: [contracts]
 ---
@@ -15,7 +16,7 @@ related_rules: [contracts]
 
 ## 한 줄
 
-`@modfolio/contracts/webhook` 가 웹훅 **서명 검증 + 파싱 + 타입 디스패치**를 제공한다 — 소비 앱은 핸들러 로직만 쓰면 된다(HMAC 손구현 금지). 이게 없어서 24개 intended 이벤트 흐름이 대부분 미배선이었다(`event_wiring_gaps`, `wiring.ts` "siblings hand-rolled off-contract").
+`@modfolio/contracts/webhook` 가 웹훅 **서명 검증 + 파싱 + 타입 디스패치**를 제공한다 — 소비 앱은 핸들러 로직만 쓰면 된다(HMAC 손구현 금지). 이게 없어서 24개 intended 이벤트 흐름이 대부분 미배선이었다(`event_wiring_gaps`, `wiring.ts` "siblings hand-rolled off-contract"). [분류]
 
 ## 소비자 (consumer) — 3줄 프론트도어
 

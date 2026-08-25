@@ -1,3 +1,11 @@
+---
+title: 시크릿 정책 — athsra 런타임 주입
+applicability: 시크릿·토큰·키를 다룰 때 · 빈 .env 를 봤을 때 · 유출이 의심될 때
+consumers: [all-agents]
+related_canon: [secret-store, agent-auth-ux]
+# `paths:` 없음 = 의도. 상시 주입 6편이며 frontmatter 는 Codex 색인용이라 주입을 바꾸지 않는다.
+---
+
 # 시크릿 정책
 
 **하드코딩 금지**. API 키, 토큰, 서명 키, DB 비밀번호, OAuth client secret, encryption salt — 전부.
