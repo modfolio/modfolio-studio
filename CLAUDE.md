@@ -49,7 +49,7 @@
 | Munseo | 0.2.0-sso | active |
 | Umbracast | 1.1.0 | active |
 | Sincheong | 0.4.0-sveltekit5 | active |
-| Muje | 0.1.0 | active |
+| Muje | 0.1.0 | landing |
 
 ## 이 repo 실측 (pull 시점 로컬 판독 — hub 미경유)
 
