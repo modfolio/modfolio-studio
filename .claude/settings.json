@@ -34,7 +34,6 @@
 			"Bash(bun run preview:*)",
 			"Bash(bash scripts/quality-gate.sh*)"
 		],
-		"defaultMode": "bypassPermissions",
 		"deny": [
 			"Edit(.claude/payment-approval.json)",
 			"Bash(*payment-approval.json*)"
