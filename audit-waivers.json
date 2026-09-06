@@ -1,0 +1,12 @@
+[
+	{
+		"pkg": "cookie",
+		"ghsa": "GHSA-pxg6-pf52-xh8x",
+		"url": "https://github.com/advisories/GHSA-pxg6-pf52-xh8x",
+		"why": "@sveltejs/kit 2.x 가 `cookie: ^0.6.0` 을 선언하고 patched 는 ≥0.7.0 이라 kit 2 안에서는 갈 곳이 없다. 같은 트리의 astro(^2.0.1)·youch(^1.0.2) 와 범위가 배타적이고 bun 은 nested override 를 지원하지 않는다(oven-sh/bun#6608) — 평평하게 덮으면 취약 범위 밖 사본을 강등시킨다. 세션 쿠키 이름은 connect-sdk 안에서 고정이라 사용자 입력이 그 자리에 오지 않는다.",
+		"upstream": "@sveltejs/kit 3.x stable (cookie ^2.0.0)",
+		"advisoryId": 1103907,
+		"revisitAfter": "2026-11-06",
+		"_comment": "`bun audit` 에서 **이 저장소 안에서는 고칠 수 없는** advisory 의 원장. `bun run check:audit`(하네스 check-audit.ts)이 읽는다. 면제가 아니라 **빚**이다 — 하네스가 양방향으로 잠근다. 형식·출처: modfolio-pay 2026-08-04 → 허브가 fleet 용으로 채택."
+	}
+]

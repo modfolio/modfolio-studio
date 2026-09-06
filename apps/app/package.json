@@ -8,16 +8,16 @@
     "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json"
   },
   "dependencies": {
-    "@modfolio/connect-sdk": "^10.6.0",
+    "@modfolio/connect-sdk": "^10.7.0",
     "@sveltejs/adapter-cloudflare": "^7.2.9",
-    "@sveltejs/kit": "^2.69.0",
+    "@sveltejs/kit": "^2.70.3",
     "@sveltejs/vite-plugin-svelte": "^5.0.0",
-    "svelte": "^5.56.4",
+    "svelte": "^5.57.0",
     "svelte-check": "^4.7.1",
     "typescript": "^6.0.3",
     "vite": "^6.3.0"
   },
   "devDependencies": {
-    "@cloudflare/workers-types": "^4.20260701.1"
+    "@cloudflare/workers-types": "^5.20260905.1"
   }
 }
