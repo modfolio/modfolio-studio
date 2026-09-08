@@ -16,7 +16,7 @@
     "apps/app": {
       "name": "app",
       "dependencies": {
-        "@modfolio/connect-sdk": "^10.7.0",
+        "@modfolio/connect-sdk": "^10.8.0",
         "@sveltejs/adapter-cloudflare": "^7.2.9",
         "@sveltejs/kit": "^2.70.3",
         "@sveltejs/vite-plugin-svelte": "^5.0.0",
@@ -34,7 +34,7 @@
       "dependencies": {
         "@astrojs/check": "^0.9.10",
         "@astrojs/cloudflare": "^14.3.0",
-        "@modfolio/connect-sdk": "^10.7.0",
+        "@modfolio/connect-sdk": "^10.8.0",
         "astro": "^7.3.1",
         "typescript": "^6.0.3",
       },

@@ -1,23 +1,23 @@
 {
-  "name": "app",
-  "type": "module",
-  "scripts": {
-    "dev": "athsra run modfolio-studio -- vite dev --port 4060",
-    "build": "vite build",
-    "preview": "athsra run modfolio-studio -- vite preview",
-    "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json"
-  },
-  "dependencies": {
-    "@modfolio/connect-sdk": "^10.7.0",
-    "@sveltejs/adapter-cloudflare": "^7.2.9",
-    "@sveltejs/kit": "^2.70.3",
-    "@sveltejs/vite-plugin-svelte": "^5.0.0",
-    "svelte": "^5.57.0",
-    "svelte-check": "^4.7.1",
-    "typescript": "^6.0.3",
-    "vite": "^6.3.0"
-  },
-  "devDependencies": {
-    "@cloudflare/workers-types": "^5.20260905.1"
-  }
+	"name": "app",
+	"type": "module",
+	"scripts": {
+		"dev": "athsra run modfolio-studio -- vite dev --port 4060",
+		"build": "vite build",
+		"preview": "athsra run modfolio-studio -- vite preview",
+		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json"
+	},
+	"dependencies": {
+		"@modfolio/connect-sdk": "^10.8.0",
+		"@sveltejs/adapter-cloudflare": "^7.2.9",
+		"@sveltejs/kit": "^2.70.3",
+		"@sveltejs/vite-plugin-svelte": "^5.0.0",
+		"svelte": "^5.57.0",
+		"svelte-check": "^4.7.1",
+		"typescript": "^6.0.3",
+		"vite": "^6.3.0"
+	},
+	"devDependencies": {
+		"@cloudflare/workers-types": "^5.20260905.1"
+	}
 }

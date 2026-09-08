@@ -1,21 +1,21 @@
 {
-  "name": "landing",
-  "type": "module",
-  "scripts": {
-    "dev": "athsra run modfolio-studio -- astro dev",
-    "build": "astro build",
-    "preview": "athsra run modfolio-studio -- astro preview",
-    "deploy": "astro build && athsra run modfolio-connect -- wrangler deploy",
-    "check": "astro check"
-  },
-  "dependencies": {
-    "@astrojs/check": "^0.9.10",
-    "@astrojs/cloudflare": "^14.3.0",
-    "@modfolio/connect-sdk": "^10.7.0",
-    "astro": "^7.3.1",
-    "typescript": "^6.0.3"
-  },
-  "devDependencies": {
-    "wrangler": "^4.129.0"
-  }
+	"name": "landing",
+	"type": "module",
+	"scripts": {
+		"dev": "athsra run modfolio-studio -- astro dev",
+		"build": "astro build",
+		"preview": "athsra run modfolio-studio -- astro preview",
+		"deploy": "astro build && athsra run modfolio-connect -- wrangler deploy",
+		"check": "astro check"
+	},
+	"dependencies": {
+		"@astrojs/check": "^0.9.10",
+		"@astrojs/cloudflare": "^14.3.0",
+		"@modfolio/connect-sdk": "^10.8.0",
+		"astro": "^7.3.1",
+		"typescript": "^6.0.3"
+	},
+	"devDependencies": {
+		"wrangler": "^4.129.0"
+	}
 }
