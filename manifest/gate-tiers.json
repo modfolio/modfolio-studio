@@ -1,0 +1,9 @@
+{
+  "_comment": "이 repo 의 게이트 tier 표. harness-pull 이 `quality:all` 체인에서 이름으로 «추측» 한 씨앗이므로 반드시 검토하고 고친다(비용도 무엇을 검사하는지도 모른다). 허브 표를 복사한 것이 아니다 — 게이트 이름은 repo 마다 다르고, 남의 목록은 무시하도록 훈련시킨다. 물을 것 둘: ① 이 게이트가 검사하는 것이 제품인가 게이트 자신인가(후자는 release) ② 대조 상대가 저장소 밖인가(그러면 weekly).",
+  "tiers": {
+    "check": "quick",
+    "typecheck": "quick",
+    "typecheck:app": "quick",
+    "bash scripts/quality-gate.sh": "full"
+  }
+}
