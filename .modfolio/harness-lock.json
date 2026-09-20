@@ -3,14 +3,12 @@
 		"AGENTS.md",
 		"CLAUDE.md",
 		"GEMINI.md",
-		"CODEX.md",
 		"MODFOLIO.md"
 	],
 	"neutralManagedPaths": [
 		"AGENTS.md",
 		"CLAUDE.md",
 		"GEMINI.md",
-		"CODEX.md",
 		"MODFOLIO.md"
 	]
 }
