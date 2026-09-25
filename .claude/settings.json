@@ -54,6 +54,10 @@
 				"hooks": [
 					{
 						"type": "command",
+						"command": "bun run \"$CLAUDE_PROJECT_DIR/.claude/hooks/post-biome-check.ts\""
+					},
+					{
+						"type": "command",
 						"command": "bun run check 2>&1 | tail -8"
 					}
 				]
@@ -81,6 +85,15 @@
 						"command": "bun run \"$CLAUDE_PROJECT_DIR/.claude/hooks/pre-payment-guard.ts\""
 					}
 				]
+			},
+			{
+				"matcher": "Edit|Write",
+				"hooks": [
+					{
+						"type": "command",
+						"command": "bun run \"$CLAUDE_PROJECT_DIR/.claude/hooks/pre-shared-edit-notice.ts\""
+					}
+				]
 			}
 		],
 		"UserPromptSubmit": [
@@ -89,6 +102,10 @@
 					{
 						"type": "command",
 						"command": "bun run \"$CLAUDE_PROJECT_DIR/node_modules/@modfolio/harness/scripts/hooks/user-prompt-playbook-inject.ts\""
+					},
+					{
+						"type": "command",
+						"command": "bun run \"$CLAUDE_PROJECT_DIR/node_modules/@modfolio/harness/scripts/hooks/user-prompt-context-gauge.ts\""
 					}
 				]
 			}
@@ -120,8 +137,18 @@
 						"command": "bun run \"$CLAUDE_PROJECT_DIR/.claude/hooks/session-start-pickup.ts\""
 					}
 				]
+			},
+			{
+				"matcher": "compact",
+				"hooks": [
+					{
+						"type": "command",
+						"command": "bun run \"$CLAUDE_PROJECT_DIR/node_modules/@modfolio/harness/scripts/hooks/session-start-compact-resume.ts\""
+					}
+				]
 			}
 		]
 	},
-	"effortLevel": "xhigh"
+	"effortLevel": "high",
+	"autoCompactWindow": "400k"
 }
