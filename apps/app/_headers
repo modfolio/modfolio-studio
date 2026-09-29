@@ -1,0 +1,5 @@
+# >>> @modfolio/fonts — 생성물. 이 두 표지 사이는 손으로 고치지 않는다.
+# /fonts/* 의 20개 파일이 전부 내용 해시 이름이다 → immutable 이 정직하다.
+/fonts/*
+  Cache-Control: public, max-age=31536000, immutable
+# <<< @modfolio/fonts

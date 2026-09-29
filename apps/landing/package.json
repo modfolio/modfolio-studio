@@ -3,9 +3,10 @@
   "type": "module",
   "scripts": {
     "dev": "athsra run modfolio-studio -- astro dev",
-    "build": "astro build",
+    "build": "astro build && node scripts/early-hints.mjs",
+    "fonts": "modfolio-fonts webfont public B --repo modfolio-studio --extra Gambetta --hash --no-stable-css --site dist/client --module src/fonts-href.ts --headers public/_headers && biome format --write src/fonts-href.ts",
     "preview": "athsra run modfolio-studio -- astro preview",
-    "deploy": "astro build && athsra run modfolio-connect -- wrangler deploy",
+    "deploy": "bun run build && athsra run modfolio-connect -- wrangler deploy",
     "check": "astro check"
   },
   "dependencies": {
@@ -16,6 +17,7 @@
     "typescript": "^6.0.3"
   },
   "devDependencies": {
+    "@modfolio/fonts": "^0.1.0",
     "wrangler": "^4.131.2"
   }
 }

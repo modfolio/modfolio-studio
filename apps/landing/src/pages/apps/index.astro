@@ -1,6 +1,10 @@
 ---
 import Base from "../../layouts/Base.astro";
 import { STUDIO_APPS } from "../../lib/apps";
+
+// No per-request data: served as a static asset (no Worker invocation). The
+// Header's signed-in CTA is resolved client-side — see lib/signed-in-hint.ts.
+export const prerender = true;
 ---
 
 <Base

@@ -1,5 +1,9 @@
 ---
 import Base from "../layouts/Base.astro";
+
+// No per-request data: served as a static asset (no Worker invocation). The
+// Header's signed-in CTA is resolved client-side — see lib/signed-in-hint.ts.
+export const prerender = true;
 ---
 
 <Base title="이용약관 — Modfolio Studio">
