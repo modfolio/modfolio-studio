@@ -1,8 +1,8 @@
 ---
-title: Cloudflare 배포 — 정공법 (Workers Builds + 비대화형 wrangler v4)
-version: 1.6.0
-last_updated: 2026-07-27
-source: [2026-05-18 속도회복 세션 §E, 2026-05-24 사용자 토큰 measurement + hallucination 차단 세션, 2026-06-21 배포 정공법 cement(문서 분산·모순 제거) + Workers Builds 비용 웹검증, 2026-07-12 modfolio P0 실측(workerd SSR 500 — 익명 스모크 구조적 미검출), developers.cloudflare.com]
+title: Cloudflare 배포 — Workers Builds 및 NAS 릴리스 파일럿
+version: 1.8.0
+last_updated: 2026-09-27
+source: [2026-05-18 속도회복 세션 §E, 2026-05-24 사용자 토큰 measurement + hallucination 차단 세션, 2026-06-21 배포 정공법 cement(문서 분산·모순 제거) + Workers Builds 비용 웹검증, 2026-07-12 modfolio P0 실측(workerd SSR 500 — 익명 스모크 구조적 미검출), 2026-09-27 Cloudflare 인보이스·Builds API 실측과 오너 비용 절감 요청, developers.cloudflare.com]
 sync_to_siblings: true
 applicability: always
 consumers: [deploy, ops, observability]
@@ -10,32 +10,34 @@ consumers: [deploy, ops, observability]
 
 # Cloudflare 배포 — 정공법
 
-> **배포 = CF Workers Builds(GitHub 네이티브, push-to-deploy). GitHub Actions 배포 금지(`gh-actions-policy.md` 정합). AI 비대화형 실행 = athsra 주입 `CLOUDFLARE_API_TOKEN` + wrangler v4.**
+> **기존 배포 = CF Workers Builds(GitHub 네이티브, push-to-deploy). PDGD는 ADR-031에 따라 NAS 전체 게이트·빌드 후 운영자 1회 업로드를 검증하는 파일럿이다. 파일럿의 실제 전환이 검증되기 전에는 다른 Worker의 Builds를 유지한다. GitHub Actions 배포는 금지한다.**
 
 ## 확정 — 배포 정공법 (single source of truth · anti-drift)
 
 > **이 canon 이 universe 배포의 유일한 source of truth.** `.claude/skills/deploy/SKILL.md` · `knowledge/global.md` · `docs/` · sibling repo 의 어떤 배포 문서도 여기로 defer 한다. 배포가 "그때그때 바뀌는" 느낌의 근본 원인은 **문서 분산 + 모순**(폐기된 Pages-first/“GHA 허용” 가이드 잔존)이었다 — 그 표면을 제거하고 여기에 못 박는다(2026-06-21 cement). 표준 자체는 안 바뀌었다.
 
-**결정 (확정 — 재논의 대상 아님)**:
+**결정 (2026-09-27 오너 지시와 ADR-031 반영)**:
 
-1. **상시 배포 = CF Workers Builds** (GitHub 연동 push-to-deploy). push = release.
+1. **현재 fleet 기본 = CF Workers Builds** (GitHub 연동 push-to-deploy). PDGD는 NAS 검증·해시 영수증·Wrangler 업로드 경로를 파일럿으로 적용한다. 성공한 Worker만 정확한 main Builds 트리거를 중지하고, live 검증 후 다음 앱으로 확장한다.
 2. **GitHub Actions 배포 금지** (`gh-actions-policy.md` 전면 금지 정합). GHA 는 deploy 에 쓰지 않는다.
-3. **wrangler 직접 배포 = fallback·일회성만** (긴급 hotfix / secret 주입 / KV·R2·D1 조작). 상시화 금지.
+3. **Wrangler 직접 배포 = 검증된 NAS 운영자 릴리스 또는 fallback**. NAS 경로는 전체 게이트 0, dry run 0, 후보 SHA·산출물 해시 일치, 단일 업로드 시도, 라이브 확인을 요구한다. 운영자 자격을 작업자에게 전달하지 않는다.
 4. **Pages → Workers** (Workers Static Assets). 신규는 무조건 Workers. Pages 잔존은 **이관 대기**(≠ 완료).
 5. **build script CI-safe**: build/deploy 스크립트에 **`athsra run` 금지** (CF Builds runner 엔 athsra 없음 → `command not found` 로 build fail). build 는 plain `astro build`/`bun run build`, **build-time secret 은 Builds trigger 환경변수(`is_secret`)로 주입**. athsra = dev/CLI·로컬 deploy 전용. (2026-06-21 fleet-wide 진단 — 다수 repo 의 `apps/landing` build 가 athsra-in-CI 라 자동배포 정지. 상세·복구 = `cf-workers-builds-api.md` 함정/§정기점검)
 
-**비용 = 사실상 $0** (웹검증 2026-06-21, [Workers Builds limits & pricing](https://developers.cloudflare.com/workers/ci-cd/builds/limits-and-pricing/)):
+**빌드 비용은 사용량에 따라 발생한다** ([Workers Builds limits & pricing](https://developers.cloudflare.com/workers/ci-cd/builds/limits-and-pricing/)):
 
 - repo 연결 + push 자동배포 **자체는 과금 항목이 아님**. 유일한 미터링 = **build minutes**.
 - Free **3,000분/월**(동시 빌드 1, timeout 20분) · Workers Paid($5/mo) **6,000분/월** + 초과 **$0.005/분**.
-- 모노레포는 **build-watch-paths**(바뀐 앱만 rebuild)로 분 최소화 → ~27개 small Worker 규모로 무료 한도 초과 도달 불가 = **추가 비용 0**.
+- 2026-08-26~09-25 인보이스 실측은 포함 6,000분을 넘어선 **1,761분 × $0.005 = $8.81** 이다. 같은 기간 Builds API에서 5,999개 빌드 중 5,986개가 push 이벤트였고, `pdgd` 1,301회·`modfolio-ecosystem-dashboard` 609회·`modfolio-loom` 551회였다. API의 실행시간 합과 청구 가능한 분은 다르므로 금액 판정은 인보이스/`billable-usage`를 따른다.
+- 모노레포 Worker는 **실제 빌드 입력만 build watch paths에 포함**하고 build cache를 켠다. 대시보드는 `apps/dashboard/*`, `data/*`, `ecosystem.json`, `package.json`, `bun.lock`, `.npmrc`, `tsconfig.json`을 포함한다. Loom은 기존 `apps/loom/*`, `contracts/*`, `package.json`, `bun.lock`을 유지한다. 2026-09-27 Cloudflare API에서 두 Worker의 캐시 활성화와 대시보드 경로 필터 적용 후 재조회까지 확인했다. PDGD Worker의 경로·캐시는 PDGD 소유 작업에서 다룬다.
+- 경로 필터는 **0개 변경 파일, 3,000개 이상 변경 파일, 20개 이상 커밋이 한 번에 푸시된 경우 우회**된다. 필터·캐시가 다음 청구액을 보장하지는 않는다. 변경 후 Builds 이력과 `billable-usage`를 확인하고, 빌드 입력이 늘면 포함 경로를 함께 갱신한다. ([Build watch paths](https://developers.cloudflare.com/workers/ci-cd/builds/build-watch-paths/), [Build caching](https://developers.cloudflare.com/workers/ci-cd/builds/build-caching/))
 - 실패는 GitHub commit **check runs** + **PR 코멘트** + CF 대시보드 로그로 표면화, CF 쪽 재시도 가능.
 
-**변경 프로토콜 (drift 방지)**: 이 표준을 바꾸려면 **이 블록만** 갱신하고 `version` 을 올린다. 다른 문서·skill·sibling 에 독립적 배포 주장(특히 “GHA 허용” / “Pages-first” / “마이그레이션 완료”)을 새로 쓰지 않는다 — 전부 이 블록을 인용한다. (`sync_to_siblings: true` 이므로 harness-pull 로 sibling 에 자동 전파.)
+**변경 프로토콜 (drift 방지)**: 이 표준을 바꾸려면 **이 블록만** 갱신하고 `version` 을 올린다. 다른 문서·skill·sibling 에 독립적 배포 주장(특히 “GHA 허용” / “Pages-first” / “마이그레이션 완료”)을 새로 쓰지 않는다 — 전부 이 블록을 인용한다. `sync_to_siblings: true` 는 게시·설치·적용 후에만 멤버에 도달한다.
 
 ---
 
-이 canon 은 "예전엔 AI 가 CF 를 잘 했는데 지금은 못 한다" 의 근본 원인과 **확실히 동작하는 정확한 커맨드**를 못 박는다. `.claude/skills/deploy/SKILL.md` 는 운영 절차, 이 canon 은 메커니즘·근거·정확 커맨드의 source of truth.
+이 canon 은 기존 Builds 운영 경로와 NAS 파일럿의 검증 조건을 기록한다. 아래 Workers Builds 절은 자동 배포가 켜진 Worker에 적용한다. `.claude/skills/deploy/SKILL.md` 는 운영 절차, 이 canon 은 메커니즘의 source of truth다.
 
 > **AI 가 CF 작업 막혔을 때 → `cf-token-permissions.md` 의 권한 의심 차단 게이트 + `cf-api-mastery.md` 의 영역별 endpoint 카탈로그 + hallucination 카탈로그를 먼저 확인** (v1.1, 2026-05-24 추가). 사용자 "All API" 토큰은 353/366 perm groups 보유한 mega — "권한 부족" 결론은 hallucination 일 확률 96%+.
 
@@ -305,6 +307,7 @@ sign `/_astro/*`·atelier `/_nuxt/*` 는 프레임워크가 해시 · **pay 만 
 
 ## 관련
 
+- `docs/adr/ADR-031-nas-built-worker-release.md` · `docs/ops/nas-worker-release.md` — NAS 릴리스 파일럿의 결정과 운영 절차.
 - `.claude/skills/deploy/SKILL.md` — 운영 절차(이 canon 이 메커니즘 source of truth)
 - `knowledge/canon/cf-token-permissions.md` — **토큰 권한 모델 + 사용자 실측값 + "권한 의심 차단 게이트"**. AI 가 CF 작업 hallucinate 차단.
 - `knowledge/canon/cf-api-mastery.md` — **영역별 endpoint 카탈로그 (Workers/Pages/DNS/Domain/Hostname/Zone) + hallucination 카탈로그 + 검증 패턴**.

@@ -12,11 +12,12 @@
 import { execSync } from "node:child_process";
 import { randomBytes } from "node:crypto";
 import { existsSync, mkdirSync, writeFileSync } from "node:fs";
-import { basename, join } from "node:path";
-import { findEcosystemRoot, gitRoot } from "./_lib.ts";
+import { join } from "node:path";
+import { checkoutRepoName, findEcosystemRoot, gitRoot } from "./_lib.ts";
 
 const cwd = gitRoot();
-const repo = basename(cwd);
+// 워크트리 폴더 이름이 아니라 주 체크아웃 이름 — 허브 워크트리의 자기 건너뛰기와 멤버 워크트리의 기록 자리가 이것에 걸린다.
+const repo = checkoutRepoName(cwd);
 // Self-skip: don't log when running inside the ecosystem repo itself.
 // Match both current (`modfolio-ecosystem`) and legacy (`modfolio-universe`) names.
 // CLI 동작 불변 — `bun run <file>` 은 `import.meta.main` 이 참이다.

@@ -47,18 +47,19 @@
 		"review:run": "bun node_modules/@modfolio/harness/scripts/review/run.ts",
 		"ai:google": "bun node_modules/@modfolio/harness/scripts/review/google.ts",
 		"ai:suggest": "bun node_modules/@modfolio/harness/scripts/budget/suggest.ts",
-		"modfolio:install-guards": "bun node_modules/@modfolio/harness/scripts/modfolio/install-guards.ts"
+		"modfolio:install-guards": "bun node_modules/@modfolio/harness/scripts/modfolio/install-guards.ts",
+		"cf:release": "bun node_modules/@modfolio/harness/scripts/ops/cf-release.ts"
 	},
 	"devDependencies": {
 		"@biomejs/biome": "^2.5.12",
-		"@modfolio/harness": "^3.94.3"
+		"@modfolio/harness": "^4.1.2"
 	},
 	"overrides": {
 		"@biomejs/cli-linux-x64-musl": "npm:@biomejs/cli-linux-x64@^2.5.12",
 		"yaml": "2.8.3"
 	},
 	"dependencies": {
-		"@modfolio/connect-sdk": "^10.13.0",
+		"@modfolio/connect-sdk": "^10.15.0",
 		"@modfolio/contracts": "^1.28.0"
 	}
 }

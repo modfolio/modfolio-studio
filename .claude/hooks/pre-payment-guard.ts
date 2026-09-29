@@ -455,15 +455,215 @@ function stripInertHeredocBodies(cmd: string): string {
 			.split(/&&|\|\||[;|]/)
 			.map((p) => p.trim())
 			.filter((p) => p.length > 0);
-		if (opener.length === 0 || !opener.every((p) => INERT_LEAD.test(p))) continue;
 		const marker = m[2];
 		const end = lines.findIndex((l, j) => j > i && l.trim() === marker);
 		if (end === -1) continue; // no terminator — inspect rather than skip
-		out.push("HEREDOC_DATA");
+		const body = lines.slice(i + 1, end);
+		if (opener.length > 0 && opener.every((p) => INERT_LEAD.test(p))) {
+			out.push("HEREDOC_DATA");
+		} else {
+			const kept = interpreterBodyInspectLines(line, m, opener, body);
+			if (kept === null) continue; // not a non-shell interpreter's code — inspect it all
+			out.push("HEREDOC_DATA", ...kept);
+		}
 		out.push(lines[end] ?? marker ?? "");
 		i = end;
 	}
 	return out.join("\n");
+}
+
+/**
+ * A quoted heredoc fed to a **non-shell interpreter** (`python3 - <<'EOF'`) is that language's code, not shell.
+ * The CLI-shaped rules in HIGH/MEDIUM/CRITICAL describe shell commands; inside Python/JS/Perl/Ruby source they are
+ * string data unless the code starts a process. 2026-09-25 (nonstop 교대 #10): a handoff-filling script was blocked
+ * as `non-cf-deploy` because its Python string held prose that the rule's hosting-provider word and a later
+ * «…deploy dry-run» happened to span — the original command is `tests/fixtures/payguard-python-heredoc-prose-20260925.txt`.
+ *
+ * Returns the body lines still to inspect, or `null` when the body must be inspected whole:
+ *   - unquoted marker — the shell expands `$(…)` and backticks in the body before the interpreter sees it;
+ *   - a pipe on the opener line — the interpreter's output may feed a shell (`python3 - <<'EOF' | bash`);
+ *   - an opener part that is not the interpreter reading stdin, `cd`, or an inert command;
+ *   - a body that starts a process (`subprocess` · `os.system` · `child_process` · `Bun.$` · Perl/Ruby backticks …).
+ * Kept even when the rest is data: lines naming a payment/metered host or carrying a credential shape — those are
+ * spend signals in any language, and dropping them would weaken what was inspected before.
+ */
+function interpreterBodyInspectLines(
+	line: string,
+	m: RegExpExecArray,
+	opener: string[],
+	body: string[],
+): string[] | null {
+	if (!m[1]) return null;
+	const rest = line.slice(0, m.index) + line.slice(m.index + m[0].length);
+	if (/(?<!\|)\|(?!\|)/.test(rest)) return null;
+	// Process substitution sends the interpreter's output (or input) through another command: `python3 - > >(sh)`.
+	// Checked on the whole line before redirections are stripped — stripping `> >(sh)` would leave a bare interpreter.
+	if (/[<>]\(/.test(rest)) return null;
+	const isInterp = (p: string) => INTERPRETER_STDIN.test(p.replace(/\s*\d*>>?\s*\S+/g, "").trim());
+	if (!opener.some(isInterp)) return null;
+	if (!opener.every((p) => isInterp(p) || /^cd\b/.test(p) || INERT_LEAD.test(p))) return null;
+	const text = body.join("\n");
+	const interp = opener.find(isInterp) ?? "";
+	const lang: CodeLang = /^python/.test(interp)
+		? "python"
+		: /^(?:perl|ruby)\b/.test(interp)
+			? "perlish"
+			: "js";
+	// A spawn **described** in a string (prose naming `execFileSync(…)`) is not a spawn — look outside literals.
+	const code = blankLiterals(text, lang);
+	if (code === null || spawnsProcess(code, text, lang)) return null;
+	return body.filter(
+		(l) =>
+			PAYMENT_HOSTS.test(l) ||
+			METERED_HOSTS.test(l) ||
+			CRITICAL.some((r) => r.placeholderSuppressible === true && r.re.test(l)),
+	);
+}
+
+type CodeLang = "python" | "js" | "perlish";
+
+/**
+ * The code with every string literal's **contents** and every comment blanked (delimiters kept, so a zx/Bun tag
+ * `$\`…\`` still reads as `$\`\``), or `null` when this lexer cannot be sure where literals are — the caller then
+ * inspects the body whole, as before. Not a parser; every doubt folds toward «inspect»:
+ *   - comments are skipped (`#` for Python/Perl/Ruby · `//` and `/* *\/` for JS), so a quote in `# don't` cannot open
+ *     a «string» that hides the code after it (review P0, 2026-09-25);
+ *   - a literal that can run code keeps its contents — `${…}` in a template or double-quoted string, Ruby `#{…}`,
+ *     Perl `@{…}`, a Python f-string's `{…}` (review P0: `\`${require('child_process').execSync(…)}\``);
+ *   - a Python/JS single-line literal that crosses a line end or never closes means the lexer lost track → `null`;
+ *   - JS/Perl/Ruby regex literals are not lexed: a `/` where a regex may start (`(`, `,`, `=`, `!` … or line start)
+ *     → `null`, since a quote inside `/'/` would otherwise open a false string.
+ */
+function blankLiterals(code: string, lang: CodeLang): string | null {
+	const REGEX_START = /(?:^|[(,=:[!&|?{};]|\breturn)\s*$/;
+	let out = "";
+	let i = 0;
+	while (i < code.length) {
+		const ch = code[i] ?? "";
+		if (lang === "perlish" && ch === "#" && i > 0 && !/\s/.test(code[i - 1] ?? "")) return null; // `$#a` · `s#x#y#`
+		if (lang !== "js" ? ch === "#" : code.startsWith("//", i)) {
+			const nl = code.indexOf("\n", i);
+			const stop = nl === -1 ? code.length : nl;
+			out += " ".repeat(stop - i);
+			i = stop;
+			continue;
+		}
+		if (lang === "js" && code.startsWith("/*", i)) {
+			const close = code.indexOf("*/", i + 2);
+			if (close === -1) return null;
+			out += " ".repeat(close + 2 - i);
+			i = close + 2;
+			continue;
+		}
+		if (ch === "/" && lang !== "python" && REGEX_START.test(out.slice(out.lastIndexOf("\n") + 1)))
+			return null;
+		if (ch !== '"' && ch !== "'" && ch !== "`") {
+			out += ch;
+			i++;
+			continue;
+		}
+		const triple = code.slice(i, i + 3);
+		const delim = triple === '"""' || triple === "'''" ? triple : ch;
+		let j = i + delim.length;
+		let crossedLine = false;
+		while (j < code.length && !code.startsWith(delim, j)) {
+			if (code[j] === "\n") crossedLine = true;
+			j += code[j] === "\\" ? 2 : 1;
+		}
+		if (j >= code.length) return null; // never closes
+		if (crossedLine && delim.length === 1 && delim !== "`" && lang !== "perlish") return null;
+		const inner = code.slice(i + delim.length, j);
+		const fString =
+			lang === "python" && /[fF][rRbB]?$|[rRbB][fF]$/.test(out) && inner.includes("{");
+		// Only forms the language evaluates: JS `${…}` in a template (a plain "…" string keeps `${` as text — review
+		// delta P1) · Ruby `#{…}` / Perl `${…}` `@{…}` in a double-quoted string · a Python f-string.
+		const interpolates =
+			fString ||
+			(delim === "`" && inner.includes("${")) ||
+			(lang === "perlish" && delim === '"' && /[$#@]\{/.test(inner));
+		out += delim + (interpolates ? inner : " ".repeat(inner.length)) + delim;
+		i = j + delim.length;
+	}
+	return out;
+}
+
+/** A non-shell interpreter reading its program from stdin: `python3 -` · `python3` · `node -` · `bun -` · `perl` · `ruby -`. */
+const INTERPRETER_STDIN =
+	/^(?:python(?:\d+(?:\.\d+)?)?|node|bun|deno\s+run|perl|ruby)(?:\s+-{1,2}[A-Za-z][\w-]*)*(?:\s+-)?$/;
+
+/**
+ * Code that starts a process — then CLI text in the body may run. Deliberately broad (a false «spawns» only means
+ * the body is inspected as before). Mirrors `SPAWN_API_RE` in `scripts/orbit/writ-policy.ts` plus zx/execa/`sh`.
+ */
+const SPAWN_IN_CODE =
+	/subprocess|\bos\.(?:system|popen|exec\w*|spawn\w*|posix_spawn\w*)\b|\bpty\.spawn\b|\bcommands\.\w+|\bchild_process\b|\b(?:execSync|execFileSync|spawnSync|spawn|execFile|execa)\s*\(|(?<![.\w])exec\s*\(|\bBun\.(?:spawn\w*|\$)|\bDeno\.(?:Command|run)\b|\bsystem\s*\(|\bqx\b|\bIO\.popen\b|\bOpen3\b|\$`|\bimport\s+sh\b|\bfrom\s+sh\s+import\b|\bplumbum\b|\b__import__\b|\bimportlib\b|\bIPC::|\bKernel\b|\b(?:require|import)\s*\(\s*[^\s'")]/;
+
+/**
+ * 별칭으로 받은 실행 함수·모듈 (통합 리뷰 P0 2026-09-25). 호출 이름으로만 찾으면 `from os import system as run_it` ·
+ * `import os as o; o.system(…)` · `const { $: sh } = Bun` 을 놓친다. 반대로 `import os` 자체를 실행으로 보면 읽기 전용
+ * 스크립트가 전부 전체 검사로 돌아간다(통합 delta P1) — 실행 함수를 **이름으로 가져오거나 모듈에 별칭을 붙일 때만** 센다.
+ */
+const PY_SPAWN_NAMES = String.raw`system|popen\w*|exec\w*|spawn\w*|posix_spawn\w*|getoutput|getstatusoutput|fork\w*`;
+const PY_SPAWN_IMPORT = new RegExp(
+	String.raw`\bfrom\s+(?:os|pty|commands)\s+import\s+(?:\*|\([^)]*\b(?:${PY_SPAWN_NAMES})\b[^)]*\)|(?:[^\n\\]|\\\n)*\b(?:${PY_SPAWN_NAMES})\b)|\bgetattr\s*\(\s*(?:os|pty|commands)\b|=\s*(?:os|pty|commands)\s*(?:$|[;\n#])`,
+	"m",
+);
+const BUN_DOLLAR_ALIAS =
+	/\{[^}]*(?:\$|\bspawn\w*)[^}]*\}\s*=\s*Bun\b|=\s*Bun\s*(?:$|[;\n])|\bBun\s*\[/m;
+
+/**
+ * JS 모듈 이름은 **문자열**이라 `blankLiterals` 뒤의 코드에서는 사라진다 — `const { execSync: run } = require('child_process')`
+ * 처럼 별칭으로 받으면 호출 이름도 남지 않는다. 그래서 프로세스를 띄우는 모듈의 로드는 **원문**에서 찾되, 그 일치가
+ * **코드 자리에서 시작할 때만** 센다(`spawnModuleLoaded`). 주석·문자열 속 `require('child_process')` 설명은 로드가 아니다
+ * (통합 리뷰 P1 2026-09-25 — 주석 한 줄이 본문 전체 검사로 돌려 읽기 전용 명령을 막았다). `bun` 은 `$` 를 가져올 때만.
+ */
+const SPAWN_MODULE_IN_TEXT =
+	/\b(?:require|import)\s*\(\s*['"`](?:node:)?(?:child_process|execa|zx|shelljs|cross-spawn)\b|\bfrom\s+['"](?:node:)?(?:child_process|execa|zx(?:\/\w+)?|shelljs|cross-spawn)['"]|\{[^}]*(?:\$|\bspawn\w*)[^}]*\}\s*from\s*['"]bun['"]|\bimport\s*\*\s*as\s+\w+\s+from\s*['"]bun['"]|\brequire\s*\(\s*['"]bun['"]\s*\)/;
+
+/**
+ * `blankLiterals` 는 길이를 보존한다(가린 자리는 공백) — 그래서 원문의 일치 위치가 코드에서도 같은 글자로 시작하면 그 일치는
+ * 코드에 있다. 주석·문자열 안에서 시작한 일치는 코드에서 공백이다.
+ *
+ * ⚠ 버린 일치 **다음 글자**에서 다시 찾는다 — `matchAll` 은 겹치지 않게 이어 가므로, 문자열 속에서 시작한 긴 일치
+ * (`{…}` 대안의 `[^}]*` 는 닫는 `}` 까지 문자열 밖으로 번진다)가 그 뒤 코드의 진짜 로드를 통째로 삼키고 버려졌다
+ * (T2 delta 리뷰 P2 2026-09-25 — `const tip = "{ $";` 다음 줄 `import { $ as run } from 'bun'` 을 놓쳤다).
+ */
+function spawnModuleLoaded(text: string, blanked: string): boolean {
+	const re = new RegExp(SPAWN_MODULE_IN_TEXT.source, "g");
+	for (let m = re.exec(text); m !== null; m = re.exec(text)) {
+		const at = m.index;
+		if (blanked[at] === text[at] && !/\s/.test(blanked[at] ?? " ")) return true;
+		re.lastIndex = at + 1;
+	}
+	return false;
+}
+
+/**
+ * 속성 접근의 점 둘레 공백·줄바꿈·줄 이음과 괄호로 감싼 이름을 붙인다 — `os . popen(…)` · `(os).system(…)` · `Bun\n.spawn` 은
+ * 파이썬·JS 에서 유효한 호출이다(통합 리뷰 P0 2026-09-25: `os . popen('…').read()` 가 탐지식을 빠져나가 본문이 걷혔다).
+ * 점 뒤에 식별자가 올 때만 붙인다(`...`·숫자는 그대로).
+ */
+function collapseAccess(code: string): string {
+	return code
+		.replace(/\(\s*([A-Za-z_$][\w$]*)\s*\)(?=[\s\\]*\.)/g, "$1")
+		.replace(/[\s\\]*\.[\s\\]*(?=[A-Za-z_$])/g, ".");
+}
+
+/** 본문이 프로세스를 띄우는가 — 넓게 잡는다(거짓 «띄운다» 는 본문을 예전처럼 전부 검사할 뿐이다). */
+function spawnsProcess(blanked: string, text: string, lang: CodeLang): boolean {
+	const code = collapseAccess(blanked);
+	if (SPAWN_IN_CODE.test(code) || spawnModuleLoaded(text, blanked) || BUN_DOLLAR_ALIAS.test(code))
+		return true;
+	if (lang === "python") {
+		if (PY_SPAWN_IMPORT.test(code)) return true;
+		for (const m of code.matchAll(/\bimport\s+(?:os|pty|commands)\s+as\s+(\w+)/g)) {
+			if (new RegExp(String.raw`\b${m[1]}\.(?:${PY_SPAWN_NAMES})\b`).test(code)) return true;
+		}
+	}
+	// Perl·Ruby 는 괄호 없이 부른다(`system "…"`) · 백틱·%x 는 셸이다. JS 의 `/re/.exec(` 는 실행이 아니라 여기만.
+	if (lang === "perlish" && (/\b(?:system|exec|spawn\w*)\b/.test(code) || /`|%x/.test(blanked)))
+		return true;
+	return false;
 }
 
 function segments(cmd: string): string[] {

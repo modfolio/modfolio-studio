@@ -61,6 +61,22 @@ bun run modfolio:nonstop -- close "<사유>"                          # 종료·
 7. **0건·무반응·판정 불능은 결론이 아니다** — probe·키·전제부터 의심하고(양성 대조), 그래도 안 되면 원장에 «미검사» 로 적고 다음으로.
 8. 하루에 한 번 이상 `/debrief`(원칙 캡처) · 끝나면 `/modfolio-moon`.
 
+## 교대 — 컨텍스트가 차면 새 세션으로, 오너가 멈추라 할 때까지
+
+오너 2026-09-25(원문은 허브 원장 `knowledge/runs/20260925-fleet-3942.md` §헌장): nonstop 은 sun 으로 열고, 컨텍스트가 찰 때쯤
+moon 으로 정리한 뒤 새 세션을 열어 sun 으로 잇고, **오너가 멈추라 할 때까지** 되풀이한다 — nonstop 상태가 유실되지 않게.
+
+- **신호**: 컨텍스트 게이지(UserPromptSubmit · 배경 작업 알림에도 돈다)가 무인 원장이면 60% 에서 «교대 시점», 85% 에서 «교대 지금» 을 낸다.
+- **순서**: 지금 매듭을 마친다(게이트·커밋·push) → `/modfolio-moon`(인계 커밋·push — main 이 막히면 `wip/*`) →
+  `bun run modfolio:nonstop -- relay`. relay 는 원장 모드가 무인·자율이고, 추적 파일이 깨끗하고, HEAD 가 원격에 있고,
+  아직 교대에 쓰지 않은 커밋된 인계가 있을 때만 `claude --bg --remote-control <repo>-nonstop-<N>` 를 같은 체크아웃에서 띄우고
+  원장 §매듭에 «교대 #N → 세션 <id> · 인계 <경로>» 를 적는다. 어긋나면 이유를 말하고 exit 2 — 그 이유를 고친다.
+- **relay 뒤 이 세션은 멈춘다** — 같은 작업 공간에 작성자는 하나다. 더 쓰지 않고 `ScheduleWakeup` 도 걸지 않는다.
+  확인만: `claude logs <id>` 로 새 세션의 첫 명령이 도는지 30초 안에 본다.
+- **새 세션은 계획 모드에 들어가지 않는다.** 2026-09-25 실측: 배경 세션(`--permission-mode bypassPermissions`)의 ExitPlanMode 는
+  «Would you like to proceed?» 로 **사람을 기다리며 멈췄다.** 승인의 단위는 원장 헌장이고, sun 은 nonstop 이 돌면 그 절차를 출력한다.
+- **멈춤**: 오너가 멈추라 하면 `/modfolio-moon` 뒤 `bun run modfolio:nonstop -- close "<사유>"`. 닫힌 원장으로는 relay 가 새 세션을 띄우지 않는다.
+
 ## 리듬 — 개발 흐름 하나, 검증 흐름 하나
 
 ```

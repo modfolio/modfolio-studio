@@ -22,7 +22,7 @@
 		"owner": "modfolio-ecosystem",
 		"policy": ".modfolio/ai-routing.json",
 		"canonicalPolicy": "config/ai-routing.json",
-		"digest": "7f43d966817eda5f59899f7a5d286cb83aee3d44d0c9b586d9ad5eefdb65c3d5",
+		"digest": "0cddfcfdc730b36b3d8d7347322549b55017d6c9d9b313817baefffaa2be0eb0",
 		"digestEncoding": "sha256-json-stringify",
 		"enforcedByManagedExecutor": false
 	},

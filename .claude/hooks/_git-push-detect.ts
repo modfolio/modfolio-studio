@@ -365,8 +365,9 @@ const PUSH_OPT_UNREADABLE = /^(--all|--mirror|--tags|--branches|--follow-tags|--
 /**
  * 평범한 `git push [옵션] [<원격> [<refspec>…]]` **한 개**가 보내는 대상 — `wip/*` 판정용(ADR-029 §7).
  *
- * 읽지 못하는 형태는 전부 null 이다 — 껍데기(env·bash -c·eval…) · git 전역 옵션(`-C` 등) · 여러 push ·
- * `--all`/`--tags` 류. null 을 받은 호출자는 **평소 규칙**(풀 영수증)을 쓴다 — 읽지 못한 것을 wip 로 접지 않는다.
+ * 읽지 못하는 형태는 전부 null 이다 — 껍데기(env·bash -c·eval…) · `-C` 밖의 git 전역 옵션(`-c`·`--git-dir` 등) ·
+ * `--all`/`--tags` 류. `git -C <경로> push` 는 읽는다 — 그 경로는 `resolvePushWorkdir` 가 따로 풀고, 실제 ref 는
+ * git 훅이 다시 가른다(2026-09-25 인계 지뢰: 워크트리 wip push 가 이 형태라 풀 영수증 규칙으로 떨어졌다). null 을 받은 호출자는 **평소 규칙**(풀 영수증)을 쓴다 — 읽지 못한 것을 wip 로 접지 않는다.
  * refspecs 가 빈 배열이면 «현재 브랜치» 다(호출자가 HEAD 로 푼다).
  */
 export function plainPushTargets(cmd: string): PushTargets | null {
@@ -400,11 +401,14 @@ export function plainPushTargetsAll(cmd: string): readonly PushTargets[] | null 
 }
 
 function readPushWords(w: readonly string[]): PushTargets | null {
-	if (w[0] !== "git" || w[1] !== "push") return null;
+	if (w[0] !== "git") return null;
+	let start = 1;
+	while (w[start] === "-C" && w[start + 1] !== undefined) start += 2;
+	if (w[start] !== "push") return null;
 	const positional: string[] = [];
 	let deletion = false;
 	let verify = true;
-	for (let i = 2; i < w.length; i++) {
+	for (let i = start + 1; i < w.length; i++) {
 		const a = w[i] ?? "";
 		if (PUSH_OPT_UNREADABLE.test(a)) return null;
 		if (a === "-d" || a === "--delete") {

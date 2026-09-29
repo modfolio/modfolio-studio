@@ -12,8 +12,8 @@
  */
 
 import { execSync, type SpawnSyncOptions, spawnSync } from "node:child_process";
-import { existsSync } from "node:fs";
-import { dirname, join, resolve } from "node:path";
+import { existsSync, readFileSync } from "node:fs";
+import { basename, dirname, join, resolve, sep } from "node:path";
 import { stdin } from "node:process";
 
 // hooks/_lib 는 hook 프로세스가 spawnSync stdin pipe 로 실행돼 boot-sensitive.
@@ -133,13 +133,59 @@ export function gitRoot(): string {
 }
 
 /**
- * Walk up from startDir looking for any ecosystem sibling alias (current name
- * first, then legacy `modfolio-universe`). Returns `undefined` when not found
- * — callers decide whether that is fatal.
+ * 저장소 이름 — 폴더 이름이 아니라 **주 체크아웃**의 폴더 이름.
+ *
+ * 연결 워크트리는 자기 이름의 폴더에 산다(`~/.modfolio/worktrees/hub-moon`). 폴더 이름을 repo 로
+ * 쓰면 허브 워크트리가 자기를 허브로 못 알아보고(자기 건너뛰기 실패) 멤버 워크트리의 기록은
+ * `feedback/<워크트리 이름>/` 같은 없는 repo 로 간다 — 2026-09-25 debrief 카드 2장이
+ * `repo=hub-moon` 으로 적혔다. 규칙은 `scripts/lib/repo-name.ts` 와 같다: git common dir
+ * (`…/<name>/.git`)의 부모 이름. 훅은 멤버에 `.claude/hooks/` 로 설치돼 그 모듈을 import 할 수
+ * 없으므로 여기 따로 둔다. git 이 아니거나 common dir 이 `.git` 으로 끝나지 않으면 폴더 이름.
  */
-export function findEcosystemRoot(startDir: string): string | undefined {
+export function checkoutRepoName(root: string): string {
+	const common = gitCommonDir(root);
+	return common !== undefined && basename(common) === ".git"
+		? basename(dirname(common))
+		: basename(resolve(root));
+}
+
+function gitCommonDir(dir: string): string | undefined {
+	try {
+		const out = execSync("git rev-parse --path-format=absolute --git-common-dir", {
+			cwd: dir,
+			encoding: "utf-8",
+			stdio: ["ignore", "pipe", "ignore"],
+		}).trim();
+		return out === "" ? undefined : out;
+	} catch {
+		return undefined;
+	}
+}
+
+/**
+ * `dir` 자신이 허브 체크아웃(주 체크아웃이든 연결 워크트리든)인가.
+ *
+ * 폴더 이름으로는 못 가른다 — 워크트리는 아무 이름에나 산다. 세 표식을 함께 본다:
+ * `ecosystem.json` · 패키지 이름 `@modfolio/harness` · `.git`(디렉터리든 워크트리의 파일이든).
+ * 설치된 하네스 번들(`node_modules/@modfolio/harness`)도 앞의 둘을 싣고 다니므로 `.git` 과
+ * `node_modules` 경로 배제가 그것을 가른다(feedback-send 2026-04-25 P0 와 같은 함정).
+ */
+function isHubCheckout(dir: string): boolean {
+	if (dir.split(sep).includes("node_modules")) return false;
+	if (!existsSync(join(dir, "ecosystem.json")) || !existsSync(join(dir, ".git"))) return false;
+	try {
+		const pkg = JSON.parse(readFileSync(join(dir, "package.json"), "utf-8")) as { name?: unknown };
+		return pkg.name === "@modfolio/harness";
+	} catch {
+		// 못 읽으면 «허브 아님» 으로 두고 아래 형제 탐색으로 넘어간다(종전 동작).
+		return false;
+	}
+}
+
+function walkForEcosystem(startDir: string): string | undefined {
 	let current = resolve(startDir);
 	for (let i = 0; i < 10; i++) {
+		if (isHubCheckout(current)) return current;
 		for (const folderName of ECOSYSTEM_FOLDER_CANDIDATES_INLINE) {
 			const candidate = join(current, folderName);
 			if (existsSync(join(candidate, "ecosystem.json"))) return candidate;
@@ -149,6 +195,28 @@ export function findEcosystemRoot(startDir: string): string | undefined {
 		current = parent;
 	}
 	return undefined;
+}
+
+/**
+ * 허브 체크아웃을 찾는다. `undefined` 면 못 찾은 것이고, 치명인지는 호출자가 정한다.
+ *
+ * ① 올라가며 각 단계에서 **그 디렉터리 자신이 허브인지** 먼저 보고(허브 워크트리 ·
+ *    주 체크아웃), 아니면 형제 이름(`modfolio-ecosystem` → 레거시 `modfolio-universe`)을 찾는다.
+ * ② 못 찾으면 **주 체크아웃 자리에서** 다시 찾는다 — 멤버의 연결 워크트리
+ *    (`~/.modfolio/worktrees/<이름>`)는 조상에 허브 형제가 없지만 주 체크아웃
+ *    (`~/code/<repo>`)은 있다.
+ *
+ * 종전엔 ①의 형제 이름만 봤다. 허브 워크트리 `~/.modfolio/worktrees/hub-moon` 은 조상 어디에도
+ * `modfolio-ecosystem/` 이 없어 허브를 못 찾았고, debrief 카드가 워크트리의 outbox 에 갇혔다
+ * (교대 #2~#7 카드 5장 — 워크트리를 지우면 소실 · 2026-09-25 baa0283a 에서 손으로 옮겼다).
+ */
+export function findEcosystemRoot(startDir: string): string | undefined {
+	const found = walkForEcosystem(startDir);
+	if (found !== undefined) return found;
+	const common = gitCommonDir(resolve(startDir));
+	if (common === undefined || basename(common) !== ".git") return undefined;
+	const mainCheckout = dirname(common);
+	return mainCheckout === resolve(startDir) ? undefined : walkForEcosystem(mainCheckout);
 }
 
 /**

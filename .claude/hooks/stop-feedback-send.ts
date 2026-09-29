@@ -18,8 +18,8 @@
 
 import { execSync } from "node:child_process";
 import { existsSync, readFileSync, statSync } from "node:fs";
-import { basename, join } from "node:path";
-import { findEcosystemRoot, gitRoot } from "./_lib.ts";
+import { join } from "node:path";
+import { checkoutRepoName, findEcosystemRoot, gitRoot } from "./_lib.ts";
 
 // CLI 동작 불변 — `bun run <file>` 은 `import.meta.main` 이 참이다.
 // 가드가 없으면 이 모듈을 **import 하는 테스트가 프로세스째 종료**된다
@@ -27,7 +27,7 @@ import { findEcosystemRoot, gitRoot } from "./_lib.ts";
 if (import.meta.main) {
 	try {
 		const cwd = gitRoot();
-		const repo = basename(cwd);
+		const repo = checkoutRepoName(cwd);
 		// ecosystem 자체에서는 안 함 (current + legacy 이름).
 		if (repo === "modfolio-ecosystem" || repo === "modfolio-universe") process.exit(0);
 

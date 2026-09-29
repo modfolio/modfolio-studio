@@ -1,7 +1,7 @@
 ---
 title: Tech Trends 2026-09 — 현행화 판단 (Claude Code 2.1.257~261 · 스택 실물 · 적응형 currency 루프)
-version: 1.3.0
-last_updated: 2026-09-24
+version: 1.4.0
+last_updated: 2026-09-25
 source: [code.claude.com/docs/en/settings (2.1.257 scope-aware defaultMode · modelSettings, 2026-09-06 실측), code.claude.com/docs/en/sub-agents + skills (frontmatter 필드 목록), registry.npmjs.org dist-tags 2026-09-06 (typescript 7.0.2 · biome 2.5.12 · wrangler 4.129.0 · vitest 5.0.0 · zod 4.5.4 · astro 7.3.1 · @astrojs/cloudflare 14.3.0 · drizzle-orm 0.45.2 / rc 1.0.0-rc.4 · @sveltejs/kit 2.70.3 / next 3.0.0-next.25), github.com/oven-sh/bun/releases (bun-v1.4.2 2026-09-05), github.com/colinhacks/zod/releases/tag/v4.5.0 (z.iso.datetime requires seconds · code-point length), docs.astro.build upgrade-to/v6·v7 + integrations-guide/cloudflare (locals.runtime 제거 · cloudflare:workers env · cfContext), github.com/better-auth/better-auth/releases (v1.7.0 Account.issuer · signIn.social), 허브 실측 (verify:stack-currency v3 fleet 179 위반 · currency:probe 2026-09-06), Writ lane 4건 (dle-desk 416f9be/82506db · naviaca 35ba881 · modfolio-admin 8d77a1c · muje 7895aa3)]
 sync_to_siblings: true
 applicability: always
@@ -146,6 +146,20 @@ URL/중복 필터). 결정: A 의 `--permission-prompts none` 은 로컬 버전 
 | `mcp_tool` 훅이 MCP 연결 중에 건너뛰던 결함 수정 · `--setting-sources` 가 spawn 세션에 전달 | 하네스 조치 없음(상류 수정) |
 
 breaking 집계 2 중 1 은 오탐이었다(«error messages breaking onto a second line») — `isBreakingLine` 으로 좁혔다.
+
+## 판단 기록 — `currency:judge` 2026-09-25 (Claude Code 2.1.282 · nonstop 교대 #12)
+
+정찰자 1회(innovation-scout · 입력 `.evolve-state/websearch-input.json`) → Phase 4: Adopt 0 · Trial P1 0 · Trial P2 5 · Skip 0.
+
+| 후보 | 판정 |
+|---|---|
+| 2.1.277 `TaskOutput` 제거(`taskOutputMaxChars` 무효) | 이미 처분(2026-09-23) — settings 에 키 없음 · `context-residency.md` 규칙 2 가 반영 |
+| 2.1.281 `/agents` 잔여 메뉴 · 2.1.277 `claude -p` auto-title 제거 | 표시만 바뀜 — 하네스 조치 없음 |
+| 2.1.280 옛 모델(Opus 4.7/4.8·Fable 5) 관련 | 하네스 기본은 이미 Opus 5.5 · 재측정 대상 아님 |
+| 2.1.282 skill 권한 관련 줄 | 하네스 `.claude/` 에 해당 패턴 0건(정찰자 grep) — 적용 대상 없음 |
+| «허브 워크트리 3곳 typescript·wrangler 위반» | **거짓 후보** — 17:54 delta 가 fleetParent 수정(1aebe116) 전 캐시에서 왔다. 재프로브 뒤 delta 에 허브 워크트리 0건 |
+
+계측기 결함 하나를 고쳤다: 판단 뒤 changelog 가 304 면 프로브가 **옛 구간의 집계를 라벨만 바꿔** 남겨, 판단을 끝내도 «관련 줄 204 · breaking 3» 이 계속 «움직임» 으로 나왔다. 구간(또는 집계의 헤딩)이 달라지면 ETag 를 버리고 전문을 다시 자른다 — 재프로브 뒤 CC 줄이 사라지고 fleet 스택(멤버 몫)만 남았다.
 
 ## 재평가 trigger
 

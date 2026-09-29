@@ -1,8 +1,8 @@
 ---
 title: 권한 모드 — bypassPermissions 표준 (zero-prompt, fleet)
-version: 2.1.0
+version: 2.2.0
 last_updated: 2026-09-25
-source: [2026-05-18 속도회복 세션, claude-code-guide 권위 확인 + 실측; 2026-09-06 Claude Code 2.1.257 settings-reference 실측 — project/local 스코프의 bypassPermissions·auto 무시; 2026-09-25 code.claude.com permission-modes — 계획 모드의 bypass 승계는 대화형 터미널만]
+source: [2026-05-18 속도회복 세션, claude-code-guide 권위 확인 + 실측; 2026-09-06 Claude Code 2.1.257 settings-reference 실측 — project/local 스코프의 bypassPermissions·auto 무시; 2026-09-25 code.claude.com permission-modes — 계획 모드의 bypass 승계는 대화형 터미널만; 2026-09-25 Desktop WSL 세션 프로세스 인자 실측]
 sync_to_siblings: true
 applicability: always
 consumers: [ops, preflight, harness-pull]
@@ -70,6 +70,24 @@ bypass 는 **모든** 창을 없애지 않는다. 남는 자리는 넷이고 처
 | `ExitPlanMode`·`AskUserQuestion` | 설계상 사람의 답을 받는 도구 | 계획 승인은 원래 창이다. 무인(`/modfolio-nonstop`)에서는 계획 모드를 쓰지 않고 원장에 계획한다 |
 
 ⚠ 2.1.212~2.1.217 은 비-bypass 세션에서 계획 모드의 비읽기 명령마다 묻는 회귀가 있었다(그 뒤 수정) — «예전엔 안 그랬다» 의 한 갈래일 수 있으나 이 머신의 판정은 위 표다.
+
+## Desktop·모바일에서 선택기에 bypass 가 안 보인다 (2026-09-25 · 오너 보고 — «WSL 세션»)
+
+**모드는 켜져 있다 — 보이지 않을 뿐이다.** 실측(이 머신 · Desktop Code 탭에서 연 WSL 세션): Desktop 은 WSL 세션을
+`~/.claude/remote/ccd-cli/<버전>` 로 띄우고, 떠 있는 세션 셋 모두 명령줄이
+`--permission-mode bypassPermissions --allow-dangerously-skip-permissions` 였다(`/proc/<pid>/cmdline`). 파일 층도 전부 켜져
+있다 — Windows `claude_desktop_config.json` `bypassPermissionsModeEnabled: true` · WSL·Windows `~/.claude/settings.json`
+`defaultMode: bypassPermissions` · managed settings 없음.
+
+| 표면 | 선택기 | 실제 모드 |
+|---|---|---|
+| Desktop · Windows 로컬 세션 | 설정 «Allow bypass permissions mode» 토글 뒤 보인다(공식 문서) | 선택대로 |
+| Desktop · **WSL 세션** | 원격 환경 경로(`remote/ccd-cli`)로 떠서 bypass 가 선택지에 없다(오너 관측) | **bypass**(프로세스 인자) |
+| 웹·모바일·Remote Control | bypass 를 선택지로 제공하지 않는다(공식 문서: Accept edits·Plan·Auto / Manual·Accept edits·Plan) | 로컬 세션이 bypass 면 그대로 |
+
+→ 처방: **설정을 더 고치지 않는다**(고칠 층이 없다). 확인은 선택기가 아니라 세션 안에서 한다 — 승인 창이 뜨지 않는지,
+또는 `/proc/<pid>/cmdline` 의 `--permission-mode`. 선택기에서 다른 모드를 **클릭하면** 그 세션은 그 모드가 된다(§주의).
+⚠ 미확인: WSL 세션 선택기에 bypass 가 빠지는 것이 제품 설계인지 결함인지는 공식 문서에 없다 — 문서가 생기면 이 표를 고친다.
 
 ## 적용 절차
 

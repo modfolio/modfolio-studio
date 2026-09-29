@@ -61,7 +61,9 @@ maxTurns: 12
 
 candidate 필드: `title · url · category(Adopt|Trial|Skip) · difficulty(Low|Med|High) · one_line · rationale ·
 value/effort/risk(1-5) · security_critical · sibling_propagation_cost(1-5) · adds_new_canon_or_agent ·
-detection{type:file|dep, pattern}`. **`estimated_cost_usd` 는 0** — subscription 안이다. 섹션은 셋 다 있어야
+detection{type:file|dep, pattern}`. **`url` 은 http(s) 절대 URL** — synthesize 가 `z.url()` 로 입력 전체를
+거부한다(2026-09-25 실측: B 의 `apps/…/package.json:28` 두 건으로 판단이 멈췄다). 저장소 파일이 근거면 `url` 은 그
+패키지의 릴리즈 노트로 두고 파일·줄은 `rationale` 에 적는다. **`estimated_cost_usd` 는 0** — subscription 안이다. 섹션은 셋 다 있어야
 한다(빈 배열 허용). 후보가 없으면 빈 배열이지 지어내지 않는다.
 
 ## 하지 않는 것

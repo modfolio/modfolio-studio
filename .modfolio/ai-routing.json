@@ -103,7 +103,7 @@
       "requireOrdinaryUsageAllowed": false
     },
     "gemini": {
-      "subscription": "Google AI Pro",
+      "subscription": "Google AI Ultra",
       "reservePercent": 0,
       "maxConcurrent": 1,
       "requiredWindows": []
@@ -217,8 +217,8 @@
     "google-research": [
       {
         "provider": "gemini",
-        "model": "gemini-3.8-flash-medium",
-        "effort": "medium"
+        "model": "gemini-3.8-flash-high",
+        "effort": "high"
       }
     ]
   },

@@ -9,7 +9,8 @@
 		".agents/skills/modfolio-sun/SKILL.md",
 		".agents/skills/modfolio-moon/SKILL.md",
 		".codex/hooks.json",
-		".agents/hooks.json"
+		".agents/hooks.json",
+		".claude/rules/modfolio-studio-domain.md"
 	],
 	"neutralManagedPaths": [
 		"AGENTS.md",
