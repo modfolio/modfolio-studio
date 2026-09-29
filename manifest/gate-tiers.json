@@ -4,6 +4,6 @@
     "check": "quick",
     "typecheck": "quick",
     "typecheck:app": "quick",
-    "bash scripts/quality-gate.sh": "full"
+    "bash scripts/quality-gate.sh --all": "full"
   }
 }
