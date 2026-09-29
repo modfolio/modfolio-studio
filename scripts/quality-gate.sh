@@ -107,7 +107,7 @@ while IFS= read -r f; do
   while IFS=: read -r line content; do
     [[ -z "$line" ]] && continue
     # as unknown as 는 합법적 타입 좁히기
-    echo "$content" | grep -q 'as unknown as' && continue
+    grep -q 'as unknown as' <<< "$content" && continue
     report "P0" "$f" "$line" "타입 탈출: as any — 정확한 타입 사용"
   done < <(grep -nE '\bas\s+any\b' "$f" 2>/dev/null || true)
 done <<< "$NON_TEST_FILES"
@@ -175,15 +175,15 @@ while IFS= read -r f; do
   while IFS=: read -r line content; do
     [[ -z "$line" ]] && continue
     # 정당한 예외 필터링
-    echo "$content" | grep -qE 'var\(' && continue
-    echo "$content" | grep -qE '^\s*/[/*]' && continue
-    echo "$content" | grep -qE '^\s*\*' && continue
-    echo "$content" | grep -q 'theme-color' && continue
-    echo "$content" | grep -q 'content="#' && continue
+    grep -qE 'var\(' <<< "$content" && continue
+    grep -qE '^\s*/[/*]' <<< "$content" && continue
+    grep -qE '^\s*\*' <<< "$content" && continue
+    grep -q 'theme-color' <<< "$content" && continue
+    grep -q 'content="#' <<< "$content" && continue
     # noscript 블록 내부 (CSS 변수 로드 안 됨)
-    echo "$NOSCRIPT_LINES" | grep -q "^${line}$" && continue
+    grep -q "^${line}$" <<< "$NOSCRIPT_LINES" && continue
     # CSS 변수 정의 컨텍스트 (소비가 아닌 토큰 선언)
-    echo "$content" | grep -qE -- '--[a-z]+-' && continue
+    grep -qE -- '--[a-z]+-' <<< "$content" && continue
     report "P1" "$f" "$line" "하드코딩 색상 — CSS 변수 사용: $(echo "$content" | xargs | head -c 80)"
   done < <(grep -nE '#[0-9a-fA-F]{3,8}\b|[^-]rgb\(|[^-]rgba\(|[^-]hsl\(|[^-]hsla\(|[^-]oklch\(' "$f" 2>/dev/null || true)
 
@@ -191,14 +191,14 @@ while IFS= read -r f; do
   # @font-face 블록 내 font-family는 정의이므로 제외 (항상 따옴표로 감싸짐)
   while IFS=: read -r line content; do
     [[ -z "$line" ]] && continue
-    echo "$content" | grep -qE 'var\(' && continue
-    echo "$content" | grep -qE '^\s*/[/*]' && continue
+    grep -qE 'var\(' <<< "$content" && continue
+    grep -qE '^\s*/[/*]' <<< "$content" && continue
     # CSS 변수 정의 컨텍스트
-    echo "$content" | grep -qE -- '--font-' && continue
+    grep -qE -- '--font-' <<< "$content" && continue
     # @font-face 정의: font-family: "name" (따옴표 = 정의, 소비 아님)
-    echo "$content" | grep -qE 'font-family\s*:\s*"' && continue
+    grep -qE 'font-family\s*:\s*"' <<< "$content" && continue
     # CSS 키워드
-    echo "$content" | grep -qE 'inherit|unset|initial' && continue
+    grep -qE 'inherit|unset|initial' <<< "$content" && continue
     report "P1" "$f" "$line" "하드코딩 font-family — CSS 변수 사용"
   done < <(grep -nE 'font-family\s*:' "$f" 2>/dev/null | grep -v 'var(' || true)
 
@@ -207,7 +207,7 @@ while IFS= read -r f; do
     while IFS=: read -r line content; do
       [[ -z "$line" ]] && continue
       # prefers-reduced-motion 블록 내 !important는 정당한 접근성 패턴
-      echo "$REDUCED_MOTION_LINES" | grep -q "^${line}$" && continue
+      grep -q "^${line}$" <<< "$REDUCED_MOTION_LINES" && continue
       report "P1" "$f" "$line" "!important 사용 금지"
     done < <(grep -n '!important' "$f" 2>/dev/null || true)
   fi
