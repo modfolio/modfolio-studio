@@ -4,11 +4,12 @@
   "scripts": {
     "dev": "athsra run modfolio-studio -- vite dev --port 4060",
     "build": "vite build",
+    "fonts": "modfolio-fonts webfont static B --repo modfolio-studio --extra Gambetta --hash --no-stable-css --module src/lib/fonts-href.ts --headers _headers && biome format --write src/lib/fonts-href.ts",
     "preview": "athsra run modfolio-studio -- vite preview",
     "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json"
   },
   "dependencies": {
-    "@modfolio/connect-sdk": "^10.13.0",
+    "@modfolio/connect-sdk": "^10.15.0",
     "@sveltejs/adapter-cloudflare": "^7.2.9",
     "@sveltejs/kit": "^2.70.3",
     "@sveltejs/vite-plugin-svelte": "^5.0.0",
@@ -18,6 +19,7 @@
     "vite": "^6.3.0"
   },
   "devDependencies": {
-    "@cloudflare/workers-types": "^5.20260905.1"
+    "@cloudflare/workers-types": "^5.20260905.1",
+    "@modfolio/fonts": "^0.1.0"
   }
 }

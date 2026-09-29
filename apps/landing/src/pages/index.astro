@@ -2,7 +2,11 @@
 import Base from "../layouts/Base.astro";
 import { STUDIO_APPS } from "../lib/apps";
 
-const portalUrl = "https://lab.modfolio.io";
+// No per-request data: served as a static asset (no Worker invocation). The
+// Header's signed-in CTA is resolved client-side — see lib/signed-in-hint.ts.
+export const prerender = true;
+
+const portalUrl = "https://lab.modfolio.io/portal"; // not the root — see Header.astro
 const siteUrl = "https://studio.modfolio.io";
 
 // schema.org Organization — identifies Studio as a brand within Modfolio and

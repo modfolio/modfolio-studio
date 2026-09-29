@@ -3,9 +3,13 @@ interface Props {
 	portalUrl?: string;
 }
 
-const { portalUrl = "https://lab.modfolio.io" } = Astro.props;
+import { SIGNED_IN_HINT_COOKIE } from "../lib/signed-in-hint";
+
+// Link the Lab portal itself: lab.modfolio.io/ is only a router (302 to /portal
+// or /auth/login), so the root costs an extra round trip. /portal is a Connect
+// protectedPath, so a visitor without a session gets the SDK direct entry there.
+const { portalUrl = "https://lab.modfolio.io/portal" } = Astro.props;
 const pathname = Astro.url.pathname;
-const user = Astro.locals.user;
 
 const navLinks = [
 	{ href: "/#manifesto", label: "Vision" },
@@ -13,9 +17,17 @@ const navLinks = [
 	{ href: "/contact", label: "Contact" },
 ];
 
-const ctaHref = user ? portalUrl : "/auth/login";
-const ctaLabel = user ? "Open Lab" : "로그인";
-const mobileCtaLabel = user ? "Lab 열기" : "로그인";
+// Every landing page is prerendered, so the markup is the signed-out CTA. The
+// inline script below swaps it for "Open Lab" before first paint when the
+// non-credential hint cookie (set by the SSR auth routes) says the visitor has a
+// Studio session. A stale hint is harmless: lab.modfolio.io enforces its own
+// session, and "로그인" re-enters SSO, which returns immediately when signed in.
+const signedIn = {
+	href: portalUrl,
+	label: "Open Lab",
+	mobileLabel: "Lab 열기",
+	cookie: SIGNED_IN_HINT_COOKIE,
+};
 ---
 
 <header class="header" id="header">
@@ -33,7 +45,7 @@ const mobileCtaLabel = user ? "Lab 열기" : "로그인";
 		))}
 	</nav>
 
-	<a href={ctaHref} class="header-cta">{ctaLabel}</a>
+	<a href="/auth/login" class="header-cta" data-signed-in-cta="desktop">로그인</a>
 
 	<!-- 모바일 메뉴 (CSS-only) -->
 	<input type="checkbox" id="mobile-menu-toggle" class="mobile-toggle" aria-hidden="true" />
@@ -47,9 +59,20 @@ const mobileCtaLabel = user ? "Lab 열기" : "로그인";
 			{navLinks.map((link) => (
 				<a href={link.href} class="mobile-link">{link.label}</a>
 			))}
-			<a href={ctaHref} class="mobile-link mobile-link-cta">{mobileCtaLabel}</a>
+			<a href="/auth/login" class="mobile-link mobile-link-cta" data-signed-in-cta="mobile"
+				>로그인</a
+			>
 		</nav>
 	</div>
+	<script is:inline data-astro-rerun define:vars={{ signedIn }}>
+		if (document.cookie.split("; ").includes(`${signedIn.cookie}=1`)) {
+			for (const a of document.querySelectorAll("[data-signed-in-cta]")) {
+				a.href = signedIn.href;
+				a.textContent =
+					a.dataset.signedInCta === "mobile" ? signedIn.mobileLabel : signedIn.label;
+			}
+		}
+	</script>
 </header>
 
 <style>

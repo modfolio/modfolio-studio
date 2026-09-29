@@ -1,8 +1,16 @@
 <script>
+import { fontPreloads, fontsCssHref } from "$lib/fonts-href";
 import "../app.css";
 
 let { children } = $props();
 </script>
+
+<svelte:head>
+	{#each fontPreloads as href (href)}
+		<link rel="preload" as="font" type="font/woff2" {href} crossorigin="anonymous" />
+	{/each}
+	<link rel="stylesheet" href={fontsCssHref} />
+</svelte:head>
 
 <!--
   Bypass-blocks link (WCAG 2.2 SC 2.4.1). The portal renders a sticky header

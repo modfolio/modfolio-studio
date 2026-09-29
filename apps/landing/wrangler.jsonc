@@ -17,9 +17,9 @@
 	"routes": [
 		{ "pattern": "studio.modfolio.io", "custom_domain": true }
 	],
-	"placement": {
-		"mode": "smart"
-	},
+	// No placement: every page is a prerendered static asset, so the Worker runs
+	// only for /auth/* (one token exchange with Connect). Smart placement had
+	// nothing to learn from (status INSUFFICIENT_INVOCATIONS) — default placement.
 	"observability": {
 		"enabled": true
 	}
