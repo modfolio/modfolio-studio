@@ -44,5 +44,17 @@
 		"writer": "task-workspace",
 		"integration": "repository"
 	},
-	"enrollment": "configured"
+	"enrollment": "configured",
+	"review": {
+		"generatedOutputs": [
+			{
+				"prefix": "apps/landing/public/fonts/",
+				"check": "bun run check:fonts — 파일명 해시 = sha256(내용) 앞 10자 · fonts-manifest.json ↔ 디스크 1:1 · fonts-href 모듈 ↔ 매니페스트 · CSS url() 존재 · _headers /fonts/* immutable 대조. 재생성은 소스 폰트가 있는 오너 기계에서 `bun run build && bun run fonts && bun run build`(각 앱) 후 git diff 로 본다"
+			},
+			{
+				"prefix": "apps/app/static/fonts/",
+				"check": "bun run check:fonts — 파일명 해시 = sha256(내용) 앞 10자 · fonts-manifest.json ↔ 디스크 1:1 · fonts-href 모듈 ↔ 매니페스트 · CSS url() 존재 · _headers /fonts/* immutable 대조. 재생성은 소스 폰트가 있는 오너 기계에서 `bun run build && bun run fonts && bun run build`(각 앱) 후 git diff 로 본다"
+			}
+		]
+	}
 }
