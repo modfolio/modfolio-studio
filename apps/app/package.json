@@ -4,7 +4,7 @@
   "scripts": {
     "dev": "athsra run modfolio-studio -- vite dev --port 4060",
     "build": "vite build",
-    "fonts": "modfolio-fonts webfont static B --repo modfolio-studio --extra Gambetta --hash --no-stable-css --module src/lib/fonts-href.ts --headers _headers && biome format --write src/lib/fonts-href.ts",
+    "fonts": "modfolio-fonts webfont static B --repo modfolio-studio --extra Gambetta --hash --no-stable-css --manifest static/fonts/fonts-manifest.json --module src/lib/fonts-href.ts --headers _headers && biome format --write src/lib/fonts-href.ts",
     "preview": "athsra run modfolio-studio -- vite preview",
     "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json"
   },

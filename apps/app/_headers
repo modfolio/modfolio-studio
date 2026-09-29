@@ -1,5 +1,44 @@
 # >>> @modfolio/fonts — 생성물. 이 두 표지 사이는 손으로 고치지 않는다.
-# /fonts/* 의 20개 파일이 전부 내용 해시 이름이다 → immutable 이 정직하다.
-/fonts/*
+# 해시 이름 20개는 파일별 immutable · 고정 이름 1개는 규칙 없음(플랫폼 기본 = 매번 재검증).
+#   고정 이름: fonts-manifest.json — 다음 --hash 재생성에서 정리된다.
+/fonts/Cabinet.f71103771c.woff2
+  Cache-Control: public, max-age=31536000, immutable
+/fonts/Clash.dbe4b338d4.woff2
+  Cache-Control: public, max-age=31536000, immutable
+/fonts/Gambetta.f705e571ea.woff2
+  Cache-Control: public, max-age=31536000, immutable
+/fonts/Paperlogy.0.d243d836d9.woff2
+  Cache-Control: public, max-age=31536000, immutable
+/fonts/Paperlogy.0b.5f69191400.woff2
+  Cache-Control: public, max-age=31536000, immutable
+/fonts/Paperlogy.1.9426445b34.woff2
+  Cache-Control: public, max-age=31536000, immutable
+/fonts/Paperlogy.1b.13dfb8d498.woff2
+  Cache-Control: public, max-age=31536000, immutable
+/fonts/Paperlogy.2.c6a742c899.woff2
+  Cache-Control: public, max-age=31536000, immutable
+/fonts/Paperlogy.2b.ff4a016fba.woff2
+  Cache-Control: public, max-age=31536000, immutable
+/fonts/Paperlogy.3.0a42340e44.woff2
+  Cache-Control: public, max-age=31536000, immutable
+/fonts/Paperlogy.3b.5b6de1590a.woff2
+  Cache-Control: public, max-age=31536000, immutable
+/fonts/Paperlogy.4.0f03c3f87d.woff2
+  Cache-Control: public, max-age=31536000, immutable
+/fonts/Paperlogy.4b.161ad18807.woff2
+  Cache-Control: public, max-age=31536000, immutable
+/fonts/Paperlogy.5.704933be58.woff2
+  Cache-Control: public, max-age=31536000, immutable
+/fonts/Paperlogy.5b.1006ee0ce3.woff2
+  Cache-Control: public, max-age=31536000, immutable
+/fonts/Paperlogy.6.a5b9938536.woff2
+  Cache-Control: public, max-age=31536000, immutable
+/fonts/Paperlogy.6b.d4009a33cc.woff2
+  Cache-Control: public, max-age=31536000, immutable
+/fonts/Pretendard.u0.4f5ccf5f1a.woff2
+  Cache-Control: public, max-age=31536000, immutable
+/fonts/Sligoil.687e50a715.woff2
+  Cache-Control: public, max-age=31536000, immutable
+/fonts/fonts.2584017f34.css
   Cache-Control: public, max-age=31536000, immutable
 # <<< @modfolio/fonts

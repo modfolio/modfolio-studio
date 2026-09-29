@@ -1,5 +1,50 @@
 # >>> @modfolio/fonts — 생성물. 이 두 표지 사이는 손으로 고치지 않는다.
-# /fonts/* 의 23개 파일이 전부 내용 해시 이름이다 → immutable 이 정직하다.
-/fonts/*
+# 해시 이름 23개는 파일별 immutable · 고정 이름 1개는 규칙 없음(플랫폼 기본 = 매번 재검증).
+#   고정 이름: fonts-manifest.json — 다음 --hash 재생성에서 정리된다.
+/fonts/Cabinet.f71103771c.woff2
+  Cache-Control: public, max-age=31536000, immutable
+/fonts/Clash.dbe4b338d4.woff2
+  Cache-Control: public, max-age=31536000, immutable
+/fonts/Gambetta.f705e571ea.woff2
+  Cache-Control: public, max-age=31536000, immutable
+/fonts/Paperlogy.0.e4a2b16c85.woff2
+  Cache-Control: public, max-age=31536000, immutable
+/fonts/Paperlogy.0b.0c361f88b8.woff2
+  Cache-Control: public, max-age=31536000, immutable
+/fonts/Paperlogy.1.9426445b34.woff2
+  Cache-Control: public, max-age=31536000, immutable
+/fonts/Paperlogy.1b.13dfb8d498.woff2
+  Cache-Control: public, max-age=31536000, immutable
+/fonts/Paperlogy.2.c6a742c899.woff2
+  Cache-Control: public, max-age=31536000, immutable
+/fonts/Paperlogy.2b.ff4a016fba.woff2
+  Cache-Control: public, max-age=31536000, immutable
+/fonts/Paperlogy.3.0a42340e44.woff2
+  Cache-Control: public, max-age=31536000, immutable
+/fonts/Paperlogy.3b.5b6de1590a.woff2
+  Cache-Control: public, max-age=31536000, immutable
+/fonts/Paperlogy.4.0f03c3f87d.woff2
+  Cache-Control: public, max-age=31536000, immutable
+/fonts/Paperlogy.4b.161ad18807.woff2
+  Cache-Control: public, max-age=31536000, immutable
+/fonts/Paperlogy.5.704933be58.woff2
+  Cache-Control: public, max-age=31536000, immutable
+/fonts/Paperlogy.5b.1006ee0ce3.woff2
+  Cache-Control: public, max-age=31536000, immutable
+/fonts/Paperlogy.6.a5b9938536.woff2
+  Cache-Control: public, max-age=31536000, immutable
+/fonts/Paperlogy.6b.d4009a33cc.woff2
+  Cache-Control: public, max-age=31536000, immutable
+/fonts/Paperlogy.c.8033aca192.woff2
+  Cache-Control: public, max-age=31536000, immutable
+/fonts/Paperlogy.cb.c159128519.woff2
+  Cache-Control: public, max-age=31536000, immutable
+/fonts/Pretendard.u0.4f5ccf5f1a.woff2
+  Cache-Control: public, max-age=31536000, immutable
+/fonts/Sligoil.5f18618c52.woff2
+  Cache-Control: public, max-age=31536000, immutable
+/fonts/Sligoil.c.387b079b0d.woff2
+  Cache-Control: public, max-age=31536000, immutable
+/fonts/fonts.00b5b96979.css
   Cache-Control: public, max-age=31536000, immutable
 # <<< @modfolio/fonts

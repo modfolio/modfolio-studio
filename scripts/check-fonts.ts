@@ -6,12 +6,17 @@
 // and that is exactly what the review packet points reviewers at instead of the
 // binary diff (.modfolio/project.json review.generatedOutputs):
 //
-//   1. every file under <static>/fonts/ carries its own content hash in its name
-//      (sha256, first 10 hex — @modfolio/fonts hash.js), so `immutable` is honest
-//   2. fonts-manifest.json lists exactly the files that are on disk
+//   1. every file under <static>/fonts/ (except the manifest) carries its own
+//      content hash in its name (sha256, first 10 hex — @modfolio/fonts hash.js)
+//   2. fonts/fonts-manifest.json lists exactly the files that are on disk
 //   3. the generated href module names the manifest's CSS and existing files
 //   4. every url() in the hashed CSS resolves to a file on disk
-//   5. _headers makes /fonts/* immutable
+//   5. _headers makes every hashed file immutable — and never the manifest, whose
+//      name does not change when its content does
+//
+// The manifest lives inside fonts/ (`--manifest`) so the whole generated output
+// sits under the declared folders; the generator then writes per-file immutable
+// rules instead of `/fonts/*`, which is what check 5 accepts.
 //
 // Exit 1 on any violation, 2 when an app's output cannot be found (undecidable).
 
@@ -34,19 +39,22 @@ const APPS = [
 	},
 ];
 
+const MANIFEST = "fonts-manifest.json";
 const root = new URL("..", import.meta.url).pathname;
 const problems: string[] = [];
 let undecidable = false;
 
 for (const app of APPS) {
 	const fontsDir = join(root, app.staticDir, "fonts");
-	const manifestPath = join(root, app.staticDir, "fonts-manifest.json");
+	const manifestPath = join(fontsDir, MANIFEST);
 	if (!existsSync(fontsDir) || !existsSync(manifestPath)) {
 		console.error(`✗ ${app.name}: ${app.staticDir}/fonts 또는 fonts-manifest.json 이 없다 (판정 불능)`);
 		undecidable = true;
 		continue;
 	}
-	const onDisk = readdirSync(fontsDir).sort();
+	const onDisk = readdirSync(fontsDir)
+		.filter((f) => f !== MANIFEST)
+		.sort();
 	if (onDisk.length === 0) {
 		console.error(`✗ ${app.name}: ${app.staticDir}/fonts 가 비었다 (판정 불능)`);
 		undecidable = true;
@@ -97,10 +105,19 @@ for (const app of APPS) {
 		}
 	}
 
-	// 5. immutable cache rule
+	// 5. immutable cache rules: each hashed file (or a /fonts/* wildcard, which is
+	//    only honest when nothing unhashed shares the folder)
 	const headers = existsSync(join(root, app.headers)) ? readFileSync(join(root, app.headers), "utf8") : "";
-	if (!/^\/fonts\/\*\s*\n\s+Cache-Control:[^\n]*immutable/m.test(headers))
-		problems.push(`${app.name}: ${app.headers} 에 /fonts/* immutable 규칙이 없다`);
+	const immutable = new Set(
+		[...headers.matchAll(/^(\/\S+)\s*\n\s+Cache-Control:[^\n]*immutable/gm)].map((m) => m[1] ?? ""),
+	);
+	if (immutable.has("/fonts/*"))
+		problems.push(`${app.name}: /fonts/* 가 immutable 인데 폴더에 해시 없는 ${MANIFEST} 가 있다`);
+	for (const f of onDisk)
+		if (!immutable.has(`/fonts/${f}`) && !immutable.has("/fonts/*"))
+			problems.push(`${app.name}: ${app.headers} 에 /fonts/${f} immutable 규칙이 없다`);
+	if (immutable.has(`/fonts/${MANIFEST}`))
+		problems.push(`${app.name}: ${MANIFEST} 가 immutable 이다(내용이 바뀌어도 이름이 같다)`);
 
 	console.log(`· ${app.name}: 파일 ${onDisk.length}개 · preload ${preloads.length}개`);
 }

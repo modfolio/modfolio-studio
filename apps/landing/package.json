@@ -4,7 +4,7 @@
   "scripts": {
     "dev": "athsra run modfolio-studio -- astro dev",
     "build": "astro build && node scripts/early-hints.mjs",
-    "fonts": "modfolio-fonts webfont public B --repo modfolio-studio --extra Gambetta --hash --no-stable-css --site dist/client --module src/fonts-href.ts --headers public/_headers && biome format --write src/fonts-href.ts",
+    "fonts": "modfolio-fonts webfont public B --repo modfolio-studio --extra Gambetta --hash --no-stable-css --site dist/client --manifest public/fonts/fonts-manifest.json --module src/fonts-href.ts --headers public/_headers && biome format --write src/fonts-href.ts",
     "preview": "athsra run modfolio-studio -- astro preview",
     "deploy": "bun run build && athsra run modfolio-connect -- wrangler deploy",
     "check": "astro check"
