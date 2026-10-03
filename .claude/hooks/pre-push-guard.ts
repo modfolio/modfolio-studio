@@ -83,11 +83,13 @@ import { judgeL0Carry } from "../lib/l0-carry.ts";
 import { isGitPushCommand, plainPushTargetsAll, pushWorkdir } from "./_git-push-detect.ts";
 import {
 	bashCommand,
+	guardClass,
 	isSvelteKitProject,
 	readHookInput,
+	recordGuardSignal,
 	spawnSyncWithSvelteKitRetry,
 } from "./_lib.ts";
-import { gitPrePushMode, looksLikeWipPush } from "./_wip-push.ts";
+import { gitPrePushMode, looksLikeSweepOnlyPush } from "./_wip-push.ts";
 
 /** 판정 완료 · 게이트 green. */
 const EXIT_GREEN = 0;
@@ -103,6 +105,7 @@ const SAFETY_MARGIN_MS = 5_000;
 /** 예산이 아무리 작아도 이보다 짧게는 주지 않는다(선언 실수로 0초가 되는 것 방지). */
 const MIN_BUDGET_MS = 1_000;
 
+recordGuardSignal("pre-push-guard");
 const input = await readHookInput();
 const cmd = bashCommand(input);
 // Only act on a command that **executes** `git push`. `git push --help`, `git push-something`,
@@ -186,13 +189,13 @@ if (import.meta.main) {
 	{
 		// 한 명령에 push 가 여럿이어도(두 원격) 전부 wip 로 보이면 넘긴다 — 각 push 가 git 훅을 따로 거친다.
 		const all = plainPushTargetsAll(cmd);
-		if (all?.every((t) => looksLikeWipPush(projectRoot, t))) {
+		if (all?.every((t) => looksLikeSweepOnlyPush(projectRoot, t))) {
 			const targets = { verify: all.every((t) => t.verify) };
 			// `--no-verify` 면 git 이 그 훅을 건너뛴다 — 넘기면 아무도 스윕하지 않는다(리뷰 dA P2). 하나라도 그러면 넘기지 않는다.
 			const mode = targets.verify ? gitPrePushMode(projectRoot) : "none";
 			if (mode === "wrapper") {
 				console.error(
-					"[pre-push-guard] wip/* push 로 보인다 — 판정은 git pre-push 훅이 한다(git 이 준 ref 목록 · 원격에 없는 커밋의 추가 줄 비밀 스윕). " +
+					"[pre-push-guard] wip/* · 보관 태그 · 브랜치 삭제 push 로 보인다 — 판정은 git pre-push 훅이 한다(git 이 준 ref 목록 · 원격에 없는 커밋의 추가 줄 비밀 스윕). " +
 						"다른 ref(main·태그)가 섞이면 그 훅이 풀 영수증을 요구한다.",
 				);
 				process.exit(EXIT_GREEN);
@@ -420,6 +423,7 @@ if (import.meta.main) {
 					"   → `bun run gate:full` (또는 `gate:release`) 을 완주하고 다시 push 한다. " +
 					"훅 안에서는 돌리지 않는다 — 판정은 러너의 것이고 훅은 영수증(밀리초)만 본다.",
 			);
+			guardClass("push-no-receipt");
 			process.exit(2);
 		}
 		console.error(`[pre-push-guard] 영수증 미인정 — ${lastWhy}. 게이트를 돌린다.`);

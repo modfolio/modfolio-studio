@@ -46,7 +46,7 @@
  */
 
 import { failClosed } from "./_fail-closed.ts";
-import { bashCommand, readHookInput } from "./_lib.ts";
+import { bashCommand, guardClass, readHookInput, recordGuardSignal } from "./_lib.ts";
 
 /** 무인/헤드리스인가. `pre-payment-guard.ts` 와 **같은 판정**을 쓴다 — 두 가드가 갈리면 안 된다. */
 export function isAutonomous(env: NodeJS.ProcessEnv = process.env): boolean {
@@ -130,6 +130,7 @@ export function judgeIrreversible(cmd: string, autonomous: boolean): Verdict {
 async function main(): Promise<void> {
 	const mode = process.env.MODFOLIO_IRREVERSIBLE_GUARD ?? "block";
 	if (mode === "off") process.exit(0);
+	recordGuardSignal("pre-irreversible-guard");
 
 	const input = await readHookInput();
 	const cmd = bashCommand(input);
@@ -146,6 +147,7 @@ async function main(): Promise<void> {
 			`되돌릴 수 있는 작업은 무인에서도 그대로 진행됩니다 (--dry-run 도 통과).\n` +
 			`escape (로그 남김): MODFOLIO_IRREVERSIBLE_GUARD=off\n`,
 	);
+	guardClass("irreversible-unattended");
 	process.exit(2);
 }
 

@@ -49,11 +49,13 @@
 		"ai:google": "bun node_modules/@modfolio/harness/scripts/review/google.ts",
 		"ai:suggest": "bun node_modules/@modfolio/harness/scripts/budget/suggest.ts",
 		"modfolio:install-guards": "bun node_modules/@modfolio/harness/scripts/modfolio/install-guards.ts",
-		"cf:release": "bun node_modules/@modfolio/harness/scripts/ops/cf-release.ts"
+		"cf:release": "bun node_modules/@modfolio/harness/scripts/ops/cf-release.ts",
+		"ai:gemini-patch": "bun node_modules/@modfolio/harness/scripts/review/gemini-patch.ts",
+		"codex:search": "bun node_modules/@modfolio/harness/scripts/codex/search.ts"
 	},
 	"devDependencies": {
 		"@biomejs/biome": "^2.5.12",
-		"@modfolio/harness": "^4.1.2"
+		"@modfolio/harness": "^4.2.0"
 	},
 	"overrides": {
 		"@biomejs/cli-linux-x64-musl": "npm:@biomejs/cli-linux-x64@^2.5.12",

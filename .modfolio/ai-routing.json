@@ -1,7 +1,7 @@
 {
   "schemaVersion": 2,
   "owner": "modfolio-ecosystem",
-  "revision": "2026-09-25.2",
+  "revision": "2026-10-04.1",
   "maxConcurrentSessions": 1,
   "maxHeavyChecks": 1,
   "maxSnapshotAgeSeconds": 900,
@@ -12,7 +12,7 @@
     "note": "owner 2026-09-22: 사용량은 오너가 보면서 가이드한다 — 하네스는 사용량을 보고만 하고 작업을 막거나 낮추지 않는다. 유료 API 전환·reset credit·업그레이드 금지와 동시 실행 상한은 유지."
   },
   "reviewPolicy": {
-    "note": "ADR-029 · voice WF-29 — 기본은 새 컨텍스트 Claude 워커 1회(L1). 다른 AI 는 트리거가 있을 때만: 공개 계약·교차 repo·큰 diff 는 second-opinion(L2), 인증·결제·데이터·비가역·보안은 critical-review(L3). 비정책 문서만 바뀌면 게이트로 끝(L0). L1 중 작은 코드 변경(gateOnly 문턱 · 정책 경로 미접촉 · 이 묶음에 리뷰 기록 없음)도 게이트로 끝(오너 2026-09-25). 라운드 = 전면 1회 + 수정분 확인 1회. 실행기 scripts/review/run.ts",
+    "note": "ADR-029 · voice WF-29 — 기본은 새 컨텍스트 Claude 워커 1회(L1). 다른 AI 는 트리거가 있을 때만: 공개 계약·교차 repo·큰 diff 는 second-opinion(L2), 인증·결제·데이터·비가역·보안은 critical-review(L3). 비정책 문서만 바뀌면 게이트로 끝(L0). L1 중 작은 코드 변경(gateOnly 문턱 · 정책 경로 미접촉 · 이 묶음에 리뷰 기록 없음)도 게이트로 끝(오너 2026-09-25). 라운드 = 전면 1회 + 수정분 확인 1회. 작업 단위가 끝나면 --completion 으로 레벨과 무관하게 completion-review 경로의 공급자(Codex·Gemini)가 각각 한 번 본다(오너 2026-09-30) — 라운드로 세지 않는다. 실행기 scripts/review/run.ts",
     "l0Paths": [
       "knowledge/HANDOFF.md",
       "knowledge/handoff/",
@@ -110,7 +110,7 @@
     }
   },
   "delegation": {
-    "requiredForRoles": ["review", "second-opinion", "critical-review"],
+    "requiredForRoles": ["review", "second-opinion", "critical-review", "completion-review"],
     "maxInputFiles": 40,
     "maxInputBytes": 122880,
     "maxResultBytes": 16384,
@@ -128,7 +128,7 @@
     "triage": [
       {
         "provider": "claude",
-        "model": "claude-sonnet-5",
+        "model": "claude-sonnet-5-5",
         "effort": "medium"
       },
       {
@@ -162,7 +162,7 @@
       },
       {
         "provider": "gemini",
-        "model": "gemini-3.8-flash-medium",
+        "model": "@gemini.alternate",
         "effort": "medium"
       }
     ],
@@ -174,7 +174,7 @@
       },
       {
         "provider": "gemini",
-        "model": "gemini-3.8-flash-medium",
+        "model": "@gemini.alternate",
         "effort": "medium"
       }
     ],
@@ -214,10 +214,36 @@
         "effort": "xhigh"
       }
     ],
+    "completion-review": [
+      {
+        "provider": "codex",
+        "model": "gpt-6-sol",
+        "effort": "high"
+      },
+      {
+        "provider": "gemini",
+        "model": "@gemini.alternate",
+        "effort": "medium"
+      }
+    ],
     "google-research": [
       {
         "provider": "gemini",
-        "model": "gemini-3.8-flash-high",
+        "model": "@gemini.primary",
+        "effort": "high"
+      }
+    ],
+    "simple-fix": [
+      {
+        "provider": "gemini",
+        "model": "@gemini.primary",
+        "effort": "high"
+      }
+    ],
+    "gemini-task": [
+      {
+        "provider": "gemini",
+        "model": "@gemini.primary",
         "effort": "high"
       }
     ]
@@ -243,7 +269,7 @@
     }
   },
   "suggest": {
-    "note": "오너 2026-09-24(#14·#16): 다른 AI 분배는 자동이 아니라 **제안**이다 — 이유와 함께 오너에게 묻고(Claude Desktop 질문 창 · Codex 대화) yes 면 제안한 명령, no 면 그 표면의 메인 AI 로 진행한다. 제안은 적극적으로 낸다(묻는 비용은 오너의 yes/no 한 번). review:run 은 이 제안과 무관하게 자동이다. 실행기 scripts/budget/suggest.ts",
+    "note": "오너 2026-09-24(#14·#16): 다른 AI 분배는 자동이 아니라 **제안**이다 — 이유와 함께 오너에게 묻고(Claude Desktop 질문 창 · Codex 대화) yes 면 제안한 명령, no 면 그 표면의 메인 AI 로 진행한다. 제안은 적극적으로 낸다(묻는 비용은 오너의 yes/no 한 번). review:run 은 이 제안과 무관하게 자동이다. 예외 하나(ADR-033 · 오너 2026-10-03): Gemini 확장 창이 열려 있고 일이 그 scope 안이며 excluded 에 닿지 않으면 Gemini 제안은 묻지 않고 «자동 실행» 이다. 실행기 scripts/budget/suggest.ts",
     "rules": [
       {
         "id": "google-research",
@@ -261,6 +287,31 @@
         ],
         "reason": "Google 검색·YouTube·Google 서비스는 Gemini 가 검색 그라운딩으로 직접 닿는다 — 질문 문자열만 보내고 저장소 파일은 싣지 않는다",
         "command": "bun run ai:google -- \"<질문>\""
+      },
+      {
+        "id": "simple-fix",
+        "role": "simple-fix",
+        "provider": "gemini",
+        "keywords": [
+          "간단한 수정",
+          "단순 수정",
+          "한 줄 수정",
+          "오타",
+          "문구 수정",
+          "typo",
+          "simple fix",
+          "small fix"
+        ],
+        "reason": "좁은 코드 수정은 좋은 지시서가 있으면 Gemini 에 맡긴다(오너 2026-10-01 · voice WF-33) — 지시서와 지정 파일만 보내고 diff 만 받는다. L3·정책 경로는 ai:gemini-patch 가 보내기 전에 거부하고, 승인은 Gemini 가 아닌 공급자의 review:run 이다",
+        "command": "bun run ai:gemini-patch -- --brief <지시서.md> <파일>..."
+      },
+      {
+        "id": "gemini-window",
+        "role": "gemini-task",
+        "provider": "gemini",
+        "window": "gemini",
+        "reason": "Gemini 확장 창(ADR-033) 범위의 일 — 격리된 docker 작업자(도구 켬 · 작업 트리만 보임)가 지시서대로 고치고 작업 브랜치에 커밋한다. main 은 못 바꾸고, 통합 승인은 Gemini 가 아닌 공급자의 review:run 이다",
+        "command": "bun run ai:agy-task -- --brief <지시서.md>"
       },
       {
         "id": "design-choice",
@@ -305,5 +356,104 @@
         "command": "codex exec --skip-git-repo-check -s read-only -m {model} -c model_reasoning_effort=\"{effort}\" \"<실패 증거 + 질문>\" < /dev/null"
       }
     ]
+  },
+  "gemini": {
+    "note": "ADR-033 — Gemini 모델 ID 와 확장 창의 단일 정본. 경로 후보는 @gemini.primary·@gemini.alternate 로 이 값을 참조한다(파싱이 실제 ID 로 바꾼다). argon 이 나오면 models 만 바꾸고, 창을 넓히거나 좁히는 일은 expansionWindow 한 곳에서 한다. 지금 Gemini 는 보조(sub)다 — 동급(peer) 승격은 argon 뒤 배정 원장 지표로 오너가 정한다.",
+    "tier": "sub",
+    "models": {
+      "primary": "gemini-3.8-flash-high",
+      "alternate": "gemini-3.8-flash-medium"
+    },
+    "expansionWindow": {
+      "active": true,
+      "since": "2026-10-03",
+      "until": "argon-release+owner-reconfirm",
+      "adr": "ADR-033",
+      "quote": "오너 2026-10-03·04 상시 허락 — 원문 비공개(docs/adr/ADR-033 §오너 원문): 지금은 보조(sub) · 오너가 정한 범위 안에서 한시적으로 Gemini 를 거침없이 쓴다 · 동급 검토는 argon 때",
+      "command": "bun run ai:agy-task -- --brief <지시서.md>",
+      "scope": [
+        {
+          "id": "docs-knowledge",
+          "keywords": ["문서", "docs", "readme", "knowledge", "가이드", "주석", "changelog"],
+          "paths": ["docs/", "knowledge/", "*.md"]
+        },
+        {
+          "id": "tests",
+          "keywords": ["테스트", "test", "대조쌍", "커버리지", "coverage"],
+          "paths": ["*.test.ts", "*.spec.ts", "__tests__/", "tests/"]
+        },
+        {
+          "id": "scoped-refactor",
+          "keywords": ["리팩터", "refactor", "중복 제거", "이름 바꾸", "rename", "정리"]
+        },
+        {
+          "id": "gate-red-fix",
+          "keywords": [
+            "게이트 빨강",
+            "gate red",
+            "lint",
+            "린트",
+            "타입 오류",
+            "typecheck",
+            "biome",
+            "빌드 실패"
+          ]
+        },
+        {
+          "id": "fleet-follow-up",
+          "keywords": ["fleet", "후속 수정", "follow-up", "전파 후속"]
+        },
+        {
+          "id": "ui-copy",
+          "keywords": ["ui 문구", "문구", "카피", "copy", "번역", "i18n", "오타", "typo"]
+        },
+        {
+          "id": "letters-handoff",
+          "keywords": ["편지", "letter", "인계", "handoff", "저널", "journal", "초안", "draft"],
+          "paths": ["knowledge/handoff/", "knowledge/journal/", "feedback/"]
+        },
+        {
+          "id": "research",
+          "keywords": ["조사", "리서치", "research", "google", "youtube", "구글", "유튜브"]
+        }
+      ],
+      "excluded": {
+        "l3": "reviewPolicy",
+        "keywords": [
+          "결제",
+          "payment",
+          "인증",
+          "auth",
+          "oauth",
+          "sso",
+          "통신판매",
+          "법정",
+          "legal",
+          "약관",
+          "보안",
+          "security",
+          "secret",
+          "시크릿",
+          "마이그레이션",
+          "migration",
+          "배포",
+          "deploy",
+          "publish",
+          "release"
+        ],
+        "paths": [
+          "MODFOLIO.md",
+          "AGENTS.md",
+          "CLAUDE.md",
+          "GEMINI.md",
+          "CODEX.md",
+          "templates/agents-md/",
+          "config/ai-routing.json",
+          ".modfolio/ai-routing.json",
+          "docs/adr/",
+          "knowledge/voice/"
+        ]
+      }
+    }
   }
 }

@@ -38,6 +38,8 @@
  * runs refuse. Both halves then match the rule at the top of this file.
  */
 
+import { guardClass } from "./_lib.ts";
+
 /** Install fail-closed handlers. Call once, at the top of a blocking hook. */
 export function failClosed(hookName: string): void {
 	const refuse = (kind: string, detail: string): never => {
@@ -49,6 +51,8 @@ export function failClosed(hookName: string): void {
 				"이 훅은 판단할 수 없으면 통과시키지 않는다. 훅 자체를 고치세요.",
 			].join("\n"),
 		);
+		// 신호 원장 — 가드가 깨져 닫힌 차단은 사건이 아니라 가드 결함이다. 계급으로 가른다.
+		guardClass("fail-closed");
 		process.exit(2);
 	};
 

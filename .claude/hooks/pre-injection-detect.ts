@@ -21,7 +21,7 @@
  */
 
 import { failClosed } from "./_fail-closed.ts";
-import { readHookInput } from "./_lib.ts";
+import { guardClass, readHookInput, recordGuardSignal } from "./_lib.ts";
 
 interface HookInput {
 	tool_name?: string;
@@ -57,6 +57,7 @@ if (import.meta.main) {
 	// Advisory by default; fail-closed only when the operator opted into
 	// blocking (see _fail-closed.ts §Mode-dependent guards).
 	if (mode === "block") failClosed("pre-injection-detect");
+	recordGuardSignal("pre-injection-detect");
 
 	const input = (await readHookInput()) as HookInput;
 	const ti = input.tool_input ?? {};
@@ -89,10 +90,12 @@ if (import.meta.main) {
 
 	if (mode === "block") {
 		console.error(`BLOCKED: ${msg}`);
+		guardClass("prompt-injection");
 		process.exit(2);
 	}
 
 	// warn mode — stderr 출력 + allow
 	console.error(`WARN: ${msg}`);
+	guardClass("prompt-injection", "warn");
 	process.exit(0);
 }

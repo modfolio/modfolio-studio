@@ -15,6 +15,13 @@ import { execSync, type SpawnSyncOptions, spawnSync } from "node:child_process";
 import { existsSync, readFileSync } from "node:fs";
 import { basename, dirname, join, resolve, sep } from "node:path";
 import { stdin } from "node:process";
+import {
+	appendSignal,
+	assertSignalId,
+	normalizeRepo,
+	sessionKey,
+	signalsRoot,
+} from "../lib/signal-ledger.ts";
 
 // hooks/_lib 는 hook 프로세스가 spawnSync stdin pipe 로 실행돼 boot-sensitive.
 // relative import 가 stdin race 를 유발했던 회귀 (release-gate pre-destructive-guard
@@ -96,10 +103,79 @@ export async function readHookInput(): Promise<HookInput> {
 	const data = await Promise.race([read, timer]).catch(() => "");
 	if (!data.trim()) return {};
 	try {
-		return JSON.parse(data) as HookInput;
+		const input = JSON.parse(data) as HookInput;
+		// 신호 원장의 세션 키·repo 는 판정 시점(exit)에 쓴다 — 페이로드를 다시 읽을 수 없으니 여기서 잡아 둔다.
+		guardSignalState.sessionId =
+			typeof input.session_id === "string" ? input.session_id : undefined;
+		guardSignalState.cwd = typeof input.cwd === "string" ? input.cwd : undefined;
+		return input;
 	} catch {
 		return {};
 	}
+}
+
+/**
+ * 가드 판정의 신호 원장 기록(하네스 진화 계획 WP-A · 4.1.9) — **가드 공통 출력 지점**.
+ *
+ * 가드는 판정을 exit code 로 낸다(2 = 차단). 그래서 판정마다 기록 줄을 따로 두지 않고 프로세스 종료에서 한 번 쓴다 —
+ * 새 차단 분기를 더해도 기록이 빠지지 않는다. 가드는 차단 직전에 `guardClass("<계급>")` 로 사건 계급을 선언한다
+ * (선언 안 한 차단은 `unclassified` — 계급 없는 차단이 원장에 보이는 것 자체가 고칠 신호다). 경고만 하고 통과시키는 가드는
+ * `guardClass("<계급>", "warn")`.
+ *
+ * - 통과(exit 0)도 쓴다 — 노출 분모. 0·2 밖의 코드(가드가 깨짐 · Claude Code 는 통과로 읽는다)는 `allow` + `guard-error`.
+ * - 원시 명령·경로·세션 id 는 싣지 않는다. 세션 id 는 `sessionKey`(기기 안 소금 해시 · 30일)로만.
+ * - 기록 실패는 조용하다 — 가드의 판정과 출력(stderr 는 에이전트에게 간다)을 계측이 바꾸면 안 된다. 그래서 미기록은
+ *   **행의 부재**로만 보인다(읽는 쪽은 가드 행 0 을 «발화 0» 이 아니라 «미기록일 수 있다» 로 읽는다).
+ */
+const guardSignalState: {
+	sessionId: string | undefined;
+	cwd: string | undefined;
+	guard: string | null;
+	cls: string | null;
+	warn: boolean;
+} = { sessionId: undefined, cwd: undefined, guard: null, cls: null, warn: false };
+
+/** 이 가드 프로세스의 판정을 종료 시 신호 원장에 남긴다. 가드 맨 위에서 한 번. */
+export function recordGuardSignal(guard: string): void {
+	assertSignalId("guard", guard);
+	if (guardSignalState.guard !== null) return;
+	guardSignalState.guard = guard;
+	process.on("exit", (code) => {
+		try {
+			const s = guardSignalState;
+			const outcome = code === 2 ? "block" : code === 0 ? (s.warn ? "warn" : "allow") : "allow";
+			const cls =
+				code === 2
+					? (s.cls ?? "unclassified")
+					: code === 0
+						? s.warn
+							? (s.cls ?? "unclassified")
+							: "none"
+						: "guard-error";
+			const root = signalsRoot();
+			appendSignal(
+				{
+					kind: "guard",
+					ts: new Date().toISOString(),
+					repo: normalizeRepo(checkoutRepoName(s.cwd ?? process.cwd())),
+					sessionKey: sessionKey(s.sessionId, root),
+					guard,
+					class: cls,
+					outcome,
+				},
+				{ shard: process.env.MODFOLIO_SIGNAL_SHARD || String(process.ppid), root },
+			);
+		} catch {
+			// 위 머리말 — 계측이 가드의 판정을 바꾸지 않는다.
+		}
+	});
+}
+
+/** 이 판정의 사건 계급을 선언한다(정적 값 · `^[a-z0-9:_-]+$`). `warn` 이면 통과지만 경고로 센다. */
+export function guardClass(cls: string, kind?: "warn"): void {
+	assertSignalId("class", cls);
+	guardSignalState.cls = cls;
+	if (kind === "warn") guardSignalState.warn = true;
 }
 
 /** Extract the Bash command, if the input was for a Bash tool. */

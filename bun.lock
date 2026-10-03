@@ -10,7 +10,7 @@
       },
       "devDependencies": {
         "@biomejs/biome": "^2.5.12",
-        "@modfolio/harness": "^4.1.2",
+        "@modfolio/harness": "^4.2.0",
       },
     },
     "apps/app": {
@@ -314,7 +314,7 @@
 
     "@modfolio/fonts": ["@modfolio/fonts@0.1.0", "https://pkg.modfolio.io/api/packages/modfolio/npm/@modfolio/fonts/-/fonts-0.1.0.tgz", { "dependencies": { "fontkit": "^2.0.4", "subset-font": "^2.7.0" }, "bin": { "modfolio-fonts": "dist/bin.js" } }, "sha512-kgSW4uDB6yvZEVrhDmKXHRat1Ji5ZBAbL3aH/ewsu+JYnAQs2rhDyZ/6qzLEQq0o0OnQix0fWn2IgAEMsf8J0w=="],
 
-    "@modfolio/harness": ["@modfolio/harness@4.1.2", "https://pkg.modfolio.io/api/packages/modfolio/npm/@modfolio/harness/-/harness-4.1.2.tgz", { "dependencies": { "@microsoft/microsoft-graph-client": "^3.0.7", "@microsoft/microsoft-graph-types": "^2.43.1", "@modelcontextprotocol/server": "2.0.0", "zod": "^4.6.5" }, "bin": { "modfolio-harness-pull": "scripts/harness-pull.ts", "modfolio-check": "scripts/modfolio/check.ts", "modfolio-migrate-finalize": "scripts/migration/finalize.ts", "modfolio-debrief": "scripts/debrief/cli.ts" } }, "sha512-EYd9G2U+e9xbxKQEl1iXLxCqhpSQXxlRlwAYGh97JukWHKXqEkRfjHnOuiBoVV71U28/g0U2da3cA61Qs6TlPw=="],
+    "@modfolio/harness": ["@modfolio/harness@4.2.0", "https://pkg.modfolio.io/api/packages/modfolio/npm/@modfolio/harness/-/harness-4.2.0.tgz", { "dependencies": { "@microsoft/microsoft-graph-client": "^3.0.7", "@microsoft/microsoft-graph-types": "^2.43.1", "@modelcontextprotocol/server": "2.0.0", "zod": "^4.6.5" }, "bin": { "modfolio-harness-pull": "scripts/harness-pull.ts", "modfolio-check": "scripts/modfolio/check.ts", "modfolio-migrate-finalize": "scripts/migration/finalize.ts", "modfolio-debrief": "scripts/debrief/cli.ts" } }, "sha512-ES06VbKrp0H6lwtzYSK2SApfjSmwfi0VfUvt4dN0My8UaOkcpO+P4ZHCNDhOuOOLwexHh9zMNuBu73Dl8X3X3A=="],
 
     "@napi-rs/lzma-linux-x64-gnu": ["@napi-rs/lzma-linux-x64-gnu@1.5.1", "", { "os": "linux", "cpu": "x64" }, "sha512-oTXEIha4SsuXdTA4Iyskj0kpdx2yVXdhd75c2v3xGrHFfVMsbhTPZU/nMPL4sWKo4pBHm3aucLaqGlF696dTyQ=="],
 

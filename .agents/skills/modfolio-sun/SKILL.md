@@ -1,14 +1,15 @@
 ---
 name: modfolio-sun
 description: >-
-  Open a Modfolio session in modfolio-studio: fetch the remote (pull only when safe), gather the latest
-  handoff, continuing work, sibling letters, things to adopt and readiness drift into one brief,
-  put its decision questions to the owner, then plan in planning mode and get the plan approved.
+  Open a Modfolio session: fetch the remote (pull only when safe), gather the latest handoff,
+  continuing work, sibling letters, things to adopt and readiness drift into one brief, put its
+  decision questions to the owner, then plan in planning mode and get the plan approved. Wrap-up is
+  /modfolio-moon; an identity check at any time is /modfolio.
 ---
 
 <!-- MODFOLIO_ADAPTER: 1 -->
 
-# /modfolio-sun — modfolio-studio
+# /modfolio-sun — open the session, then plan
 
 Run it and report its output and **exit code**:
 
@@ -23,7 +24,9 @@ bun node_modules/@modfolio/harness/scripts/modfolio/sun.ts
 ```
 
 Exit 0 means the brief was produced (also saved outside the repository — the path is printed); 2 means
-undecidable. A line marked `?` was not measured — never summarize it as fine.
+undecidable. A line marked `?` was not measured — never summarize it as fine. MCP connections and
+the hook layer are invisible to the script: report failed MCP servers yourself and probe hooks with
+`true # hook-probe` on the first Bash call.
 
 ## What you owe the owner
 
@@ -44,5 +47,13 @@ undecidable. A line marked `?` was not measured — never summarize it as fine.
    review level (`bun run review:run`) and the step-2 proposals with the owner's answers.
 4. Get the owner's approval before implementing. Wrap up at any time with `/modfolio-moon`.
 
-In an unattended or autonomous run, do not ask and do not wait: write the decision questions to
-the run ledger as owner-pending items and plan within the ledger's charter.
+In an unattended or autonomous run (`/modfolio-nonstop` active, or the owner said they are away),
+do not ask and do not wait: write the decision questions to the run ledger as owner-pending items
+and plan within the ledger's charter. **Do not enter planning mode there** — a background or relay
+session that calls its exit waits for a human approval and stalls.
+
+## Remote and other devices
+
+Handoffs live in git, so `/modfolio-sun` rebuilds the same brief on any device. When the tree is
+dirty or has local commits it does not pull; it says so, so another session's work in the same
+checkout is never overwritten.

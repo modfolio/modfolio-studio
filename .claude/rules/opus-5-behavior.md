@@ -1,9 +1,15 @@
 ---
+paths:
+  - ".claude/agents/**"
+  - ".claude/skills/**"
+  - ".agents/**"
+  - "AGENTS.md"
+  - "GEMINI.md"
 title: Opus 5 행동 보정
 applicability: agent·skill 프롬프트를 쓸 때 · 위임할지 정할 때 · 출력이 길어질 때
 consumers: [all-agents]
 related_canon: [opus-4-7-effort-policy, model-escalation]
-# `paths:` 없음 = 의도. 상시 주입 6편이며 frontmatter 는 Codex 색인용이라 주입을 바꾸지 않는다.
+# 경로 스코프(4.1.5) — 이 파일의 «적용 대상»(agent·skill 프롬프트)을 열 때 실린다. 세션 모델이 Opus 5 계열이면 MODFOLIO.md 포인터로 연다.
 ---
 
 # Opus 5 행동 보정 — 하네스 적용 규칙
@@ -12,7 +18,7 @@ Opus 5 (2026-07-24 릴리즈) 는 Opus 4.8 과 **행동이 다르다**. 아래�
 
 적용 대상: `.claude/agents/*`, `.claude/skills/*`, 그리고 이 repo 에서 프롬프트를 작성하는 모든 지점.
 
-**적용 모델 범위 (2026-09-23 갱신)**: Opus 5 계열 컨텍스트 — `claude-opus-5-5`(2026-09-23 부터 하네스 기본: Opus 고정 agent 21편 · Opus 5.5 메인 세션)와 `claude-opus-5`. **Opus 5.5 는 §1~§5 를 출발점으로 쓰고 §6 의 차이를 얹는다**(공식 이관 가이드: Opus 5 프롬프팅이 출발점으로 유효). **메인 세션이 `claude-fable-5-1` 이면 §1·§2·§5 는 `fable-5-1-behavior.md` 가 대체한다**(공식 가이드가 그 셋을 반대 방향으로 권한다). §3·§4 는 모든 모델 공통. 이 파일은 UNIVERSAL 이라 모델을 가리지 않고 주입된다 — 읽는 쪽이 자기 모델로 가른다.
+**적용 모델 범위 (2026-09-23 갱신)**: Opus 5 계열 컨텍스트 — `claude-opus-5-5`(2026-09-23 부터 하네스 기본: Opus 고정 agent 21편 · Opus 5.5 메인 세션)와 `claude-opus-5`. **Opus 5.5 는 §1~§5 를 출발점으로 쓰고 §6 의 차이를 얹는다**(공식 이관 가이드: Opus 5 프롬프팅이 출발점으로 유효). **메인 세션이 `claude-fable-5-1` 이면 §1·§2·§5 는 `fable-5-1-behavior.md` 가 대체한다**(공식 가이드가 그 셋을 반대 방향으로 권한다). §3·§4 는 모든 모델 공통. 이 파일은 모든 멤버에 배포되지만 4.1.5 부터 **경로 스코프**다(agent·skill 프롬프트를 열 때 실린다) — 실렸을 때 읽는 쪽이 자기 모델로 가른다.
 
 ---
 

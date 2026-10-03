@@ -1,10 +1,15 @@
 ---
+paths:
+  - ".claude/agents/**"
+  - ".claude/skills/**"
+  - ".agents/**"
+  - "AGENTS.md"
+  - "GEMINI.md"
 title: Fable 5.1 행동 보정
 applicability: 메인 세션 모델이 claude-fable-5-1 일 때 · 위임·검증·편집·출력 방식을 정할 때
 consumers: [all-agents]
 related_canon: [model-escalation, opus-4-7-effort-policy, claude-code-2026h1-features]
-# `paths:` 없음 = 의도(상시 주입). opus-5-behavior.md 와 쌍이며 **적용 모델**로 갈린다.
-# frontmatter 는 Codex 색인용이라 주입을 가르지 않는다 — 읽는 쪽이 자기 모델로 가른다.
+# 경로 스코프(4.1.5) — agent·skill 프롬프트를 열 때 실린다. 세션 모델이 claude-fable-5-1 이면 MODFOLIO.md 포인터로 연다.
 ---
 
 # Fable 5.1 행동 보정 — 메인 세션이 `claude-fable-5-1` 일 때

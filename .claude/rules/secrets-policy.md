@@ -3,7 +3,7 @@ title: 시크릿 정책 — athsra 런타임 주입
 applicability: 시크릿·토큰·키를 다룰 때 · 빈 .env 를 봤을 때 · 유출이 의심될 때
 consumers: [all-agents]
 related_canon: [secret-store, agent-auth-ux]
-# `paths:` 없음 = 의도. 상시 주입 6편이며 frontmatter 는 Codex 색인용이라 주입을 바꾸지 않는다.
+# `paths:` 없음 = 의도(상시 · 규범만). 로테이션·유출 절차·린트 사유는 canon secret-store.md 로 옮겼다(4.1.5).
 ---
 
 # 시크릿 정책
@@ -30,21 +30,6 @@ athsra 는 **runtime 주입** 모델 — 시크릿은 `athsra run <repo> -- <cmd
 
 **구조적 해결 (forgetting 자체 제거)**: 개발 세션을 `athsra run <repo> -- <launcher>` 로 시작 → 시크릿이 세션 env 에 상주 → AI 가 그냥 `process.env` 로 읽음(매번 `athsra run` 기억 불필요, 디스크 0). IDE/툴이 `.env` 파일을 강제하면 영구 캐시 대신 **tmpfs 에 쓰고 종료 시 wipe**. 상세: canon `secret-store.md`.
 
-## 린트 정합 — `noUndeclaredEnvVars` 는 이 저장소에서 **적용 불가** (2026-07-31)
-
-`biome.json` 에서 `suspicious/noUndeclaredEnvVars: "off"`. 우회가 아니라 **전제 부재**다:
-
-그 규칙은 `.env` 계열 파일에 선언된 이름과 코드의 `process.env.X` 를 대조한다. 그런데
-이 저장소는 **athsra 런타임 주입**이라 `.env` 를 두지 않는 것이 위 §보관 계층의 정책이다
-(no-persistence = 보안 gold standard). 즉 대조할 선언 원본이 **설계상 존재하지 않는다.**
-
-⚠ 규칙을 켜 두면 두 가지 나쁜 일이 생긴다: ① 정상적인 노브 참조가 매번 경고를 내고
-② 그걸 없애려고 실제 `.env` 를 커밋하게 유도한다 — **정책이 금지하는 바로 그 행위**다.
-린트가 시크릿 정책과 반대 방향을 가리키면 린트를 끈다.
-
-비-시크릿 튜닝 노브(`TS7_REGISTRY`·`LABEL_CONCURRENCY` 등)는 `.env.example` 에
-placeholder 로 **문서화**한다(§4 그대로 — 실제 값 없음).
-
 ## 금지 패턴
 
 - 테스트 코드에 실제 키 하드코딩 — 테스트 키라도 예외 없음
@@ -52,53 +37,6 @@ placeholder 로 **문서화**한다(§4 그대로 — 실제 값 없음).
 - MCP config에 토큰 inline — `.mcp.json`에 placeholder만, 실제 값은 env
 - Supertone / Toss / Resend / HuggingFace token 리터럴
 
-## 로테이션 주기 (권고)
+## 상세는 canon
 
-| 시크릿 | 주기 | 기준 |
-|--------|------|------|
-| `SESSION_SECRET` | 90일 | Better Auth 규범 |
-| `BETTER_AUTH_SECRET` | 180일 (incident 시 즉시) | Connect SSO 기반 |
-| 외부 API key (Toss, Resend 등) | 180일 | 제공사 권고 |
-| **athsra master password** | 365일 (분실/leak 의심 시 즉시) | `athsra rotate-master` — 모든 envelope re-encrypt + 모든 token revoke |
-| **athsra Bearer token** | 자동 (atk_* 분실/머신 변경 시 즉시) | `athsra revoke <atk_*>` — **즉시 유효**(D1 strong consistency) |
-| **athsra `GLOBAL_SALT`** | 1095일 (3년) 또는 incident 시 즉시 | `wrangler secret put GLOBAL_SALT` 후 PROOF 재 bootstrap (모든 사용자 재 register 필요 — major event) |
-| `SSO_PRIVATE_KEY_JWK` | 365일 (incident 시 즉시) | JWK 수명 |
-
-> ⚠ **2026-08-05 정정 — Bearer token revoke 는 «KV ~60s eventual» 이 아니다.** 그 문장이
-> 이 표에 3개월 넘게 실려 있었고 **모든 sibling 에 배포됐다.** athsra 는 2026-05-06 에
-> KV → D1 로 컷오버했고(Phase 1.x.4) 네임스페이스는 2026-07-19 에 삭제됐다.
-> 허브 독립 실측(athsra 체크아웃, read-only): 워커 소스에 `KVNamespace` **0건** ·
-> revoke 는 `db.delete(authTokens)` = **D1 DELETE** · `apps/worker/src/lib/db.ts:8` 이
-> *"쓰기(토큰 revoke…)가 그 요청의 전 쿼리에서 관측된다. 따라서 revoke 즉시성"* 을 명시.
->
-> **이 표는 유출 사건 한복판에서 읽힌다.** «60초 전파» 라고 적혀 있으면 대응자가
-> **존재하지 않는 노출 창을 계산**하거나 이미 끝난 revoke 를 «아직인가» 하고 기다린다.
-> athsra 의 문장: *"낡은 운영 문서는 조용히 틀리지 않는다 — **사건 중에** 틀린다."*
-
-## 유출 시
-
-1. 즉시 로테이션:
-   - athsra master pw leak: `athsra rotate-master` (CLI 한 번에 모든 envelope re-encrypt + token revoke)
-   - athsra Bearer token leak: `athsra revoke <atk_*>` (다른 머신에서)
-   - GLOBAL_SALT leak: `wrangler secret put GLOBAL_SALT` + 모든 PROOF/secret 재 bootstrap (major event)
-   - 외부 API key leak: 해당 provider dashboard 에서 revoke + 새 key 발급 + `athsra set <repo> KEY=new`
-2. `docs/incidents/<date>-secret-leak.md` 작성
-3. audit: athsra `lastSeenAt` (whoami/doctor) + CF Worker 로그
-4. `modfolio-connect` 관련이면 active session 전부 무효화
-
-## 검출
-
-- code-reviewer agent가 하드코딩 스캔 (high-entropy string, prefix 매칭)
-- pre-commit hook이 git add 시 스캔 (v2.4에서 추가 예정)
-- Cloudflare의 Pages/Workers 빌드 로그에 key 출력되지 않도록 `env` 사용
-
-## 관련 canon / skill
-
-- `knowledge/canon/secret-store.md` (v1.1+) — 시크릿 관리 표준 athsra v3 (universe-wide, applicability: always)
-- `knowledge/canon/agent-auth-ux.md` + `.claude/rules/agent-auth-flow.md` — 에이전트가 직접 시작·브라우저 승인 인증(athsra login 터미널 떠넘기기 금지)
-- `knowledge/canon/archive/secrets-dotenvx.md` — archived 2026-05-03 (Phase 1 완료)
-- `knowledge/canon/observability.md` — 트레이스에 시크릿 포함 금지 (Langfuse redaction)
-- `.claude/skills/secret/SKILL.md` — athsra CLI 운영 가이드 (v3.1+)
-- `.claude/skills/ops/SKILL.md` — secret 운영 전반
-- `.claude/skills/security-scan/SKILL.md` — OWASP Top 10 + 시크릿 스캔
-- `knowledge/canon/cost-attribution.md` — 시크릿 rotation cost 평가
+로테이션 주기 표 · 유출 시 절차(athsra `rotate-master`·`revoke`·GLOBAL_SALT) · 검출 · 린트 정합(`noUndeclaredEnvVars` off 사유) · 관련 skill 은 `knowledge/canon/secret-store.md` §«secrets-policy.md 에서 옮긴 상세» 에 있다. **유출이 의심되면 그 절을 먼저 연다.** (Bearer token revoke 는 D1 이라 **즉시 유효** — «60초 전파» 가 아니다.)

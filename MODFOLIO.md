@@ -114,7 +114,9 @@ policy digest, capability owner, relevant project knowledge and acceptance check
 Questions and planning alone do not create implementation jobs. Reuse an existing goal
 for follow-up requests. Never run two writers in one workspace.
 
-Handing work to another AI is a proposal, never automatic (owner 2026-09-24). Run
+Handing work to another AI is a proposal, never automatic (owner 2026-09-24). One exception
+(owner 2026-10-03, ADR-033): Gemini work that `ai:suggest` marks inside the active expansion
+window runs without asking; everything else stays a proposal. Run
 `bun run ai:suggest -- "<work>" [--paths …] [--failures <n>]` when a task starts and again
 after a second failed approach, and propose readily: the owner's answer costs one yes/no.
 When it recommends another AI, ask the owner and give its reason (Claude: the question
@@ -221,9 +223,10 @@ the same command mean the same thing in Claude Code, Antigravity and Codex.
 | `/modfolio --intent "<work>"` | `bun run modfolio:compass -- --intent "<work>"` | Card plus `plan:build`: who owns this capability and which parts already exist. |
 | `/modfolio --deep` | `bun run modfolio -- --deep` | Fourteen-track diagnosis. |
 | `/modfolio-nonstop` | `bun run modfolio:nonstop` | Pursue the owner's goal to completion — not a loop. Development continues while gates and reviews run beside it (background, another worktree); a failure is the next task, not a stop. Ends only when the goal's acceptance checks pass; `-- close` then. |
-| review | `bun run review:run` | Proportional independent review of the current candidate (levels and rounds above). Exit 0 approved, 1 P0/P1, 2 undecidable. |
+| review | `bun run review:run` | Proportional independent review of the current candidate (levels and rounds above); `-- --completion [--base <ref>]` after a unit of work also has Codex and Gemini each review it, at any level and outside the round budget. Exit 0 approved, 1 P0/P1, 2 undecidable. |
 | suggest | `bun run ai:suggest -- "<work>"` | Whether another AI should take this work, with the reason and the command to run. Ask the owner; yes runs it, no stays with this surface's model. Exit 0 suggestion made («main AI» included), 2 undecidable. |
 | Google research | `bun run ai:google -- "<question>"` | Google-domain research through Gemini: web search, YouTube, Google services. No repository files are sent. |
+| Gemini patch | `bun run ai:gemini-patch -- --brief <brief.md> [--apply] <file>...` | Hand a narrow code fix to Gemini: it gets the brief and the named files with no tools and returns a diff (never critical or policy paths). `--apply` only off the default branch; then gates and `review:run` by another provider. |
 | effort | `bun run modfolio:effort` | Session effort policy versus the injected value; `--apply` restores the policy, `--set <level>` is an owner-requested exception. |
 | `/harness-pull` | `bun run harness-pull` | Pull shared harness files. Report only; `--apply` writes. |
 | gates | `bun run gate:quick` · `gate:full` · `gate:release` | The verdict is the exit code, never the printed text. |
@@ -244,12 +247,14 @@ the owner asks or the context grows long (not during an autonomous run — use `
 the next session, on any machine, starts from its handoff. On a remote surface where a new
 session is inconvenient, `/compact` continues the same session.
 
-**How each surface reaches these.** Claude Code loads `.claude/skills/<name>/SKILL.md`
-and Antigravity loads `.agents/skills/<name>/SKILL.md`; both expand `/<name>`.
-Codex has **no skill loader** — a leading slash is ordinary text to it, so this table
-is how Codex learns the commands, and it runs the script directly. A skill file that
-carries procedure the script does not perform breaks that equality; put the behaviour
-in the script and keep the skill thin.
+**How each surface reaches these.** The effect lives in the script; a skill file only
+points at it, and this table names every command, so a surface reaches the same effect
+with or without a native loader by running the script. Which tool version loads which
+path is an adapter fact, not policy: it lives in `config/adapter-capabilities.json`
+(locally or under `node_modules/@modfolio/harness/`) with its evidence, level and expiry,
+and a record past `validUntil` is unmeasured, not true. A skill file that carries
+procedure the script does not perform breaks that equality; put the behaviour in the
+script and keep the skill thin.
 
 The fuller catalogue of procedures lives in `.claude/skills/`. Those are shared
 documents in a legacy path, readable by any agent; read the one the task names.

@@ -1,7 +1,7 @@
 ---
 title: Attention Budget — Context as Finite Resource
-version: 1.4.0
-last_updated: 2026-07-09
+version: 1.5.0
+last_updated: 2026-09-30
 source: [Anthropic 2026 Agentic Coding Trends Report (https://resources.anthropic.com/2026-agentic-coding-trends-report), Anthropic Engineering "Effective context engineering for AI agents" (https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents), Claude Cookbook "Context engineering: memory, compaction, and tool clearing" 2026-03-20 (https://platform.claude.com/cookbook/tool-use-context-engineering-context-engineering-tools), harness-evolve 첫 dogfood Adopt P0 #4, 2026-05-13 v2.0 dogfood Trial P1 (Memory tool L3), harness v2.34 P0.2 (context-engineering canon 분리)]
 sync_to_siblings: true
 consumers: [harness-evolve, modfolio, preflight, claude-api, multi-review, generate-review, plan, ralph-loop, context-engineering]
@@ -97,6 +97,24 @@ session-internal 메모리 의존 X, 명시적 파일에 cement. modfolio univer
 - agent prompt 는 link/reference 위주 (read 시점에 sub-agent 가 fetch)
 - 큰 결과는 sub-agent 안에서 종결 (메인 = orchestration only)
 - 외부 memory file (journal/canon/plan) 으로 정기 cement
+
+## 상시 지시 총량 — 도구 한도 안, 천장은 내려가기만 한다 (2026-09-30 · 하네스 4.1.5)
+
+**실측**: Claude Code(2.1.281)는 상시 지시(CLAUDE.md + `@import` + `paths:` 없는 `.claude/rules/**`)가
+**150,000자**를 넘으면 넘는 부분을 **싣지 않는다** — 경고가 아니라 누락이다(표식 대조쌍: 189,335자 → 마지막
+파일 표식 없음 · 113,627자 → 있음). pdgd 는 301,702자였다. 어느 파일부터 빠지는지는 미검사다.
+
+1. **상시 지시 총량은 도구 한도 안에 둔다** — 150k자 − 사용자 층(`~/.claude/CLAUDE.md` 등). 100k 를 넘으면
+   경고다(매 턴 다시 읽힌다 — `context-residency.md`). 잣대: `scripts/lib/resident-context.ts` ·
+   `/modfolio`·`/modfolio-sun` 한 줄 · 멤버에서 `bun node_modules/@modfolio/harness/scripts/ci/context-budget-gate.ts --member`(넘으면 exit 1).
+2. **천장은 내려가기만 한다.** 크기 게이트가 넘었을 때 **자기 상한을 올려 쓰면** 게이트가 아니라 «예산이 늘어난
+   기록» 이다(pdgd `metrics/claude-md-ceiling.json` 이 max 를 463,406 → 470,112 로 스스로 올렸다). 상한을 올리는
+   것은 오너 승인 + 근거 기록이 있을 때만이다.
+3. **상시에는 규범만, 역사·사례·절차는 온디맨드로.** 하네스 자신이 4.1.5 에서 이렇게 옮겼다 — 상시 72.2k → 38.2k자:
+   `opus-5-behavior`·`fable-5-1-behavior` 는 `paths:` 스코프, `lethal-trifecta` 는 행동 규칙만 상시(전문은 canon
+   `lethal-trifecta-governance.md` — 외부 콘텐츠를 읽는 순간은 경로로 예측할 수 없다), `agent-evidence` 전문은
+   canon `evidence-discipline.md`, 시크릿·인증의 운영 상세는 canon `secret-store.md`·`agent-auth-ux.md`.
+   작업 한정 규칙은 `paths:` 로, 역사 파일은 `docs/`·canon 으로.
 
 ## 정공법 5원칙 정합
 

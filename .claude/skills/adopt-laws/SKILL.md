@@ -1,6 +1,7 @@
 ---
 name: adopt-laws
-description: 이 repo 가 modfolio universe 불변 법칙(tier: law canon)에 대해 어디쯤 있는지 스스로 진단하고, 자기 상황에 맞는 채택 계획 초안을 만든다. hub 는 계획을 주지 않는다 — 법칙과 진단만 준다. harness pull 직후 권장.
+description: >-
+  이 repo 가 modfolio universe 불변 법칙(tier: law canon)에 대해 어디쯤 있는지 스스로 진단하고, 자기 상황에 맞는 채택 계획 초안을 만든다. hub 는 계획을 주지 않는다 — 법칙과 진단만 준다. harness pull 직후 권장.
 user-invocable: true
 ---
 

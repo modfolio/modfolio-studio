@@ -1,5 +1,6 @@
 {
 	"lockedPaths": [
+		".claude/rules/modfolio-studio-domain.md",
 		"AGENTS.md",
 		"CLAUDE.md",
 		"GEMINI.md",
@@ -9,8 +10,7 @@
 		".agents/skills/modfolio-sun/SKILL.md",
 		".agents/skills/modfolio-moon/SKILL.md",
 		".codex/hooks.json",
-		".agents/hooks.json",
-		".claude/rules/modfolio-studio-domain.md"
+		".agents/hooks.json"
 	],
 	"neutralManagedPaths": [
 		"AGENTS.md",

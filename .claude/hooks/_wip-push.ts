@@ -17,6 +17,11 @@
  * 선언(`.claude/rules/secret-sweep-allowlist.json`)은 **보내는 끝 커밋에 커밋된 것**을 쓴다 — 작업 트리의 미커밋 선언은
  * 면제가 아니다(리뷰 P3). 범위가 크거나(원격 추적 ref 가 없거나 낡음) 읽지 못하면 **막는다** — 판정 불능은 통과가 아니다.
  *
+ * 4.1.4 — «원격에 이미 있는 것» 은 원격 추적 ref 만이 아니라 **보내는 그 URL** 의 `git ls-remote` 로도 잰다. git 은 훅에
+ * `$1` = 원격 이름(이름 없는 push 면 URL) · `$2` = **실제로 보내는 URL** 을 준다. URL 로 직접 보내면 추적 ref 가 없어
+ * 저장소 전체 히스토리가 «원격에 없음» 으로 세어져 막혔고(fleet-4 T10b pdgd: 보관 태그 push 가 수천 커밋으로 막힘),
+ * 이름 push 여도 추적 ref 는 **fetch URL** 의 것이라 두 번째 push URL(NAS)의 사실이 아니었다(T12 리뷰 P2).
+ *
  * 이 파일은 공유 lib 이라 멤버의 `.claude/hooks/` 에도 착지한다 — 동기화되는 형제(`./secret-patterns.ts`)만 임포트한다.
  */
 
@@ -30,6 +35,15 @@ export type PushVerdict =
 	| { readonly allow: false; readonly message: string };
 
 export const WIP_REF = /^refs\/heads\/wip\//;
+/**
+ * 보관 태그 — 헌장 규칙: main 에 없는 커밋을 가진 브랜치를 지우기 전에 `archive/<이름>-<날짜>` 태그를 두 원격에 올린다.
+ * 그 태그는 **옛 커밋**을 가리키고 그 트리엔 게이트 영수증이 있을 수 없다 — 풀 영수증 규칙이면 영원히 못 올린다
+ * (2026-09-30 fleet-4 T6: pdgd 워커가 wip 브랜치 push + GitHub API + Forgejo 컨테이너 안 `git tag` 로 우회했다).
+ * 통합 후보가 아니므로 wip 와 같이 **보내는 커밋의 비밀 스윕**만 한다.
+ */
+export const ARCHIVE_TAG_REF = /^refs\/tags\/archive\//;
+/** 스윕 규칙을 절대 쓰지 않는 브랜치 — 통합 브랜치는 늘 풀 영수증이다(삭제도). */
+const INTEGRATION_BRANCH = /^refs\/heads\/(main|master)$/;
 const ZERO_SHA = /^0+$/;
 /** 한 번의 wip push 가 보낼 수 있는 커밋 상한 — 넘으면 원격 추적 ref 가 없거나 낡은 것이다(전체 히스토리를 훑지 않는다). */
 export const MAX_WIP_COMMITS = 300;
@@ -71,6 +85,30 @@ export function parsePushLines(stdin: string): PushLine[] {
 /** 보내는 ref 가 **전부** `wip/*` 브랜치일 때만 wip 규칙이다. 빈 목록은 wip 가 아니다(판정 근거가 없다). */
 export function isWipPush(lines: readonly PushLine[]): boolean {
 	return lines.length > 0 && lines.every((l) => WIP_REF.test(l.remoteRef));
+}
+
+/**
+ * 한 줄이 «통합 후보가 아닌» ref 갱신인가 — `wip/*` 브랜치 · 보관 태그(`refs/tags/archive/*`) 생성·갱신 ·
+ * 통합 브랜치(main·master)가 **아닌** 브랜치의 삭제. 보관 태그의 **삭제**는 아니다(보관의 뜻이 사라진다 → 풀 규칙).
+ */
+export function isSweepOnlyLine(l: PushLine): boolean {
+	if (WIP_REF.test(l.remoteRef)) return true;
+	if (ARCHIVE_TAG_REF.test(l.remoteRef)) return !ZERO_SHA.test(l.localSha);
+	return (
+		ZERO_SHA.test(l.localSha) &&
+		l.remoteRef.startsWith("refs/heads/") &&
+		!INTEGRATION_BRANCH.test(l.remoteRef)
+	);
+}
+
+/** 보내는 ref 가 **전부** 스윕 규칙 대상일 때만 — 한 줄이라도 main·다른 브랜치·일반 태그가 섞이면 풀 영수증. */
+export function isSweepOnlyPush(lines: readonly PushLine[]): boolean {
+	return lines.length > 0 && lines.every(isSweepOnlyLine);
+}
+
+/** 메시지의 이름 — wip 만이면 «wip push», 아니면 보관·삭제가 섞인 것이다. */
+function pushLabel(lines: readonly PushLine[]): string {
+	return isWipPush(lines) ? "wip push" : "wip·보관 태그·브랜치 삭제 push";
 }
 
 /** git 의 C 인용 경로(`"a\tb"`)를 푼다 — 인용이 아니면 그대로. */
@@ -251,72 +289,241 @@ export function remoteScope(root: string, remote: string | null): string | null 
 		: null;
 }
 
+/** `git ls-remote` 한 줄 — 벗긴 줄(`^{}`)은 ref 이름에서 떼고 그대로 싣는다(대상이 커밋이다). */
+export interface RemoteRef {
+	readonly sha: string;
+	readonly ref: string;
+}
+
 /**
- * `wip/*` push — 원격에 아직 없는 커밋들의 추가된 줄을 비밀 스윕한다. `remote` 는 git 이 훅에 준 원격 이름($1) —
- * 그 원격의 추적 ref 와 줄의 remote sha 를 범위에서 뺀다(다른 원격에만 있는 커밋을 «이미 게시됨» 으로 치지 않는다).
+ * 보내는 원격의 ref 목록 — `target` 은 git 이 준 URL($2)이 있으면 그것, 없으면 원격 이름($1). 둘 다 없으면 null(잴 수 없다).
+ * 못 읽으면(네트워크·인증·시간 초과) null — 호출자가 «이미 게시됨» 쪽으로 접지 않는다. 테스트가 대상을 바꿀 수 있게 target 을 받는다.
+ */
+export function lsRemote(
+	root: string,
+	target: string | null,
+	patterns: readonly string[] = [],
+): RemoteRef[] | null {
+	if (target === null || target === "") return null;
+	const r = spawnSync("git", ["ls-remote", "--", target, ...patterns], {
+		cwd: root,
+		encoding: "utf8",
+		stdio: ["ignore", "pipe", "pipe"],
+		timeout: 30_000,
+		maxBuffer: MAX_PATCH_BYTES,
+	});
+	if (r.status !== 0 || r.error) return null;
+	return (r.stdout ?? "")
+		.split("\n")
+		.map((row) => row.split("\t"))
+		.filter(([sha, ref]) => /^[0-9a-f]{40,64}$/.test(sha ?? "") && (ref ?? "") !== "")
+		.map(([sha = "", ref = ""]) => ({ sha, ref: ref.replace(/\^\{\}$/, "") }));
+}
+
+/** 이 저장소에 **커밋(또는 커밋을 가리키는 태그)으로** 있는 sha 만 — 한 프로세스(`cat-file --batch-check`)로 가른다. */
+export function localCommitish(root: string, shas: readonly string[]): string[] {
+	const uniq = [...new Set(shas)];
+	if (uniq.length === 0) return [];
+	const r = spawnSync("git", ["cat-file", "--batch-check=%(objectname) %(objecttype)"], {
+		cwd: root,
+		encoding: "utf8",
+		input: `${uniq.join("\n")}\n`,
+		maxBuffer: MAX_PATCH_BYTES,
+	});
+	if (r.status !== 0) return [];
+	return (r.stdout ?? "")
+		.split("\n")
+		.map((row) => row.trim().split(" "))
+		.filter(([, type]) => type === "commit" || type === "tag")
+		.map(([sha = ""]) => sha);
+}
+
+/**
+ * 브랜치 삭제가 커밋을 잃게 하는가 — 헌장 규칙: main 에 없는 커밋을 가진 브랜치는 `archive/*` 태그를 **두 원격에** 올린 뒤에만
+ * 지운다. 그래서 «담겼는가» 는 **지우는 그 원격**에서 잰다(리뷰 delta P0: 로컬 태그만으로는 원격에 보관 사본이 없을 수 있다):
+ * 그 원격에 **실제로 있는**(`git ls-remote <보내는 URL>`) `main`·`master`·`refs/tags/archive/*`(벗긴 대상) 중 하나가
+ * 지워질 끝(`remoteSha`)을 담으면 null.
+ *   · 4.1.4 — `url`(훅의 $2)이 있으면 그 URL 을 읽는다. 원격 **이름**으로 읽으면 fetch URL 이라, 두 번째 push URL(NAS)로 지울 때
+ *     GitHub 의 보관 태그를 보고 통과시켰다(T12 리뷰 P2). URL 을 못 받았을 때(옛 래퍼 · `moon.ts`)만 이름과 그 추적 ref 를 쓴다.
+ *   · 4.1.4 — **고유 내용 없는 끝**(fleet-4 T10b pdgd): 끝 커밋의 트리가 부모 하나의 트리와 **같고** 부모가 **전부** 그 원격의
+ *     main·보관 태그에 담겨 있으면 잃는 내용이 없다(보관 브랜치들을 합친 병합 커밋 · 빈 커밋). 한 칸만 본다 — 재귀하지 않는다.
+ * 원격 이름을 못 받았거나, 끝 커밋이 이 저장소에 없거나, 원격을 못 읽으면 잴 수 없다 — 막는다(판정 불능은 통과가 아니다).
+ */
+export function deletionLoss(
+	root: string,
+	l: PushLine,
+	remote: string | null,
+	url: string | null = null,
+): string | null {
+	if (ZERO_SHA.test(l.remoteSha)) return null; // 원격에 없는 ref — 잃을 것이 없다
+	const tip = l.remoteSha.slice(0, 8);
+	const tag = `\`git tag archive/<브랜치 이름의 / 를 - 로>-<YYYYMMDD> ${tip}\``;
+	const target = url !== null && url !== "" ? url : remote;
+	if (target === null || target === "")
+		return `원격 이름을 못 받아(옛 래퍼 · 손으로 부름) 그 원격에 보관 사본이 있는지 잴 수 없다 → \`bun run modfolio:install-guards\``;
+	if (git(root, ["cat-file", "-e", `${l.remoteSha}^{commit}`]).status !== 0)
+		return `지울 원격 끝 ${tip}(${l.remoteRef}) 이 이 저장소에 없어 담겼는지 잴 수 없다 → \`git fetch ${target}\` 뒤 다시(담기지 않았으면 ${tag} 을 그 원격에 먼저 올린다)`;
+	const contains = (sha: string, ref: string) =>
+		git(root, ["merge-base", "--is-ancestor", sha, ref]).status === 0;
+	// URL 을 못 받았을 때만 이름의 추적 ref 를 쓴다 — URL 이 있으면 추적 ref 는 다른 URL(fetch)의 사실일 수 있다.
+	const tracking: string[] = [];
+	if ((url === null || url === "") && remote !== null && /^[A-Za-z0-9._-]+$/.test(remote))
+		for (const b of ["main", "master"]) {
+			const ref = `refs/remotes/${remote}/${b}`;
+			if (git(root, ["rev-parse", "--verify", "--quiet", ref]).status === 0) tracking.push(ref);
+		}
+	const listed = lsRemote(root, target, [
+		"refs/heads/main",
+		"refs/heads/master",
+		"refs/tags/archive/*",
+	]);
+	if (listed === null && tracking.length === 0)
+		return `원격 ${target} 의 main·보관 태그를 읽지 못했다(ls-remote 실패) · 판정 불능은 통과가 아니다`;
+	// 벗긴 줄(`^{}`)과 주석 태그 객체 sha 를 둘 다 시도한다 — 이 저장소에 있는 것만 잴 수 있다.
+	const holders = [
+		...tracking,
+		...localCommitish(
+			root,
+			(listed ?? []).map((r) => r.sha),
+		),
+	];
+	const kept = (sha: string) => holders.some((h) => contains(sha, h));
+	if (kept(l.remoteSha)) return null;
+	// 고유 내용 없는 끝 — 트리가 부모 하나와 같고 부모가 전부 담겨 있다.
+	const parents = git(root, ["rev-list", "--parents", "-n", "1", l.remoteSha]);
+	const ps = (parents.stdout ?? "").trim().split(/\s+/).slice(1).filter(Boolean);
+	const treeOf = (sha: string) => (git(root, ["rev-parse", `${sha}^{tree}`]).stdout ?? "").trim();
+	if (parents.status === 0 && ps.length > 0) {
+		const t = treeOf(l.remoteSha);
+		if (t !== "" && ps.some((p) => treeOf(p) === t) && ps.every(kept)) return null;
+	}
+	return (
+		`${l.remoteRef} 의 끝 ${tip} 이 원격 ${target} 의 main 에도 보관 태그에도 없다 — 지우면 그 커밋을 잃는다.\n` +
+		`  → ${tag} 을 두 원격에 먼저 push 한 뒤 지운다(헌장 규칙 · 로컬 태그만으로는 원격에 사본이 없다)\n` +
+		"  (끝이 보관된 부모들을 합친 병합·빈 커밋처럼 **고유 내용이 없으면** 태그 없이 지운다 — 트리가 부모 하나와 같고 부모가 전부 그 원격의 main·보관 태그에 있어야 한다)"
+	);
+}
+
+/**
+ * «이미 그 원격에 있음» 으로 뺄 커밋들(sha) — 원격 추적 ref(`remoteScope`) ∪ **보내는 URL 의 `ls-remote`** 중 이 저장소에
+ * 있는 것. `lsFailed` 는 ls-remote 를 시도했는데 못 읽었다는 뜻이다(메시지용 — 못 읽음을 «이미 게시됨» 으로 접지 않는다).
+ */
+export function publishedExclusions(
+	root: string,
+	remote: string | null,
+	url: string | null,
+): { readonly shas: string[]; readonly lsFailed: boolean } {
+	const shas: string[] = [];
+	// 추적 ref 는 **fetch URL** 의 사실이다 — 훅이 보내는 URL($2)을 받았으면 쓰지 않는다: push URL 이 둘(GitHub·NAS)이면
+	// GitHub 에만 있는 커밋을 NAS 로 보낼 때 «이미 게시됨» 으로 빠져 비밀 스윕을 건너뛴다(4.1.4 후보 리뷰 P0).
+	// URL 이 있는데 ls-remote 를 못 읽으면 덜 뺀다(더 많이 스캔한다 · 상한을 넘으면 막힌다) — 다른 URL 의 사실로 메우지 않는다.
+	const scope = url !== null && url !== "" ? null : remoteScope(root, remote);
+	if (scope !== null) {
+		const r = git(root, ["rev-parse", scope]);
+		if (r.status === 0)
+			shas.push(
+				...(r.stdout ?? "")
+					.split("\n")
+					.filter((x) => /^[0-9a-f]{40,64}$/.test(x.trim()))
+					.map((x) => x.trim()),
+			);
+	}
+	const target = url !== null && url !== "" ? url : remote;
+	let lsFailed = false;
+	if (target !== null && target !== "") {
+		const listed = lsRemote(root, target);
+		if (listed === null) lsFailed = true;
+		else
+			shas.push(
+				...localCommitish(
+					root,
+					listed.map((r) => r.sha),
+				),
+			);
+	}
+	return { shas: [...new Set(shas)], lsFailed };
+}
+
+/**
+ * `wip/*` push — 원격에 아직 없는 커밋들의 추가된 줄을 비밀 스윕한다. `remote` 는 git 이 훅에 준 원격 이름($1) · `url` 은
+ * **실제로 보내는 URL**($2) — 그 원격의 추적 ref · 그 URL 의 `ls-remote` · 줄의 remote sha 를 범위에서 뺀다(다른 원격에만 있는
+ * 커밋을 «이미 게시됨» 으로 치지 않는다 · 4.1.4: URL 로 직접 보내도 원격에 있는 히스토리를 다시 세지 않는다).
  */
 export function judgeWipPush(
 	root: string,
 	lines: readonly PushLine[],
 	remote: string | null = null,
 	maxCommits: number = MAX_WIP_COMMITS,
+	url: string | null = null,
 ): PushVerdict {
+	const label = pushLabel(lines);
 	const undeclared: string[] = [];
 	let scannedBlocks = 0;
 	let scannedCommits = 0;
+	let published: ReturnType<typeof publishedExclusions> | undefined;
 	for (const l of lines) {
-		if (ZERO_SHA.test(l.localSha)) continue; // 삭제 push — 보낼 내용이 없다
+		if (ZERO_SHA.test(l.localSha)) {
+			// 삭제 push — 보낼 내용은 없지만 **지워질 내용**이 있다(리뷰 P0 · 4.1.3): 원격 끝이 main·보관 태그에 없으면 막는다.
+			const loss = deletionLoss(root, l, remote, url);
+			if (loss !== null) return { allow: false, message: `⛔ ${label} — ${loss}` };
+			continue;
+		}
 		let allowed: Set<string>;
 		try {
 			allowed = allowlistAt(root, l.localSha);
 		} catch (e) {
 			return {
 				allow: false,
-				message: `⛔ wip push — 보내는 커밋의 비밀 스윕 선언이 손상됐다(${(e as Error).message}) · 판정 불능은 통과가 아니다`,
+				message: `⛔ ${label} — 보내는 커밋의 비밀 스윕 선언이 손상됐다(${(e as Error).message}) · 판정 불능은 통과가 아니다`,
 			};
 		}
-		const excl: string[] = [];
+		published ??= publishedExclusions(root, remote, url);
+		const excl: string[] = [...published.shas];
 		if (
 			!ZERO_SHA.test(l.remoteSha) &&
 			git(root, ["cat-file", "-e", `${l.remoteSha}^{commit}`]).status === 0
 		)
 			excl.push(l.remoteSha);
-		const scope = remoteScope(root, remote);
-		if (scope !== null) excl.push(scope);
-		const count = git(root, ["rev-list", "--count", l.localSha, "--not", ...excl]);
+		// 뺄 것이 수천 개일 수 있다(보관 태그·브랜치) — 명령줄이 아니라 stdin 으로 준다(`^sha`).
+		const revInput = `${[l.localSha, ...new Set(excl)].map((sha, i) => (i === 0 ? sha : `^${sha}`)).join("\n")}\n`;
+		const count = git(root, ["rev-list", "--count", "--stdin"], revInput);
 		const n = Number((count.stdout ?? "").trim());
 		if (count.status !== 0 || !Number.isFinite(n))
 			return {
 				allow: false,
-				message: `⛔ wip push — 보낼 커밋을 셀 수 없다(${l.localRef}) · 판정 불능은 통과가 아니다`,
+				message: `⛔ ${label} — 보낼 커밋을 셀 수 없다(${l.localRef}) · 판정 불능은 통과가 아니다`,
 			};
 		if (n > maxCommits)
 			return {
 				allow: false,
-				message:
-					`⛔ wip push — 원격에 없는 커밋이 ${n}개다(상한 ${maxCommits}) · 원격 추적 ref 가 없거나 낡았다 → ` +
-					`\`git fetch ${remote ?? "<원격>"}\` 뒤 다시 · 전체 히스토리를 훑지 않는다(판정 불능은 통과가 아니다)`,
+				message: `⛔ ${label} — 원격에 없는 커밋이 ${n}개다(상한 ${maxCommits}) · ${
+					published.lsFailed
+						? `보내는 원격(${url ?? remote})의 ref 목록을 읽지 못했고(ls-remote 실패) 추적 ref 도 없거나 낡았다`
+						: "원격 추적 ref 가 없거나 낡았다"
+				} → \`git fetch ${remote ?? "<원격>"}\` 뒤 다시 · 전체 히스토리를 훑지 않는다(판정 불능은 통과가 아니다)`,
 			};
 		scannedCommits += n;
-		const log = git(root, [
-			"log",
-			"-p",
-			"--no-color",
-			"--no-ext-diff",
-			"--no-textconv",
-			"--no-renames",
-			"--diff-merges=cc",
-			// 사용자 설정 `log.showRoot=false` 면 루트 커밋의 diff 가 빠져 그 내용이 스캔 없이 나간다(리뷰 dA P2).
-			"--root",
-			"--format=commit %H",
-			l.localSha,
-			"--not",
-			...excl,
-		]);
+		const log = git(
+			root,
+			[
+				"log",
+				"-p",
+				"--no-color",
+				"--no-ext-diff",
+				"--no-textconv",
+				"--no-renames",
+				"--diff-merges=cc",
+				// 사용자 설정 `log.showRoot=false` 면 루트 커밋의 diff 가 빠져 그 내용이 스캔 없이 나간다(리뷰 dA P2).
+				"--root",
+				"--format=commit %H",
+				"--stdin",
+			],
+			revInput,
+		);
 		if (log.status !== 0 || log.error)
 			return {
 				allow: false,
-				message: `⛔ wip push — 보낼 커밋의 패치를 못 읽었다(${l.localRef}) · 판정 불능은 통과가 아니다`,
+				message: `⛔ ${label} — 보낼 커밋의 패치를 못 읽었다(${l.localRef}) · 판정 불능은 통과가 아니다`,
 			};
 		const { blocks, binaries } = collectAdded(log.stdout ?? "");
 		const bodies = readBlobs(
@@ -327,7 +534,7 @@ export function judgeWipPush(
 		if (unreadable.length > 0)
 			return {
 				allow: false,
-				message: `⛔ wip push — 읽지 못한 바이너리 ${unreadable.length}개(${unreadable.slice(0, 3).join(" · ")}) · 판정 불능은 통과가 아니다`,
+				message: `⛔ ${label} — 읽지 못한 바이너리 ${unreadable.length}개(${unreadable.slice(0, 3).join(" · ")}) · 판정 불능은 통과가 아니다`,
 			};
 		const all: AddedBlock[] = [
 			...blocks,
@@ -343,7 +550,7 @@ export function judgeWipPush(
 		return {
 			allow: false,
 			message:
-				`⛔ wip push — 선언되지 않은 시크릿 모양 ${undeclared.length}건:\n` +
+				`⛔ ${label} — 선언되지 않은 시크릿 모양 ${undeclared.length}건:\n` +
 				undeclared
 					.slice(0, MAX_LISTED)
 					.map((u) => `    ${u}`)
@@ -353,7 +560,7 @@ export function judgeWipPush(
 		};
 	return {
 		allow: true,
-		message: `✓ wip push — 원격에 없는 커밋 ${scannedCommits}개의 추가 내용 ${scannedBlocks}건 비밀 스윕 통과(통합 후보가 아니다 · main 통합은 여전히 풀 영수증)${
+		message: `✓ ${label} — 원격에 없는 커밋 ${scannedCommits}개의 추가 내용 ${scannedBlocks}건 비밀 스윕 통과(통합 후보가 아니다 · main 통합은 여전히 풀 영수증)${
 			remote === null || remote === ""
 				? "\n  ⚠ 원격 이름을 못 받았다(옛 래퍼 · 손으로 부름) — 모든 원격의 추적 ref 를 «이미 게시됨» 으로 뺐다 → `bun run modfolio:install-guards`"
 				: ""
@@ -383,6 +590,34 @@ export function gitPrePushMode(root: string): "wrapper" | "chain" | "foreign" | 
 	}
 	if (text.includes(GIT_HOOK_CHAIN_BEGIN)) return "chain";
 	return text.includes(GIT_HOOK_MARKER) ? "wrapper" : "foreign";
+}
+
+/**
+ * 명령줄에서 읽은 대상이 스윕 규칙(wip 브랜치 · 보관 태그 · main 아닌 브랜치 삭제)으로 **보이는가** — Claude 쪽 가드가
+ * 판정을 git 훅에 넘길지 정할 때만 쓴다. 틀려도 안전하다: git 훅이 실제 ref(`isSweepOnlyPush`)로 다시 가른다.
+ */
+export function looksLikeSweepOnlyPush(
+	root: string,
+	targets: { readonly refspecs: readonly string[]; readonly deletion: boolean },
+): boolean {
+	if (looksLikeWipPush(root, targets)) return true;
+	if (targets.refspecs.length === 0) return false;
+	return targets.refspecs.every((raw) => {
+		const spec = raw.replace(/^\+/, "");
+		const deleting = targets.deletion || spec.startsWith(":");
+		const dst = spec.includes(":") ? spec.slice(spec.indexOf(":") + 1) : spec;
+		if (deleting) {
+			const name = dst.replace(/^refs\/heads\//, "");
+			return (
+				name !== "" &&
+				name !== "HEAD" &&
+				name !== "main" &&
+				name !== "master" &&
+				!name.startsWith("refs/tags/")
+			);
+		}
+		return /^(refs\/tags\/)?archive\//.test(dst);
+	});
 }
 
 /**

@@ -27,7 +27,7 @@ import { createHash } from "node:crypto";
 import { appendFileSync, existsSync, mkdirSync, readFileSync, rmSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { failClosed } from "./_fail-closed.ts";
-import { bashCommand, gitRoot, readHookInput } from "./_lib.ts";
+import { bashCommand, gitRoot, guardClass, readHookInput, recordGuardSignal } from "./_lib.ts";
 import { SECRET_PATTERNS } from "./secret-patterns.ts";
 
 type Tier = "critical" | "high" | "medium";
@@ -895,6 +895,7 @@ const mode = resolveMode();
 if (mode === "off") process.exit(0);
 
 failClosed("pre-payment-guard");
+recordGuardSignal("pre-payment-guard");
 
 const input = await readHookInput();
 const toolName = input.tool_name ?? "";
@@ -961,6 +962,7 @@ if (autonomous) {
 			`MUST NOT spend money unattended (lethal-trifecta.md, payment-safety.md §5).`,
 		].join("\n"),
 	);
+	guardClass("unattended-spend");
 	process.exit(2);
 }
 
@@ -1037,4 +1039,5 @@ console.error(
 		`Policy: knowledge/canon/payment-safety.md   Escape (logged): PAYMENT_GUARD_MODE=off`,
 	].join("\n"),
 );
+guardClass("payment-unapproved");
 process.exit(2);

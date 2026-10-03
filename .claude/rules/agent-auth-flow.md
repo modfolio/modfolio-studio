@@ -3,7 +3,7 @@ title: Agent Auth Flow — 에이전트가 시작하고 사람은 브라우저 �
 applicability: 로그인·인증·토큰 만료를 만났을 때 · 「터미널에서 하세요」라고 말하려 할 때
 consumers: [all-agents]
 related_canon: [agent-auth-ux, secret-store]
-# `paths:` 없음 = 의도. 상시 주입 6편이며 frontmatter 는 Codex 색인용이라 주입을 바꾸지 않는다.
+# `paths:` 없음 = 의도(상시 · 규범만). 근거·보안 정합은 canon agent-auth-ux.md 로 옮겼다(4.1.5).
 ---
 
 # Agent Auth Flow — 에이전트가 직접 시작하는 브라우저 인증 (터미널 떠넘기기 금지)
@@ -68,18 +68,6 @@ related_canon: [agent-auth-ux, secret-store]
 - ❌ **device-login 승인을 ~45s(≈9폴) 만에 give-up** — 조기 포기가 관측된 "재발급 필요"의 근본(athsra 2026-07-04 root-cause). `expires_in`(≈15분) approved/denied/expired 까지 폴링한다.
 - ❌ **device-login 진행 중 MCP 서버 프로세스 teardown** — `device_code` 는 메모리-전용·의도적 미저장(no-persistence 보안)이라 flow 유실 → 새 코드 발급. 세션을 유지한다(또는 flow-resume).
 
-## 브라우저/device 플로우가 정말 없을 때
+## 상세는 canon
 
-그 사실을 **명시**하고, "터미널 수동 인증"을 정상으로 normalize 하지 않는다. device/loopback 플로우 추가를 **정공법 과제로 띄운다** (canon `agent-auth-ux.md` 마이그레이션 경로). 무인 환경(headless/CI)은 service token(예 `ATHSRA_TOKEN=ats_…` / `GITHUB_TOKEN`)을 athsra·env 로 주입.
-
-## 보안 정합 (이 방식이 더 안전)
-
-사람의 **브라우저 승인(human-in-the-loop)은 그대로 유지**되고, 비밀은 에이전트를 거치지 않는다 → 마찰만 제거, 통제는 보존. 단 **승인 ≠ 게이트 우회**:
-
-- 돈 이동은 무조건 `knowledge/canon/payment-safety.md` 의 `pre-payment-guard` 가 별도로 계속 적용 (로그인 자동화가 지출 자동승인이 되지 않는다).
-- secret/private 데이터 유출 면은 `.claude/rules/lethal-trifecta.md` 가 계속 적용.
-- 자율(cron/무인) 모드에서 사람 부재 시 승인 단계를 임의 통과시키지 않는다.
-
-## 근거
-
-athsra 는 이미 이 모델의 레퍼런스 구현체다 (device grant + `athsra_login_start` "터미널 불필요" + master pw 브라우저 밖 미노출 + fingerprint phishing guard + `device_code` 무노출). 능력은 전부 있고 빠진 건 "에이전트가 이를 **기본**으로 쓰라"는 지침뿐이었다. 표준·서비스별 상세·마이그레이션은 canon `knowledge/canon/agent-auth-ux.md`.
+플로우가 정말 없을 때의 처리 · 보안 정합(승인 ≠ 게이트 우회) · 근거는 `knowledge/canon/agent-auth-ux.md` §«agent-auth-flow.md 에서 옮긴 상세».

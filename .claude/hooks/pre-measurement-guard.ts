@@ -32,7 +32,7 @@
  */
 
 import { failClosed } from "./_fail-closed.ts";
-import { bashCommand, readHookInput } from "./_lib.ts";
+import { bashCommand, guardClass, readHookInput, recordGuardSignal } from "./_lib.ts";
 
 export interface MeasurementFinding {
 	readonly id:
@@ -443,6 +443,7 @@ export function judgeMeasurement(raw: string): MeasurementFinding[] {
 
 if (import.meta.main) {
 	failClosed("pre-measurement-guard");
+	recordGuardSignal("pre-measurement-guard");
 
 	/*
 	 * 세 단계다 — **`off` 밖에 없으면 멤버의 선택지가 「참거나 끄거나」 둘뿐**이고,
@@ -471,7 +472,9 @@ if (import.meta.main) {
 	console.error("   (의도한 형태라면 명령에 `# measure-ok` 를 붙인다)");
 	if (mode === "warn") {
 		console.error("   MODFOLIO_MEASUREMENT_GUARD=warn — **막지 않는다**. 판정은 사람 몫이다.");
+		guardClass("measurement-shape", "warn");
 		process.exit(0);
 	}
+	guardClass("measurement-shape");
 	process.exit(2);
 }

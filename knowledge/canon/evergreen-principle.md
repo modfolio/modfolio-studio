@@ -1,7 +1,7 @@
 ---
 title: Evergreen Principle — 권고·정보 공유와 승인된 교차 프로젝트 작업
-version: 2.7.0
-last_updated: 2026-09-21
+version: 2.7.1
+last_updated: 2026-09-30
 source: [knowledge/canon/evergreen-principle.md, v2.10 reference-only 재정립, v2.3 drift 재정의 2026-05-18, v2.4 절대불변 'ecosystem 은 다른 repo 직접 수정 X' cement 2026-06-09 사용자 명시, v2.5 session-open = 기본 advisory·자동 pull 은 opt-in 2026-06-18 (harness v3.12), v2.5.1 자매 canon fact-ownership 연결 2026-07-04 (ADR-014)]
 sync_to_siblings: true
 applicability: always
@@ -103,7 +103,7 @@ consumers: [preflight, harness-pull, sso-integrate, ecosystem]
 1. **Range-first, pin 은 lockfile 에서만**: universe 가 child `package.json` 에 **버전을 주입할 일이 있으면 항상 range (caret/tilde 등)**. exact pin 금지. 실제 pin 은 child 의 `bun.lock` 에서만 발생 — child 가 언제 resolve 할지 자유.
 2. **Dynamic reflection**: override 처럼 "다른 의존의 버전을 따라가야 하는" 값은 **child 의 실제 값에서 동적 생성**. universe 가 하드코딩한 고정값 주입 금지. 예: `overrides['@biomejs/cli-linux-x64-musl']` 는 child 의 `@biomejs/biome` range 에서 파생.
 3. **Report-only default**: `bun run harness-pull` 기본은 **diff 출력만**. mutation 은 `--apply` 명시 후에만. child 가 검토 → 수용 순서.
-4. **Auto-normalize 허용 범위**: exact pin → caret range 로 승격 같이 **명백히 진화적인 변환**만 자동. 내용 재설계는 child 몫.
+4. **Auto-normalize 허용 범위**: 허브가 **스스로 주입한 값**의 진화적 변환만 자동(예: 허브가 심은 biome 별칭을 child range 로). 멤버가 적은 값은 더 엄격해도 멤버 선택이다 — `@modfolio/harness` exact 핀 → caret 자동 승격은 4.1.4 에서 폐지하고 리포트 INFO 로만 알린다(2026-09-30 fleet-4 · pdgd·infra·modfolio). 내용 재설계는 child 몫.
 5. **`.claude/harness-lock.json`**: child 가 특정 경로의 자동 주입 자체를 거부할 수 있음. 기본 mutation 목록 (`package.json`, `.claude/**`, etc.) 전체를 잠글 수 있다.
 
 ### 폐기된 패턴 (v2.10 이전)

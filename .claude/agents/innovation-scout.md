@@ -1,7 +1,7 @@
 ---
 name: innovation-scout
 description: currency 판단 단계의 단일 정찰자 — .evolve-state/currency-delta.md(유한 입력)를 읽고 1차 출처만 확인해 websearch-input.json(A·B·C) 을 낸다. 웹서치 fan-out 이 아니다.
-model: claude-sonnet-5
+model: claude-sonnet-5-5
 effort: medium
 governance: owasp-agentic-2026
 tools:

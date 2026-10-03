@@ -307,7 +307,7 @@ bun install
    // child 에 biome 이 없으면 override 주입 자체 skip (강제 금지)
    ```
 2. `scripts.harness-pull` 은 항상 `modfolio-harness-pull` (npm bin) — 버전 독립.
-3. `@modfolio/harness` exact pin (예: `"2.8.1"`) 을 발견하면 **caret range (`"^2.8.1"`) 로 정규화**. `bun install` 으로 2.x 패치 자동 따라감.
+3. ~~`@modfolio/harness` exact pin 을 발견하면 caret range 로 정규화~~ — **4.1.4 에서 폐지**: 허브는 실수로 박힌 exact 와 멤버가 일부러 고른 exact 를 구분하지 못한다(2026-09-30 fleet-4: pdgd·infra·modfolio 는 채택 커밋마다 exact 를 적고 pull 이 매번 `^` 로 되돌렸다). 지금은 **보존하고 리포트 INFO 로만 알린다**(`harnessPinAdvisory`) — 아래 교훈 3 그대로.
 4. Phase 0.5 bootstrap 의 `bun add -D @modfolio/harness` 에서 **버전 생략** — bun 이 latest 조회 후 caret 저장.
 
 **자동화 (resolve.ts `resolvePackageJsonAction`)**: 변경은 child 가 이미 원하는 값을 두고 있으면 skip (Hub-not-enforcer), `.claude/harness-lock.json` 으로 package.json path 잠금 가능.

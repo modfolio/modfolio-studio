@@ -1,7 +1,7 @@
 ---
 title: Agent Auth UX — 에이전트가 시작하고 브라우저로 승인하는 인증 표준
-version: 1.3.0
-last_updated: 2026-08-17
+version: 1.4.0
+last_updated: 2026-09-30
 source: [사용자 피드백 2026-06-14 (athsra/connect 터미널 떠넘기기 마찰), athsra device-login(RFC 8628)/MCP login_start 구현 실측, oidc-flow.ts, 2026-06-14 athsra_run MCP CF 직접조작 실증, athsra 2026-07-04 device-login root-cause 회신(폴링 예산·MCP teardown, feedback/athsra/2026-07-04_device-login-root-cause.md), pay 2026-07-04 session27 장세션 복호 만료 관측]
 changelog: ["1.3.0 (2026-08-17): §원격 운영 전제 추가 — 오너가 폰에서 원격 운영하므로 터미널 인증 떠넘기기가 물리적으로 불가. 규칙은 2026-07-24 부터 있었으나 디바이스 로컬 ~/.claude/CLAUDE.md 에만 있어 repo 를 따라가지 못했다(pdgd 제보 ③). service token 폴백 · 디렉터리명≠프로젝트명 · athsra 동시성 4 상한 동봉.", "1.2.1 (2026-07-04): §3 장세션 mid-session 복호(decryption) 만료 → athsra doctor 근거 시에만 device-login 재인증 추가(pay session27).", "1.2.0 (2026-07-04): device flow 폴링 지속성 + MCP 세션 수명 섹션 추가(athsra root-cause 반영 — 45s give-up 금지, teardown 금지, TTL 오귀속 정정). 실행 패턴 step 4 강화.", "1.1.0 (2026-06-14): 인증 후 direct-operation 섹션 추가(athsra_run MCP 직접조작, CF=cf-api-mastery 레퍼런스, 게이트 유지). 1.0.0: 초판(login UX 표준)"]
 sync_to_siblings: true
@@ -160,3 +160,24 @@ token 폴백으로 갔다."*
 - `.claude/skills/secret/SKILL.md` — athsra CLI/MCP 운영
 - `.claude/skills/sso-integrate/SKILL.md` — connect OIDC 통합
 - `knowledge/canon/payment-safety.md`(자매) · `.claude/rules/lethal-trifecta.md` — 승인이 우회하지 못하는 게이트
+
+## agent-auth-flow.md 에서 옮긴 상세 (하네스 4.1.5 · 2026-09-30)
+
+> 상시 규칙 `.claude/rules/agent-auth-flow.md` 은 매 턴 모든 멤버에 실린다. 사건·운영 때 여는 상세는 여기 둔다 —
+> 규범은 규칙에, 절차·표·근거는 canon 에(`context-residency.md`).
+
+### 브라우저/device 플로우가 정말 없을 때
+
+그 사실을 **명시**하고, "터미널 수동 인증"을 정상으로 normalize 하지 않는다. device/loopback 플로우 추가를 **정공법 과제로 띄운다** (canon `agent-auth-ux.md` 마이그레이션 경로). 무인 환경(headless/CI)은 service token(예 `ATHSRA_TOKEN=ats_…` / `GITHUB_TOKEN`)을 athsra·env 로 주입.
+
+### 보안 정합 (이 방식이 더 안전)
+
+사람의 **브라우저 승인(human-in-the-loop)은 그대로 유지**되고, 비밀은 에이전트를 거치지 않는다 → 마찰만 제거, 통제는 보존. 단 **승인 ≠ 게이트 우회**:
+
+- 돈 이동은 무조건 `knowledge/canon/payment-safety.md` 의 `pre-payment-guard` 가 별도로 계속 적용 (로그인 자동화가 지출 자동승인이 되지 않는다).
+- secret/private 데이터 유출 면은 `.claude/rules/lethal-trifecta.md` 가 계속 적용.
+- 자율(cron/무인) 모드에서 사람 부재 시 승인 단계를 임의 통과시키지 않는다.
+
+### 근거
+
+athsra 는 이미 이 모델의 레퍼런스 구현체다 (device grant + `athsra_login_start` "터미널 불필요" + master pw 브라우저 밖 미노출 + fingerprint phishing guard + `device_code` 무노출). 능력은 전부 있고 빠진 건 "에이전트가 이를 **기본**으로 쓰라"는 지침뿐이었다. 표준·서비스별 상세·마이그레이션은 canon `knowledge/canon/agent-auth-ux.md`.

@@ -26,13 +26,14 @@
  */
 
 import { failClosed } from "./_fail-closed.ts";
-import { bashCommand, readHookInput } from "./_lib.ts";
+import { bashCommand, guardClass, readHookInput, recordGuardSignal } from "./_lib.ts";
 
 // CLI 동작 불변 — `bun run <file>` 은 `import.meta.main` 이 참이다.
 // 가드가 없으면 이 모듈을 **import 하는 테스트가 프로세스째 종료**된다
 // (2026-08-25 실측: `payment-ledger-clean` 을 import 하자 훅 스위트 15개가 돌았다).
 if (import.meta.main) {
 	failClosed("pre-destructive-guard");
+	recordGuardSignal("pre-destructive-guard");
 
 	const input = await readHookInput();
 	const cmd = bashCommand(input);
@@ -52,10 +53,11 @@ if (import.meta.main) {
 			"[hook-probe] ✓ PreToolUse 훅 층이 이 세션에서 돈다 (pre-destructive-guard). " +
 				"이 명령은 probe 라 의도적으로 막았다(exit 2) — 계속 진행하면 된다.",
 		);
+		guardClass("hook-probe");
 		process.exit(2);
 	}
 
-	const CATASTROPHIC: ReadonlyArray<{ re: RegExp; why: string }> = [
+	const CATASTROPHIC: ReadonlyArray<{ re: RegExp; why: string; cls: string }> = [
 		// 1a. rm with -r and -f (either order, combined or split) targeting a
 		//     catastrophic path. `rm -rf node_modules` / `rm -rf dist` are NOT
 		//     matched — only root, home, system dirs, bare cwd, or a bare glob.
@@ -67,21 +69,25 @@ if (import.meta.main) {
 		{
 			re: /\brm\s+-[a-z]*r[a-z]*f[a-z]*\s+(?:--no-preserve-root\s+)?(?:\/(?:\s|$)|~(?:\/\*|\s|$)|\$HOME|\*(?:\s|$)|\.(?:\s|$)|\/(?:home|etc|usr|var|bin|sbin|root|boot|lib)(?:\/[\w.@-]+)?(?:\/\*)?\/?(?=\s|$|[;&|)]))/i,
 			why: "recursive force-remove of root/home/system/cwd/glob",
+			cls: "rm-rf-catastrophic",
 		},
 		{
 			re: /\brm\s+-[a-z]*f[a-z]*r[a-z]*\s+(?:--no-preserve-root\s+)?(?:\/(?:\s|$)|~(?:\/\*|\s|$)|\$HOME|\*(?:\s|$)|\.(?:\s|$)|\/(?:home|etc|usr|var|bin|sbin|root|boot|lib)(?:\/[\w.@-]+)?(?:\/\*)?\/?(?=\s|$|[;&|)]))/i,
 			why: "recursive force-remove of root/home/system/cwd/glob",
+			cls: "rm-rf-catastrophic",
 		},
 		// 3. Deleting secret material.
 		{
 			re: /\brm\s+(?:-\w+\s+)*(?:[^\s|;&]*\/)?(?:\.env(?:\.keys|\.local|\.[a-z]+)?|[^\s|;&]*\.pem|id_rsa|id_ed25519)\b/i,
 			why: "deletion of secret material (.env / .keys / .pem / ssh key)",
+			cls: "secret-file-delete",
 		},
 	];
 
-	for (const { re, why } of CATASTROPHIC) {
+	for (const { re, why, cls } of CATASTROPHIC) {
 		if (re.test(cmd)) {
 			console.error(`BLOCKED: ${why}. (pre-destructive-guard)`);
+			guardClass(cls);
 			process.exit(2);
 		}
 	}
@@ -98,6 +104,7 @@ if (import.meta.main) {
 			console.error(
 				"BLOCKED: git push --force rewrites remote history. Use --force-with-lease if you really must. (pre-destructive-guard)",
 			);
+			guardClass("force-push");
 			process.exit(2);
 		}
 	}
